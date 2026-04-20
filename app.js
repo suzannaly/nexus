@@ -30,9 +30,10 @@ document.querySelectorAll('.anchor-btn').forEach(btn => {
   let bodyHTML = `<h2>${entry.Phase}</h2>`;
   if (isLinks) {
     const links = content.split('|').map(l => l.trim());
-    bodyHTML += links.map((url, i) =>
-      `<a href="${url}" target="_blank" class="anchor-link">Song ${i + 1}</a>`
-    ).join('');
+bodyHTML += links.map(item => {
+  const [label, url] = item.split(/:(.+)/);
+  return `<a href="${url}" target="_blank" class="anchor-link">${label}</a>`;
+}).join('');
   } else {
     bodyHTML += `<p>${content}</p>`;
   }
