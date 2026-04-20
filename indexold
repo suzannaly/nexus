@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ADMIN HEADER -->
+  <header id="admin-bar">
+    <a href="#">Dan</a>
+    <a href="#">Bishop</a>
+    <a href="#">Projects</a>
+    <span id="flag-indicator"></span>
+  </header>
+
+  <!-- ANCHOR -->
+  <section id="anchor">
+    <button class="anchor-btn" data-phase="stop">STOP</button>
+    <button class="anchor-btn" data-phase="bridge">BRIDGE</button>
+    <button class="anchor-btn" data-phase="start">START</button>
+  </section>
+
+  <!-- ANCHOR MODAL -->
+  <div id="anchor-modal" class="hidden">
+    <div id="anchor-modal-content">
+      <button id="anchor-close">✕</button>
+      <div id="anchor-body"></div>
+    </div>
+  </div>
+
+  <!-- TASKS / CALENDAR -->
+ <section id="tasks-section">
+    <a href="tasks.html"><h2>Tasks</h2></a>
+    <!-- task manager goes here -->
+</section>
+
+  <!-- BOTTOM SPLIT -->
+  <div id="bottom-split">
+    <section id="money-section">
+      <h2>Money</h2>
+    </section>
+    <section id="health-section">
+      <h2>Health</h2>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
