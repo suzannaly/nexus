@@ -80,7 +80,24 @@ body {
   border-color: var(--primary);
   color: var(--primary);
 }
+.anchor-link {
+  display: block;
+  padding: 10px 16px;
+  margin: 8px 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  transition: border-color 0.15s;
+}
 
+.anchor-link:hover {
+  border-color: var(--primary);
+  color: var(--accent1);
+}
 /* ANCHOR MODAL */
 #anchor-modal {
   position: fixed;
