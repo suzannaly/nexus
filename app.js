@@ -24,9 +24,22 @@ document.querySelectorAll('.anchor-btn').forEach(btn => {
     const phase = btn.dataset.phase.toUpperCase();
     const data = await getData('Anchor');
     const entry = data.find(r => r.Phase && r.Phase.toUpperCase() === phase);
-    modalBody.innerHTML = entry
-      ? `<h2>${entry.Phase}</h2><p>${entry.Content}</p>`
-      : `<h2>${phase}</h2><p>No content yet.</p>`;
+  if (entry) {
+  const content = entry.Content || '';
+  const isLinks = content.includes('http');
+  let bodyHTML = `<h2>${entry.Phase}</h2>`;
+  if (isLinks) {
+    const links = content.split('|').map(l => l.trim());
+    bodyHTML += links.map((url, i) =>
+      `<a href="${url}" target="_blank" class="anchor-link">Song ${i + 1}</a>`
+    ).join('');
+  } else {
+    bodyHTML += `<p>${content}</p>`;
+  }
+  modalBody.innerHTML = bodyHTML;
+} else {
+  modalBody.innerHTML = `<h2>${phase}</h2><p>No content yet.</p>`;
+}
     modal.classList.remove('hidden');
   });
 });
