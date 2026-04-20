@@ -27,6 +27,8 @@ document.querySelectorAll('.anchor-btn').forEach(btn => {
 if (entry) {
   const content = entry.Content || '';
   const isLinks = content.includes('http');
+  console.log('content:', JSON.stringify(content));
+console.log('isTimers:', /^\d+(\|\d+)*$/.test(content.trim()));
   const isTimers = /^\d+(\|\d+)*$/.test(content.trim());
   let bodyHTML = `<h2>${entry.Phase}</h2>`;
 
