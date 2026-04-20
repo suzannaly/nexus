@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus | Tasks</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Task-specific styles */
+    .task-page { padding: 20px; max-width: 800px; margin: 0 auto; }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+    }
+
+    .back-link:hover { color: var(--accent1); }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      padding: 5px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    .filter-btn.active { color: var(--primary); }
+
+    #task-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      cursor: grab;
+      user-select: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .task-card:active { cursor: grabbing; }
+    .task-card.dragging { opacity: 0.4; }
+    .task-card.drag-over { border-color: var(--primary); background: var(--surface2); }
+    .task-card.urgent-near { border-left: 3px solid var(--alert); }
+    .task-card.urgent-soon { border-left: 3px solid var(--warning); }
+    .task-card.done .task-title { text-decoration: line-through; color: var(--muted); }
+
+    .card-top { display: flex; align-items: flex-start; gap: 10px; }
+    .drag-handle { color: var(--muted); padding-top: 2px; flex-shrink: 0; }
+    .task-main { flex: 1; min-width: 0; }
+    .task-title { font-size: 14px; font-weight: 500; line-height: 1.3; }
+
+    .task-meta {
+      display: flex;
+      gap: 8px;
+      margin-top: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .cat-tag {
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+
+    .cat-work   { background: #1a2a38; color: #5a7fa8; }
+    .cat-school { background: #221a38; color: #7a6fa8; }
+    .cat-home   { background: #1a2a1a; color: #7a9e6f; }
+    .cat-health { background: #2a1a1a; color: #a87a6f; }
+    .cat-errand { background: #2a251a; color: #a8976f; }
+    .cat-other  { background: #1a2228; color: #6f8fa8; }
+
+    .deadline-label { font-size: 10px; color: var(--muted); }
+    .deadline-label.near { color: var(--alert); }
+    .deadline-label.soon { color: var(--warning); }
+    .repeat-icon { font-size: 11px; color: var(--muted); }
+
+    .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 4px;
+      border-radius: 3px;
+      transition: color 0.15s;
+    }
+
+    .btn-icon:hover { color: var(--text); }
+    .btn-icon.done-btn:hover { color: var(--accent2); }
+    .btn-icon.delete-btn:hover { color: var(--alert); }
+
+    .task-notes {
+      margin-top: 8px;
+      margin-left: 24px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-style: italic;
+      border-left: 2px solid var(--border);
+      padding-left: 10px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 40px 0;
+      letter-spacing: 0.05em;
+    }
+
+    #add-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary);
+      color: #080C55;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 20px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: opacity 0.15s;
+    }
+
+    #add-btn:hover { opacity: 0.85; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-overlay.hidden { display: none; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .modal h2 {
+      font-size: 14px;
+      color: var(--primary);
+      letter-spacing: 0.06em;
+      margin-bottom: 20px;
+    }
+
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .field input, .field textarea, .field select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text);
+      font-size: 13px;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: sans-serif;
+    }
+
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border-color: var(--primary);
+    }
+
+    .field textarea { resize: vertical; min-height: 64px; }
+    .field select option { background: var(--surface2); }
+
+    .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .repeat-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .repeat-row label { font-size: 11px; color: var(--muted); }
+    .repeat-row input[type=checkbox] { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+    .btn-cancel {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      padding: 8px 16px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-cancel:hover { color: var(--text); }
+
+    .btn-save {
+      background: var(--primary);
+      border: none;
+      color: #080C55;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-save:hover { opacity: 0.85; }
+
+    .done-section-header {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .done-section-header:hover { color: var(--text); }
+    #done-list { display: flex; flex-direction: column; gap: 6px; }
+    #done-list.hidden { display: none; }
+
+    .loading { text-align: center; color: var(--muted); padding: 40px 0; font-size: 12px; }
+  </style>
+</head>
+<body>
+<div class="task-page">
+  <a href="index.html" class="back-link">← Nexus</a>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-cat="all">ALL</button>
+    <button class="filter-btn" data-cat="work">WORK</button>
+    <button class="filter-btn" data-cat="school">SCHOOL</button>
+    <button class="filter-btn" data-cat="home">HOME</button>
+    <button class="filter-btn" data-cat="health">HEALTH</button>
+    <button class="filter-btn" data-cat="errand">ERRAND</button>
+    <button class="filter-btn" data-cat="other">OTHER</button>
+    <button class="filter-btn" id="urgent-toggle" style="margin-left:auto;">⚑ DEADLINES</button>
+  </div>
+
+  <div id="task-list"><div class="loading">loading tasks...</div></div>
+
+  <div class="done-section-header" id="done-toggle">
+    <span id="done-arrow">▶</span> COMPLETED
+    <span id="done-count"></span>
+  </div>
+  <div id="done-list" class="hidden"></div>
+</div>
+
+<button id="add-btn">+ ADD TASK</button>
+
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-title">NEW TASK</h2>
+    <div class="field">
+      <label>Task</label>
+      <input type="text" id="f-title" placeholder="What needs doing?" autocomplete="off">
+    </div>
+    <div class="modal-row">
+      <div class="field">
+        <label>Category</label>
+        <select id="f-cat">
+          <option value="work">Work</option>
+          <option value="school">School</option>
+          <option value="home">Home</option>
+          <option value="health">Health</option>
+          <option value="errand">Errand</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Deadline</label>
+        <input type="datetime-local" id="f-deadline">
+      </div>
+    </div>
+    <div class="repeat-row">
+      <input type="checkbox" id="f-repeat">
+      <label for="f-repeat">Repeating task</label>
+    </div>
+    <div class="field" id="repeat-freq-field" style="display:none;">
+      <label>Repeat frequency</label>
+      <input type="text" id="f-repeat-freq" placeholder="e.g. weekly, every wednesday">
+    </div>
+    <div class="field">
+      <label>Notes</label>
+      <textarea id="f-notes" placeholder="Any context or details..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel">Cancel</button>
+      <button class="btn-save" id="modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxijZbHHPc0Pzo_DOpf2NN2OdeDHjX8j-qdlPADasGvMKanphW_-RI_fwuV5f7-5KOJcg/exec';
+
+let tasks = [];
+let filterCat = 'all';
+let showDone = false;
+let editId = null;
+let dragSrcId = null;
+
+// ── API ────────────────────────────────────────────────────────────────────
+async function getData(tab) {
+  const res = await fetch(`${API}?tab=${tab}`);
+  return await res.json();
+}
+
+async function postData(tab, row) {
+  await fetch(API, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tab, row })
+  });
+}
+
+// ── Load tasks from Sheets ─────────────────────────────────────────────────
+async function loadTasks() {
+  try {
+    const data = await getData('Tasks');
+    tasks = data.filter(r => r.ID);
+    render();
+  } catch(e) {
+    document.getElementById('task-list').innerHTML =
+      '<div class="empty-state">could not load tasks</div>';
+  }
+}
+
+// ── Save order to localStorage (order only) ────────────────────────────────
+function saveOrder() {
+  localStorage.setItem('nexus-task-order', JSON.stringify(tasks.map(t => t.ID)));
+}
+
+function applyOrder() {
+  const order = JSON.parse(localStorage.getItem('nexus-task-order') || '[]');
+  if (!order.length) return;
+  tasks.sort((a, b) => {
+    const ai = order.indexOf(a.ID);
+    const bi = order.indexOf(b.ID);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+}
+
+// ── Urgency ────────────────────────────────────────────────────────────────
+function urgency(deadline) {
+  if (!deadline) return null;
+  const diff = new Date(deadline) - new Date();
+  const hrs = diff / 3600000;
+  if (hrs < 0) return 'overdue';
+  if (hrs <= 24) return 'near';
+  if (hrs <= 72) return 'soon';
+  return null;
+}
+
+function deadlineLabel(deadline) {
+  if (!deadline) return '';
+  const d = new Date(deadline);
+  const diff = d - new Date();
+  const hrs = diff / 3600000;
+  if (hrs < 0) return '⚑ OVERDUE';
+  if (hrs <= 24) return `⚑ ${Math.ceil(hrs)}h`;
+  const days = Math.ceil(hrs / 24);
+  if (days <= 7) return `⚑ ${days}d`;
+  return `⚑ ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function render() {
+  applyOrder();
+  const list = document.getElementById('task-list');
+  const doneList = document.getElementById('done-list');
+  list.innerHTML = '';
+  doneList.innerHTML = '';
+
+  const active = tasks.filter(t => t.Done !== 'TRUE' && t.Done !== true);
+  const done = tasks.filter(t => t.Done === 'TRUE' || t.Done === true);
+  const visible = filterCat === 'all' ? active : active.filter(t => t.Category === filterCat);
+
+  if (visible.length === 0) {
+    list.innerHTML = '<div class="empty-state">no tasks here</div>';
+  } else {
+    visible.forEach(t => list.appendChild(makeCard(t, false)));
+  }
+
+  done.forEach(t => doneList.appendChild(makeCard(t, true)));
+  document.getElementById('done-count').textContent = done.length ? `(${done.length})` : '';
+}
+
+function makeCard(task, isDone) {
+  const card = document.createElement('div');
+  card.className = 'task-card' + (isDone ? ' done' : '');
+  card.dataset.id = task.ID;
+
+  const urg = urgency(task.Deadline);
+  if (!isDone && urg === 'near') card.classList.add('urgent-near');
+  if (!isDone && urg === 'soon') card.classList.add('urgent-soon');
+
+  if (!isDone) {
+    card.draggable = true;
+    card.addEventListener('dragstart', onDragStart);
+    card.addEventListener('dragover', onDragOver);
+    card.addEventListener('dragleave', onDragLeave);
+    card.addEventListener('drop', onDrop);
+    card.addEventListener('dragend', onDragEnd);
+  }
+
+  const dl = task.Deadline ? deadlineLabel(task.Deadline) : '';
+  const dlClass = urg === 'near' || urg === 'overdue' ? 'near' : urg === 'soon' ? 'soon' : '';
+
+  card.innerHTML = `
+    <div class="card-top">
+      <span class="drag-handle">${isDone ? '·' : '⠿'}</span>
+      <div class="task-main">
+        <div class="task-title">${escHtml(task.Title || '')}</div>
+        <div class="task-meta">
+          <span class="cat-tag cat-${task.Category || 'other'}">${task.Category || 'other'}</span>
+          ${dl ? `<span class="deadline-label ${dlClass}">${dl}</span>` : ''}
+          ${task.Repeat === 'TRUE' ? `<span class="repeat-icon">↻ ${escHtml(task.RepeatFreq || '')}</span>` : ''}
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-icon done-btn" title="${isDone ? 'Restore' : 'Mark done'}" data-id="${task.ID}">${isDone ? '↺' : '✓'}</button>
+        <button class="btn-icon" title="Edit" data-edit="${task.ID}">✎</button>
+        <button class="btn-icon delete-btn" title="Delete" data-del="${task.ID}">✕</button>
+      </div>
+    </div>
+    ${task.Notes ? `<div class="task-notes">${escHtml(task.Notes)}</div>` : ''}
+  `;
+
+  card.querySelector('.done-btn').addEventListener('click', async e => {
+    const id = e.currentTarget.dataset.id;
+    const t = tasks.find(x => x.ID === id);
+    if (!t) return;
+    t.Done = t.Done === 'TRUE' ? 'FALSE' : 'TRUE';
+    await postData('Tasks', t);
+    saveOrder();
+    render();
+  });
+
+  card.querySelector('[data-edit]').addEventListener('click', e => {
+    openModal(e.currentTarget.dataset.edit);
+  });
+
+  card.querySelector('[data-del]').addEventListener('click', e => {
+    if (confirm('Delete this task?')) {
+      tasks = tasks.filter(x => x.ID !== e.currentTarget.dataset.del);
+      saveOrder();
+      render();
+    }
+  });
+
+  return card;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Drag & drop ────────────────────────────────────────────────────────────
+function onDragStart(e) {
+  dragSrcId = e.currentTarget.dataset.id;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+
+function onDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const targetId = e.currentTarget.dataset.id;
+  if (!targetId || targetId === dragSrcId) return;
+  const srcIdx = tasks.findIndex(t => t.ID === dragSrcId);
+  const tgtIdx = tasks.findIndex(t => t.ID === targetId);
+  if (srcIdx === -1 || tgtIdx === -1) return;
+  const [moved] = tasks.splice(srcIdx, 1);
+  tasks.splice(tgtIdx, 0, moved);
+  saveOrder();
+  render();
+}
+
+function onDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.task-card').forEach(c => c.classList.remove('drag-over'));
+}
+
+// ── Modal ──────────────────────────────────────────────────────────────────
+function newId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function openModal(id = null) {
+  editId = id;
+  document.getElementById('modal-title').textContent = id ? 'EDIT TASK' : 'NEW TASK';
+  if (id) {
+    const t = tasks.find(x => x.ID === id);
+    document.getElementById('f-title').value = t.Title || '';
+    document.getElementById('f-cat').value = t.Category || 'other';
+    document.getElementById('f-deadline').value = t.Deadline ? toDatetimeLocal(t.Deadline) : '';
+    document.getElementById('f-notes').value = t.Notes || '';
+    document.getElementById('f-repeat').checked = t.Repeat === 'TRUE';
+    document.getElementById('f-repeat-freq').value = t.RepeatFreq || '';
+    document.getElementById('repeat-freq-field').style.display = t.Repeat === 'TRUE' ? 'block' : 'none';
+  } else {
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-cat').value = 'other';
+    document.getElementById('f-deadline').value = '';
+    document.getElementById('f-notes').value = '';
+    document.getElementById('f-repeat').checked = false;
+    document.getElementById('f-repeat-freq').value = '';
+    document.getElementById('repeat-freq-field').style.display = 'none';
+  }
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  document.getElementById('f-title').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+  editId = null;
+}
+
+function toDatetimeLocal(iso) {
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+document.getElementById('f-repeat').addEventListener('change', e => {
+  document.getElementById('repeat-freq-field').style.display = e.target.checked ? 'block' : 'none';
+});
+
+document.getElementById('modal-save').addEventListener('click', async () => {
+  const title = document.getElementById('f-title').value.trim();
+  if (!title) { document.getElementById('f-title').focus(); return; }
+
+  const dlVal = document.getElementById('f-deadline').value;
+  const deadline = dlVal ? new Date(dlVal).toISOString() : '';
+
+  if (editId) {
+    const t = tasks.find(x => x.ID === editId);
+    t.Title = title;
+    t.Category = document.getElementById('f-cat').value;
+    t.Deadline = deadline;
+    t.Notes = document.getElementById('f-notes').value.trim();
+    t.Repeat = document.getElementById('f-repeat').checked ? 'TRUE' : 'FALSE';
+    t.RepeatFreq = document.getElementById('f-repeat-freq').value.trim();
+    await postData('Tasks', t);
+  } else {
+    const newTask = {
+      ID: newId(),
+      Title: title,
+      Category: document.getElementById('f-cat').value,
+      Deadline: deadline,
+      Notes: document.getElementById('f-notes').value.trim(),
+      Repeat: document.getElementById('f-repeat').checked ? 'TRUE' : 'FALSE',
+      RepeatFreq: document.getElementById('f-repeat-freq').value.trim(),
+      Done: 'FALSE'
+    };
+    tasks.unshift(newTask);
+    await postData('Tasks', newTask);
+  }
+
+  saveOrder();
+  closeModal();
+  render();
+});
+
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+document.getElementById('f-title').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('modal-save').click();
+});
+
+// ── Filters ────────────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterCat = btn.dataset.cat || filterCat;
+    render();
+  });
+});
+
+document.getElementById('urgent-toggle').addEventListener('click', () => {
+  const urgOrder = { overdue: 0, near: 1, soon: 2 };
+  tasks.sort((a, b) => {
+    const ua = urgOrder[urgency(a.Deadline)] ?? 3;
+    const ub = urgOrder[urgency(b.Deadline)] ?? 3;
+    return ua - ub;
+  });
+  saveOrder();
+  render();
+});
+
+document.getElementById('done-toggle').addEventListener('click', () => {
+  showDone = !showDone;
+  document.getElementById('done-list').classList.toggle('hidden', !showDone);
+  document.getElementById('done-arrow').textContent = showDone ? '▼' : '▶';
+});
+
+document.getElementById('add-btn').addEventListener('click', () => openModal());
+
+// ── Init ───────────────────────────────────────────────────────────────────
+loadTasks();
+</script>
+</body>
+</html>
