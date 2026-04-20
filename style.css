@@ -1,0 +1,158 @@
+css:root {
+  --bg: #080C55;
+  --surface: #0d1266;
+  --surface2: #131a7a;
+  --border: #1e2a8a;
+  --text: #f0f0f0;
+  --muted: #7a8ab0;
+  --primary: #93D1ED;
+  --accent1: #AC59F1;
+  --accent2: #29E3C0;
+  --alert: #F96363;
+  --warning: #F5CE41;
+  --hyperlink: #0F0FF5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ADMIN HEADER */
+#admin-bar {
+  display: flex;
+  gap: 16px;
+  padding: 10px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+
+#admin-bar a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+#admin-bar a:hover {
+  color: var(--accent1);
+}
+
+/* ANCHOR */
+#anchor {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  justify-content: center;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.anchor-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 28px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.anchor-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ANCHOR MODAL */
+#anchor-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#anchor-modal.hidden {
+  display: none;
+}
+
+#anchor-modal-content {
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  padding: 28px;
+  max-width: 480px;
+  width: 90%;
+  position: relative;
+}
+
+#anchor-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#anchor-close:hover {
+  color: var(--alert);
+}
+
+#anchor-body h2 {
+  color: var(--primary);
+  margin-bottom: 12px;
+  letter-spacing: 0.08em;
+}
+
+/* TASKS */
+#tasks-section {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+#tasks-section h2 {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+/* BOTTOM SPLIT */
+#bottom-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 300px;
+}
+
+#money-section {
+  padding: 20px;
+  border-right: 1px solid var(--border);
+}
+
+#health-section {
+  padding: 20px;
+}
+
+#money-section h2,
+#health-section h2 {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
