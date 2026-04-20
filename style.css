@@ -68,7 +68,14 @@ body {
   border-radius: 4px;
   transition: all 0.15s;
 }
-
+.anchor-btn img {
+  width: 600px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  flex-shrink:0;
+}
 .anchor-btn:hover {
   border-color: var(--primary);
   color: var(--primary);
