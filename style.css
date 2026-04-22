@@ -181,3 +181,7 @@ body {
   color: var(--muted);
   margin-bottom: 12px;
 }
+#health-section {
+  padding: 20px;
+  border-top: 1px solid var(--border);
+}

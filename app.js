@@ -77,7 +77,18 @@ console.log('isTimers:', /^\d+(\|\d+)*$/.test(content.trim()));
         });
       });
     });
-
+} else if (phase === 'START') {
+  const tasks = await getData('Tasks');
+  const next = tasks.find(t => t.Done !== 'TRUE' && t.Title);
+  bodyHTML += `
+    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png" 
+      style="width:100%;border-radius:6px;margin-bottom:16px;object-fit:cover;max-height:240px;">
+    <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:8px;">Stand up, find an anchor point, and start to climb.</p>
+    <div style="text-align:center;font-size:18px;font-weight:600;color:var(--primary);">
+      ${next ? next.Title : 'nothing queued — add a task first'}
+    </div>
+  `;
+  modalBody.innerHTML = bodyHTML;
   } else {
     bodyHTML += `<p>${content}</p>`;
     modalBody.innerHTML = bodyHTML;
