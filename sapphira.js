@@ -6,7 +6,7 @@
 //   initSapphira()         — call on page load, renders the briefing panel
 //   getSapphiraBriefing()  — returns the briefing object (cached or fresh)
 
-const SAPPHIRA_API = 'https://script.google.com/macros/s/AKfycbxijZbHHPc0Pzo_DOpf2NN2OdeDHjX8j-qdlPADasGvMKanphW_-RI_fwuV5f7-5KOJcg/exec';
+const SAPPHIRA_API = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
 // Claude is called via GAS proxy — no API key ever touches the browser
 const CACHE_KEY    = 'sapphira-briefing-cache';
 const CACHE_TTL_MS = 4 * 60 * 60 * 1000; // 4 hours
