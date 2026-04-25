@@ -1,4 +1,4 @@
-const API = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
+const API = 'https://script.google.com/macros/s/AKfycbxijZbHHPc0Pzo_DOpf2NN2OdeDHjX8j-qdlPADasGvMKanphW_-RI_fwuV5f7-5KOJcg/exec';
 
 // ── Fetch data from a tab ──────────────────────────────────────────────────
 async function getData(tab) {
@@ -7,7 +7,6 @@ async function getData(tab) {
 }
 
 // ── Post data to a tab ────────────────────────────────────────────────────
-// FIX: added mode:'no-cors' to match tasks.html — without this, writes silently fail
 async function postData(tab, row) {
   await fetch(API, {
     method: 'POST',
@@ -116,7 +115,6 @@ function renderTaskPreview(tasks) {
   const container = document.getElementById('task-preview');
   if (!container) return;
 
-  // Apply saved order if it exists
   const order = JSON.parse(localStorage.getItem('nexus-task-order') || '[]');
   if (order.length) {
     tasks.sort((a, b) => {
@@ -154,7 +152,6 @@ function escHtml(s) {
 }
 
 // ── Load tasks ────────────────────────────────────────────────────────────
-// FIX: was fetching data and logging it but never rendering anything
 async function loadTasks() {
   try {
     const tasks = await getData('Tasks');
