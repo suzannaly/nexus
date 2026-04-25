@@ -1,4 +1,4 @@
-const API = 'https://script.google.com/macros/s/AKfycbxijZbHHPc0Pzo_DOpf2NN2OdeDHjX8j-qdlPADasGvMKanphW_-RI_fwuV5f7-5KOJcg/exec';
+const API = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
 
 // ── Fetch data from a tab ──────────────────────────────────────────────────
 async function getData(tab) {
@@ -108,9 +108,17 @@ closeBtn.addEventListener('click', () => {
   modal.classList.add('hidden');
 });
 
+// ── Priority flag helper ──────────────────────────────────────────────────
+function priorityFlag(priority) {
+  if (!priority) return '';
+  const p = String(priority).trim().toLowerCase();
+  if (p === 'high')   return '<span class="priority-flag priority-high">⚑ High</span>';
+  if (p === 'medium') return '<span class="priority-flag priority-medium">⚑ Med</span>';
+  if (p === 'low')    return '<span class="priority-flag priority-low">⚑ Low</span>';
+  return '';
+}
+
 // ── Task preview on dashboard ─────────────────────────────────────────────
-// Shows the top 3 undone tasks inline on the index page.
-// Respects localStorage order from tasks.html drag-to-reorder.
 function renderTaskPreview(tasks) {
   const container = document.getElementById('task-preview');
   if (!container) return;
@@ -138,6 +146,7 @@ function renderTaskPreview(tasks) {
     <div class="task-preview-item">
       <span class="task-preview-num">${i + 1}</span>
       <span class="task-preview-title">${escHtml(t.Title)}</span>
+      ${priorityFlag(t.Priority)}
       ${t.Category ? `<span class="task-preview-cat cat-${t.Category}">${t.Category}</span>` : ''}
     </div>
   `).join('');

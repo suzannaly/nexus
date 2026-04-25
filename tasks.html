@@ -36,7 +36,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--muted);
-      font-size: 12px; /* FIX: was 18px */
+      font-size: 12px;
       letter-spacing: 0.05em;
       padding: 5px 12px;
       border-radius: 3px;
@@ -78,7 +78,7 @@
     }
 
     .cat-tag {
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: 0.05em;
       padding: 2px 7px;
       border-radius: 2px;
@@ -116,7 +116,7 @@
     .task-notes {
       margin-top: 8px;
       margin-left: 24px;
-      font-size: 12px; /* FIX: was 18px */
+      font-size: 12px;
       color: var(--muted);
       line-height: 1.5;
       font-style: italic;
@@ -233,7 +233,7 @@
       background: var(--primary);
       border: none;
       color: #080C55;
-      font-size: 13px; /* FIX: was 24px */
+      font-size: 13px;
       font-weight: 600;
       padding: 8px 20px;
       border-radius: 3px;
@@ -243,7 +243,7 @@
     .btn-save:hover { opacity: 0.85; }
 
     .done-section-header {
-      font-size: 12px; /* FIX: was 18px */
+      font-size: 12px;
       color: var(--taskheader);
       letter-spacing: 0.06em;
       margin-top: 28px;
@@ -309,9 +309,18 @@
         </select>
       </div>
       <div class="field">
-        <label>Deadline</label>
-        <input type="datetime-local" id="f-deadline">
+        <label>Priority</label>
+        <select id="f-priority">
+          <option value="">— none —</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
       </div>
+    </div>
+    <div class="field">
+      <label>Deadline</label>
+      <input type="datetime-local" id="f-deadline">
     </div>
     <div class="repeat-row">
       <input type="checkbox" id="f-repeat">
@@ -333,7 +342,7 @@
 </div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbxijZbHHPc0Pzo_DOpf2NN2OdeDHjX8j-qdlPADasGvMKanphW_-RI_fwuV5f7-5KOJcg/exec';
+const API = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
 
 let tasks = [];
 let filterCat = 'all';
@@ -404,6 +413,15 @@ function deadlineLabel(deadline) {
   return `⚑ ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
 }
 
+function priorityFlag(priority) {
+  if (!priority) return '';
+  const p = String(priority).trim().toLowerCase();
+  if (p === 'high')   return '<span class="priority-flag priority-high">⚑ High</span>';
+  if (p === 'medium') return '<span class="priority-flag priority-medium">⚑ Med</span>';
+  if (p === 'low')    return '<span class="priority-flag priority-low">⚑ Low</span>';
+  return '';
+}
+
 function render() {
   applyOrder();
   const list = document.getElementById('task-list');
@@ -412,7 +430,7 @@ function render() {
   doneList.innerHTML = '';
 
   const active = tasks.filter(t => t.Done !== 'TRUE' && t.Done !== true);
-  const done = tasks.filter(t => t.Done === 'TRUE' || t.Done === true);
+  const done   = tasks.filter(t => t.Done === 'TRUE' || t.Done === true);
   const visible = filterCat === 'all' ? active : active.filter(t => t.Category === filterCat);
 
   if (visible.length === 0) {
@@ -437,10 +455,10 @@ function makeCard(task, isDone) {
   if (!isDone) {
     card.draggable = true;
     card.addEventListener('dragstart', onDragStart);
-    card.addEventListener('dragover', onDragOver);
+    card.addEventListener('dragover',  onDragOver);
     card.addEventListener('dragleave', onDragLeave);
-    card.addEventListener('drop', onDrop);
-    card.addEventListener('dragend', onDragEnd);
+    card.addEventListener('drop',      onDrop);
+    card.addEventListener('dragend',   onDragEnd);
   }
 
   const dl = task.Deadline ? deadlineLabel(task.Deadline) : '';
@@ -453,6 +471,7 @@ function makeCard(task, isDone) {
         <div class="task-title">${escHtml(task.Title || '')}</div>
         <div class="task-meta">
           <span class="cat-tag cat-${task.Category || 'other'}">${task.Category || 'other'}</span>
+          ${priorityFlag(task.Priority)}
           ${dl ? `<span class="deadline-label ${dlClass}">${dl}</span>` : ''}
           ${task.Repeat === 'TRUE' ? `<span class="repeat-icon">↻ ${escHtml(task.RepeatFreq || '')}</span>` : ''}
         </div>
@@ -495,18 +514,9 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function onDragStart(e) {
-  dragSrcId = e.currentTarget.dataset.id;
-  e.currentTarget.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
-}
-function onDragOver(e) {
-  e.preventDefault();
-  e.currentTarget.classList.add('drag-over');
-}
-function onDragLeave(e) {
-  e.currentTarget.classList.remove('drag-over');
-}
+function onDragStart(e) { dragSrcId = e.currentTarget.dataset.id; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+function onDragOver(e)  { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
 function onDrop(e) {
   e.preventDefault();
   e.currentTarget.classList.remove('drag-over');
@@ -534,18 +544,20 @@ function openModal(id = null) {
   document.getElementById('modal-title').textContent = id ? 'EDIT TASK' : 'NEW TASK';
   if (id) {
     const t = tasks.find(x => x.ID === id);
-    document.getElementById('f-title').value = t.Title || '';
-    document.getElementById('f-cat').value = t.Category || 'other';
+    document.getElementById('f-title').value    = t.Title    || '';
+    document.getElementById('f-cat').value      = t.Category || 'other';
+    document.getElementById('f-priority').value = t.Priority || '';
     document.getElementById('f-deadline').value = t.Deadline ? toDatetimeLocal(t.Deadline) : '';
-    document.getElementById('f-notes').value = t.Notes || '';
+    document.getElementById('f-notes').value    = t.Notes    || '';
     document.getElementById('f-repeat').checked = t.Repeat === 'TRUE';
     document.getElementById('f-repeat-freq').value = t.RepeatFreq || '';
     document.getElementById('repeat-freq-field').style.display = t.Repeat === 'TRUE' ? 'block' : 'none';
   } else {
-    document.getElementById('f-title').value = '';
-    document.getElementById('f-cat').value = 'other';
+    document.getElementById('f-title').value    = '';
+    document.getElementById('f-cat').value      = 'other';
+    document.getElementById('f-priority').value = '';
     document.getElementById('f-deadline').value = '';
-    document.getElementById('f-notes').value = '';
+    document.getElementById('f-notes').value    = '';
     document.getElementById('f-repeat').checked = false;
     document.getElementById('f-repeat-freq').value = '';
     document.getElementById('repeat-freq-field').style.display = 'none';
@@ -573,28 +585,30 @@ document.getElementById('modal-save').addEventListener('click', async () => {
   const title = document.getElementById('f-title').value.trim();
   if (!title) { document.getElementById('f-title').focus(); return; }
 
-  const dlVal = document.getElementById('f-deadline').value;
+  const dlVal   = document.getElementById('f-deadline').value;
   const deadline = dlVal ? new Date(dlVal).toISOString() : '';
 
   if (editId) {
     const t = tasks.find(x => x.ID === editId);
-    t.Title = title;
-    t.Category = document.getElementById('f-cat').value;
-    t.Deadline = deadline;
-    t.Notes = document.getElementById('f-notes').value.trim();
-    t.Repeat = document.getElementById('f-repeat').checked ? 'TRUE' : 'FALSE';
+    t.Title      = title;
+    t.Category   = document.getElementById('f-cat').value;
+    t.Priority   = document.getElementById('f-priority').value;
+    t.Deadline   = deadline;
+    t.Notes      = document.getElementById('f-notes').value.trim();
+    t.Repeat     = document.getElementById('f-repeat').checked ? 'TRUE' : 'FALSE';
     t.RepeatFreq = document.getElementById('f-repeat-freq').value.trim();
     await postData('Tasks', t);
   } else {
     const newTask = {
-      ID: newId(),
-      Title: title,
-      Category: document.getElementById('f-cat').value,
-      Deadline: deadline,
-      Notes: document.getElementById('f-notes').value.trim(),
-      Repeat: document.getElementById('f-repeat').checked ? 'TRUE' : 'FALSE',
+      ID:         newId(),
+      Title:      title,
+      Category:   document.getElementById('f-cat').value,
+      Priority:   document.getElementById('f-priority').value,
+      Deadline:   deadline,
+      Notes:      document.getElementById('f-notes').value.trim(),
+      Repeat:     document.getElementById('f-repeat').checked ? 'TRUE' : 'FALSE',
       RepeatFreq: document.getElementById('f-repeat-freq').value.trim(),
-      Done: 'FALSE'
+      Done:       'FALSE'
     };
     tasks.unshift(newTask);
     await postData('Tasks', newTask);

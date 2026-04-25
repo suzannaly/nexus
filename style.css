@@ -14,11 +14,7 @@ html {
   --taskheader: #060e31;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: sans-serif;
@@ -44,9 +40,7 @@ body {
   letter-spacing: 0.05em;
 }
 
-#admin-bar a:hover {
-  color: var(--accent1);
-}
+#admin-bar a:hover { color: var(--accent1); }
 
 /* ── SAPPHIRA PANEL ───────────────────────────────────────────────────── */
 #sapphira-panel {
@@ -58,9 +52,7 @@ body {
   gap: 14px;
 }
 
-#sapphira-panel:empty {
-  display: none;
-}
+#sapphira-panel:empty { display: none; }
 
 .sap-orientation {
   font-size: 14px;
@@ -138,10 +130,7 @@ body {
   border-top: 1px solid var(--border);
 }
 
-.sap-actions {
-  display: flex;
-  gap: 10px;
-}
+.sap-actions { display: flex; gap: 10px; }
 
 .sap-btn-dismiss {
   background: none;
@@ -156,45 +145,26 @@ body {
   transition: all 0.15s;
 }
 
-.sap-btn-dismiss:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
+.sap-btn-dismiss:hover { border-color: var(--primary); color: var(--primary); }
 
-.sap-loading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 0;
-}
+.sap-loading { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
 
 .sap-loading-dot {
-  width: 6px;
-  height: 6px;
+  width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--primary);
   animation: sap-pulse 1.4s ease-in-out infinite;
   flex-shrink: 0;
 }
 
-.sap-loading-text {
-  font-size: 12px;
-  color: var(--muted);
-  letter-spacing: 0.05em;
-}
+.sap-loading-text { font-size: 12px; color: var(--muted); letter-spacing: 0.05em; }
 
 @keyframes sap-pulse {
   0%, 100% { opacity: 0.3; transform: scale(0.85); }
   50%       { opacity: 1;   transform: scale(1); }
 }
 
-.sap-error {
-  font-size: 12px;
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.sap-error { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 12px; }
 
 .sap-btn-retry {
   background: none;
@@ -207,10 +177,7 @@ body {
   transition: all 0.15s;
 }
 
-.sap-btn-retry:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
+.sap-btn-retry:hover { border-color: var(--primary); color: var(--primary); }
 
 /* ── ANCHOR ───────────────────────────────────────────────────────────── */
 #anchor {
@@ -223,9 +190,7 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-/* FIX A5: anchor button images were hardcoded to 400px width.
-   Each button now takes equal flex space and the image fills it
-   responsively without overflowing or distorting. */
+/* FIX A5: images now fill their button responsively instead of hardcoded 400px */
 .anchor-btn {
   flex: 1;
   max-width: 340px;
@@ -270,10 +235,7 @@ body {
   transition: border-color 0.15s;
 }
 
-.anchor-link:hover {
-  border-color: var(--primary);
-  color: var(--accent1);
-}
+.anchor-link:hover { border-color: var(--primary); color: var(--accent1); }
 
 /* ── ANCHOR MODAL ─────────────────────────────────────────────────────── */
 #anchor-modal {
@@ -286,9 +248,7 @@ body {
   z-index: 100;
 }
 
-#anchor-modal.hidden {
-  display: none;
-}
+#anchor-modal.hidden { display: none; }
 
 #anchor-modal-content {
   background: var(--surface);
@@ -302,8 +262,7 @@ body {
 
 #anchor-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 12px; right: 12px;
   background: none;
   border: none;
   color: var(--muted);
@@ -311,15 +270,9 @@ body {
   cursor: pointer;
 }
 
-#anchor-close:hover {
-  color: var(--alert);
-}
+#anchor-close:hover { color: var(--alert); }
 
-#anchor-body h2 {
-  color: var(--primary);
-  margin-bottom: 12px;
-  letter-spacing: 0.08em;
-}
+#anchor-body h2 { color: var(--primary); margin-bottom: 12px; letter-spacing: 0.08em; }
 
 /* ── TASKS SECTION ────────────────────────────────────────────────────── */
 #tasks-section {
@@ -327,9 +280,7 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-#tasks-section a {
-  text-decoration: none;
-}
+#tasks-section a { text-decoration: none; }
 
 #tasks-section h2 {
   font-size: 13px;
@@ -339,15 +290,9 @@ body {
   transition: color 0.15s;
 }
 
-#tasks-section h2:hover {
-  color: var(--primary);
-}
+#tasks-section h2:hover { color: var(--primary); }
 
-#task-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+#task-preview { display: flex; flex-direction: column; gap: 4px; }
 
 .task-preview-item {
   display: flex;
@@ -360,9 +305,7 @@ body {
   transition: border-color 0.15s;
 }
 
-.task-preview-item:hover {
-  border-color: var(--primary);
-}
+.task-preview-item:hover { border-color: var(--primary); }
 
 .task-preview-num {
   font-size: 10px;
@@ -371,11 +314,7 @@ body {
   min-width: 14px;
 }
 
-.task-preview-title {
-  font-size: 13px;
-  color: var(--text);
-  flex: 1;
-}
+.task-preview-title { font-size: 13px; color: var(--text); flex: 1; }
 
 .task-preview-cat {
   font-size: 10px;
@@ -385,19 +324,35 @@ body {
   text-transform: uppercase;
 }
 
-.cat-work   { background: #1a2a38; color: #5a7fa8; }
-.cat-school { background: #221a38; color: #7a6fa8; }
-.cat-home   { background: #1a2a1a; color: #7a9e6f; }
-.cat-health { background: #2a1a1a; color: #a87a6f; }
-.cat-errand { background: #2a251a; color: #a8976f; }
-.cat-other  { background: #1a2228; color: #6f8fa8; }
-
 .task-preview-empty {
   font-size: 12px;
   color: var(--muted);
   letter-spacing: 0.05em;
   padding: 8px 0;
 }
+
+/* ── PRIORITY FLAGS ───────────────────────────────────────────────────── */
+.priority-flag {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.priority-high   { background: rgba(249, 99, 99, 0.15);  color: #F96363; border: 1px solid rgba(249,99,99,0.3); }
+.priority-medium { background: rgba(245,206, 65, 0.12);  color: #F5CE41; border: 1px solid rgba(245,206,65,0.3); }
+.priority-low    { background: rgba(41, 227,192, 0.10);  color: #29E3C0; border: 1px solid rgba(41,227,192,0.25); }
+
+/* ── CATEGORY TAGS (shared across index + tasks page) ─────────────────── */
+.cat-work   { background: #1a2a38; color: #5a7fa8; }
+.cat-school { background: #221a38; color: #7a6fa8; }
+.cat-home   { background: #1a2a1a; color: #7a9e6f; }
+.cat-health { background: #2a1a1a; color: #a87a6f; }
+.cat-errand { background: #2a251a; color: #a8976f; }
+.cat-other  { background: #1a2228; color: #6f8fa8; }
 
 /* ── BOTTOM SPLIT ─────────────────────────────────────────────────────── */
 #bottom-split {
@@ -419,10 +374,7 @@ body {
   margin-bottom: 12px;
 }
 
-#sheets-section {
-  padding: 12px;
-  overflow: hidden;
-}
+#sheets-section { padding: 12px; overflow: hidden; }
 
 #sheets-section iframe {
   width: 100%;
