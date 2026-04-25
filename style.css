@@ -1,3 +1,32 @@
+Skip to content
+suzannaly
+nexus
+Repository navigation
+Code
+Issues
+Pull requests
+Agents
+Actions
+Projects
+Security and quality
+Insights
+Settings
+nexus
+/style.css
+Go to file
+t
+T
+suzannaly
+suzannaly
+Update style.css
+204f901
+ · 
+19 hours ago
+441 lines (384 loc) · 8.72 KB
+
+Code
+
+Blame
 html {
   --bg: #080C55;
   --surface: #0d1266;
@@ -27,7 +56,7 @@ body {
   min-height: 100vh;
 }
 
-/* ADMIN HEADER */
+/* ── ADMIN HEADER ─────────────────────────────────────────────────────── */
 #admin-bar {
   display: flex;
   gap: 16px;
@@ -48,7 +77,173 @@ body {
   color: var(--accent1);
 }
 
-/* ANCHOR */
+/* ── SAPPHIRA PANEL ───────────────────────────────────────────────────── */
+#sapphira-panel {
+  padding: 24px 28px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#sapphira-panel:empty {
+  display: none;
+}
+
+.sap-orientation {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 720px;
+}
+
+.sap-mode-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sap-mode-badge {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 3px;
+  background: rgba(147, 209, 237, 0.1);
+  border: 1px solid rgba(147, 209, 237, 0.3);
+  color: var(--primary);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.sap-mode-reason {
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.sap-plan {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+  opacity: 0.85;
+  max-width: 680px;
+  border-left: 1px solid var(--border);
+  padding-left: 14px;
+}
+
+.sap-first-task-wrap {
+  border-left: 2px solid var(--primary);
+  padding: 10px 16px;
+  background: rgba(147, 209, 237, 0.05);
+  border-radius: 0 4px 4px 0;
+  max-width: 600px;
+}
+
+.sap-first-task-label {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.sap-first-task {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--primary);
+  line-height: 1.35;
+}
+
+.sap-reasoning {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 660px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.sap-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.sap-btn-dismiss {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sap-btn-dismiss:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Loading state */
+.sap-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.sap-loading-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: sap-pulse 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.sap-loading-text {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+@keyframes sap-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50%       { opacity: 1;   transform: scale(1); }
+}
+
+/* Error state */
+.sap-error {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sap-btn-retry {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sap-btn-retry:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ── ANCHOR ───────────────────────────────────────────────────────────── */
 #anchor {
   display: flex;
   gap: 12px;
@@ -103,7 +298,7 @@ body {
   color: var(--accent1);
 }
 
-/* ANCHOR MODAL */
+/* ── ANCHOR MODAL ─────────────────────────────────────────────────────── */
 #anchor-modal {
   position: fixed;
   inset: 0;
@@ -149,10 +344,14 @@ body {
   letter-spacing: 0.08em;
 }
 
-/* TASKS SECTION */
+/* ── TASKS SECTION ────────────────────────────────────────────────────── */
 #tasks-section {
   padding: 20px;
   border-bottom: 1px solid var(--border);
+}
+
+#tasks-section a {
+  text-decoration: none;
 }
 
 #tasks-section h2 {
@@ -160,17 +359,14 @@ body {
   letter-spacing: 0.08em;
   color: var(--muted);
   margin-bottom: 12px;
-}
-
-#tasks-section a {
-  text-decoration: none;
+  transition: color 0.15s;
 }
 
 #tasks-section h2:hover {
   color: var(--primary);
 }
 
-/* TASK PREVIEW — top 3 tasks shown inline on dashboard */
+/* Task preview — top 3 tasks on dashboard */
 #task-preview {
   display: flex;
   flex-direction: column;
@@ -213,7 +409,6 @@ body {
   text-transform: uppercase;
 }
 
-/* Reuse category colors from tasks.html */
 .cat-work   { background: #1a2a38; color: #5a7fa8; }
 .cat-school { background: #221a38; color: #7a6fa8; }
 .cat-home   { background: #1a2a1a; color: #7a9e6f; }
@@ -228,10 +423,11 @@ body {
   padding: 8px 0;
 }
 
-/* BOTTOM SPLIT */
+/* ── BOTTOM SPLIT ─────────────────────────────────────────────────────── */
+/* Money takes 1/3, Sheets dashboard takes 2/3 */
 #bottom-split {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 2fr;
   min-height: 300px;
   border-bottom: 1px solid var(--border);
 }
@@ -248,13 +444,19 @@ body {
   margin-bottom: 12px;
 }
 
-/* Sheets dashboard panel — right side of bottom split */
 #sheets-section {
-  padding: 20px;
+  padding: 12px;
   overflow: hidden;
 }
 
-/* HEALTH */
+#sheets-section iframe {
+  width: 100%;
+  height: 450px;
+  border: none;
+  border-radius: 4px;
+}
+
+/* ── HEALTH ───────────────────────────────────────────────────────────── */
 #health-section {
   padding: 20px;
   border-top: 1px solid var(--border);

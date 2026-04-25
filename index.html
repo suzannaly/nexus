@@ -11,10 +11,16 @@
   <!-- ADMIN HEADER -->
   <header id="admin-bar">
     <a href="#">Dan</a>
-    <a href="#">Bishop</a>
     <a href="#">Projects</a>
+    <a href="#">Kids</a>
     <span id="flag-indicator"></span>
   </header>
+
+  <!-- SAPPHIRA BRIEFING PANEL -->
+  <!-- She speaks first. Before anything else. -->
+  <section id="sapphira-panel">
+    <!-- renderBriefing() writes here via sapphira.js -->
+  </section>
 
   <!-- ANCHOR -->
   <section id="anchor">
@@ -40,12 +46,10 @@
   <!-- TASKS PREVIEW -->
   <section id="tasks-section">
     <a href="tasks.html"><h2>Tasks</h2></a>
-    <!-- FIX: added task-preview div — renderTaskPreview() in app.js writes here -->
     <div id="task-preview"></div>
   </section>
 
   <!-- BOTTOM SPLIT -->
-  <!-- FIX: was missing closing iframe tag, health-section was outside this div -->
   <div id="bottom-split">
 
     <section id="money-section">
@@ -73,11 +77,16 @@
 
   </div><!-- /bottom-split -->
 
-  <!-- HEALTH — FIX: was outside bottom-split closing tag AND had a stray </div> after it -->
+  <!-- HEALTH -->
   <section id="health-section">
     <h2>Health</h2>
   </section>
 
   <script src="app.js"></script>
+  <script src="sapphira.js"></script>
+  <script>
+    // Sapphira calls Claude via GAS proxy — no API key in this file.
+    initSapphira();
+  </script>
 </body>
 </html>
