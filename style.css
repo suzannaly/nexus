@@ -1,32 +1,3 @@
-Skip to content
-suzannaly
-nexus
-Repository navigation
-Code
-Issues
-Pull requests
-Agents
-Actions
-Projects
-Security and quality
-Insights
-Settings
-nexus
-/style.css
-Go to file
-t
-T
-suzannaly
-suzannaly
-Update style.css
-204f901
- · 
-19 hours ago
-441 lines (384 loc) · 8.72 KB
-
-Code
-
-Blame
 html {
   --bg: #080C55;
   --surface: #0d1266;
@@ -190,7 +161,6 @@ body {
   color: var(--primary);
 }
 
-/* Loading state */
 .sap-loading {
   display: flex;
   align-items: center;
@@ -218,7 +188,6 @@ body {
   50%       { opacity: 1;   transform: scale(1); }
 }
 
-/* Error state */
 .sap-error {
   font-size: 12px;
   color: var(--muted);
@@ -247,36 +216,44 @@ body {
 #anchor {
   display: flex;
   gap: 12px;
-  padding: 20px;
+  padding: 16px 20px;
   justify-content: center;
+  align-items: stretch;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
 }
 
+/* FIX A5: anchor button images were hardcoded to 400px width.
+   Each button now takes equal flex space and the image fills it
+   responsively without overflowing or distorting. */
 .anchor-btn {
+  flex: 1;
+  max-width: 340px;
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 12px 28px;
-  font-size: 13px;
-  letter-spacing: 0.1em;
+  padding: 0;
   cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.15s;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .anchor-btn img {
-  width: 400px;
-  height: auto;
+  width: 100%;
+  height: 140px;
   object-fit: cover;
-  border-radius: 4px;
+  object-position: center;
   display: block;
-  flex-shrink: 0;
+  border-radius: 6px;
 }
 
 .anchor-btn:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
 }
 
 .anchor-link {
@@ -366,7 +343,6 @@ body {
   color: var(--primary);
 }
 
-/* Task preview — top 3 tasks on dashboard */
 #task-preview {
   display: flex;
   flex-direction: column;
@@ -424,7 +400,6 @@ body {
 }
 
 /* ── BOTTOM SPLIT ─────────────────────────────────────────────────────── */
-/* Money takes 1/3, Sheets dashboard takes 2/3 */
 #bottom-split {
   display: grid;
   grid-template-columns: 1fr 2fr;

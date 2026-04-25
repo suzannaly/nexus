@@ -5,16 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nexus | Tasks</title>
   <link rel="stylesheet" href="style.css">
-      <title>Tasks</title>
-    <style>
-        body {
-            background: url('images/centernexus.png');
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
-        }
-  
-    /* Task-specific styles */
+  <style>
+    body {
+      background: url('images/centernexus.png');
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+    }
+
     .task-page { padding: 20px; max-width: 800px; margin: 0 auto; }
 
     .back-link {
@@ -25,7 +23,6 @@
       font-size: 13px;
       letter-spacing: 0.05em;
     }
-
     .back-link:hover { color: var(--accent1); }
 
     .filter-bar {
@@ -39,19 +36,14 @@
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--muted);
-      font-size: 18px;
+      font-size: 12px; /* FIX: was 18px */
       letter-spacing: 0.05em;
       padding: 5px 12px;
       border-radius: 3px;
       cursor: pointer;
       transition: all 0.15s;
     }
-
-    .filter-btn:hover, .filter-btn.active {
-      color: var(--text);
-      border-color: var(--primary);
-    }
-
+    .filter-btn:hover, .filter-btn.active { color: var(--text); border-color: var(--primary); }
     .filter-btn.active { color: var(--primary); }
 
     #task-list { display: flex; flex-direction: column; gap: 6px; }
@@ -65,7 +57,6 @@
       user-select: none;
       transition: border-color 0.15s, background 0.15s;
     }
-
     .task-card:active { cursor: grabbing; }
     .task-card.dragging { opacity: 0.4; }
     .task-card.drag-over { border-color: var(--primary); background: var(--surface2); }
@@ -118,7 +109,6 @@
       border-radius: 3px;
       transition: color 0.15s;
     }
-
     .btn-icon:hover { color: var(--text); }
     .btn-icon.done-btn:hover { color: var(--accent2); }
     .btn-icon.delete-btn:hover { color: var(--alert); }
@@ -126,7 +116,7 @@
     .task-notes {
       margin-top: 8px;
       margin-left: 24px;
-      font-size: 18px;
+      font-size: 12px; /* FIX: was 18px */
       color: var(--muted);
       line-height: 1.5;
       font-style: italic;
@@ -157,7 +147,6 @@
       letter-spacing: 0.05em;
       transition: opacity 0.15s;
     }
-
     #add-btn:hover { opacity: 0.85; }
 
     .modal-overlay {
@@ -170,7 +159,6 @@
       z-index: 100;
       padding: 16px;
     }
-
     .modal-overlay.hidden { display: none; }
 
     .modal {
@@ -212,11 +200,7 @@
       transition: border-color 0.15s;
       font-family: sans-serif;
     }
-
-    .field input:focus, .field textarea:focus, .field select:focus {
-      border-color: var(--primary);
-    }
-
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--primary); }
     .field textarea { resize: vertical; min-height: 64px; }
     .field select option { background: var(--surface2); }
 
@@ -228,7 +212,6 @@
       gap: 10px;
       margin-bottom: 16px;
     }
-
     .repeat-row label { font-size: 11px; color: var(--muted); }
     .repeat-row input[type=checkbox] { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; }
 
@@ -244,25 +227,23 @@
       cursor: pointer;
       transition: all 0.15s;
     }
-
     .btn-cancel:hover { color: var(--text); }
 
     .btn-save {
       background: var(--primary);
       border: none;
       color: #080C55;
-      font-size: 24px;
+      font-size: 13px; /* FIX: was 24px */
       font-weight: 600;
       padding: 8px 20px;
       border-radius: 3px;
       cursor: pointer;
       transition: opacity 0.15s;
     }
-
     .btn-save:hover { opacity: 0.85; }
 
     .done-section-header {
-      font-size: 18px;
+      font-size: 12px; /* FIX: was 18px */
       color: var(--taskheader);
       letter-spacing: 0.06em;
       margin-top: 28px;
@@ -274,8 +255,8 @@
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border);
     }
-
     .done-section-header:hover { color: var(--text); }
+
     #done-list { display: flex; flex-direction: column; gap: 6px; }
     #done-list.hidden { display: none; }
 
@@ -360,7 +341,6 @@ let showDone = false;
 let editId = null;
 let dragSrcId = null;
 
-// ── API ────────────────────────────────────────────────────────────────────
 async function getData(tab) {
   const res = await fetch(`${API}?tab=${tab}`);
   return await res.json();
@@ -375,7 +355,6 @@ async function postData(tab, row) {
   });
 }
 
-// ── Load tasks from Sheets ─────────────────────────────────────────────────
 async function loadTasks() {
   try {
     const data = await getData('Tasks');
@@ -387,7 +366,6 @@ async function loadTasks() {
   }
 }
 
-// ── Save order to localStorage (order only) ────────────────────────────────
 function saveOrder() {
   localStorage.setItem('nexus-task-order', JSON.stringify(tasks.map(t => t.ID)));
 }
@@ -404,7 +382,6 @@ function applyOrder() {
   });
 }
 
-// ── Urgency ────────────────────────────────────────────────────────────────
 function urgency(deadline) {
   if (!deadline) return null;
   const diff = new Date(deadline) - new Date();
@@ -427,7 +404,6 @@ function deadlineLabel(deadline) {
   return `⚑ ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
 }
 
-// ── Render ─────────────────────────────────────────────────────────────────
 function render() {
   applyOrder();
   const list = document.getElementById('task-list');
@@ -519,22 +495,18 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Drag & drop ────────────────────────────────────────────────────────────
 function onDragStart(e) {
   dragSrcId = e.currentTarget.dataset.id;
   e.currentTarget.classList.add('dragging');
   e.dataTransfer.effectAllowed = 'move';
 }
-
 function onDragOver(e) {
   e.preventDefault();
   e.currentTarget.classList.add('drag-over');
 }
-
 function onDragLeave(e) {
   e.currentTarget.classList.remove('drag-over');
 }
-
 function onDrop(e) {
   e.preventDefault();
   e.currentTarget.classList.remove('drag-over');
@@ -548,13 +520,11 @@ function onDrop(e) {
   saveOrder();
   render();
 }
-
 function onDragEnd(e) {
   e.currentTarget.classList.remove('dragging');
   document.querySelectorAll('.task-card').forEach(c => c.classList.remove('drag-over'));
 }
 
-// ── Modal ──────────────────────────────────────────────────────────────────
 function newId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
@@ -643,7 +613,6 @@ document.getElementById('f-title').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('modal-save').click();
 });
 
-// ── Filters ────────────────────────────────────────────────────────────────
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -672,7 +641,6 @@ document.getElementById('done-toggle').addEventListener('click', () => {
 
 document.getElementById('add-btn').addEventListener('click', () => openModal());
 
-// ── Init ───────────────────────────────────────────────────────────────────
 loadTasks();
 </script>
 </body>
