@@ -68,80 +68,96 @@ function renderBriefing(data) {
   const ft = data.firstTask || {};
 
   panel.innerHTML = `
-    <div class="sap-inner">
+    <div class="sap-layout">
 
-      <!-- Header -->
-      <div class="sap-header">
-        <div class="sap-header-left">
-          <div class="sap-avatar">
-            <img src="images/sapphira.png" alt="Sapphira"
-              onerror="this.style.display='none'">
-            <div class="sap-avatar-ring"></div>
-          </div>
-          <div>
-            <div class="sap-name">
-              Sapphira
-              <span class="sap-name-sep">·</span>
-              <span class="sap-name-sub">a daily reading</span>
+      <!-- Left: all briefing content -->
+      <div class="sap-inner">
+
+        <!-- Header -->
+        <div class="sap-header">
+          <div class="sap-header-left">
+            <div class="sap-avatar">
+              <img src="images/sapphira.png" alt="Sapphira"
+                onerror="this.style.display='none'">
+              <div class="sap-avatar-ring"></div>
             </div>
-            <div class="sap-date">${esc(dateStr)} · ${esc(timeStr)}</div>
+            <div>
+              <div class="sap-name">
+                Sapphira
+                <span class="sap-name-sep">·</span>
+                <span class="sap-name-sub">a daily reading</span>
+              </div>
+              <div class="sap-date">${esc(dateStr)} · ${esc(timeStr)}</div>
+            </div>
+          </div>
+          <div class="sap-header-right">
+            <div class="sap-pulse"></div>
+            <span class="sap-status-label">Listening</span>
           </div>
         </div>
-        <div class="sap-header-right">
-          <div class="sap-pulse"></div>
-          <span class="sap-status-label">Listening</span>
+
+        <!-- Status report eyebrow -->
+        <div class="sap-status-label-row">
+          <span class="sap-status-rule"></span>
+          <span class="sap-status-eyebrow">Status Report</span>
+          <span class="sap-status-eyebrow" style="color:rgba(147,209,237,0.3)">:</span>
+          <span class="sap-status-mode">${esc(data.mode || '')}</span>
         </div>
-      </div>
 
-      <!-- Status report eyebrow -->
-      <div class="sap-status-label-row">
-        <span class="sap-status-rule"></span>
-        <span class="sap-status-eyebrow">Status Report</span>
-        <span class="sap-status-eyebrow" style="color:rgba(147,209,237,0.3)">:</span>
-        <span class="sap-status-mode">${esc(data.mode || '')}</span>
-      </div>
-
-      <!-- Top line -->
-      <div class="sap-topline">
-        <span class="sap-topline-quote">"</span>${esc(data.topLine || '')}<span class="sap-topline-quote">"</span>
-      </div>
-
-      <!-- Mode badge -->
-      ${data.mode ? `<div class="sap-mode-badge">${esc(data.mode)}</div>` : ''}
-
-      <!-- Reasoning — collapsible -->
-      <button class="sap-reasoning-toggle" onclick="toggleReasoning(this)">
-        <span class="sap-reasoning-chev">›</span>
-        <span>Her reasoning</span>
-        <span style="opacity:0.4;font-size:8px;margin-left:4px;">
-          ${Array.isArray(data.reasoning) ? data.reasoning.length : 1} threads
-        </span>
-      </button>
-      <div class="sap-reasoning-body">
-        <div class="sap-reasoning-inner">
-          ${reasoningItems}
+        <!-- Top line -->
+        <div class="sap-topline">
+          <span class="sap-topline-quote">"</span>${esc(data.topLine || '')}<span class="sap-topline-quote">"</span>
         </div>
-      </div>
 
-      <!-- First task -->
-      ${ft.title ? `
-        <div class="sap-first-task">
-          <div class="sap-first-task-eyebrow">First step</div>
-          <div class="sap-first-task-title">${esc(ft.title)}</div>
-          ${ft.why ? `<div class="sap-first-task-why">${esc(ft.why)}</div>` : ''}
-          <div class="sap-first-task-meta">
-            ${ft.estimate ? `<span class="sap-first-task-tag">${esc(ft.estimate)}</span>` : ''}
-            ${ft.domain   ? `<span class="sap-first-task-tag">${esc(ft.domain)}</span>`   : ''}
-            ${ft.due      ? `<span class="sap-first-task-tag">Due: ${esc(ft.due)}</span>` : ''}
+        <!-- Mode badge -->
+        ${data.mode ? `<div class="sap-mode-badge">${esc(data.mode)}</div>` : ''}
+
+        <!-- Reasoning — collapsible -->
+        <button class="sap-reasoning-toggle" onclick="toggleReasoning(this)">
+          <span class="sap-reasoning-chev">›</span>
+          <span>Her reasoning</span>
+          <span style="opacity:0.4;font-size:8px;margin-left:4px;">
+            ${Array.isArray(data.reasoning) ? data.reasoning.length : 1} threads
+          </span>
+        </button>
+        <div class="sap-reasoning-body">
+          <div class="sap-reasoning-inner">
+            ${reasoningItems}
           </div>
         </div>
-      ` : ''}
 
-      <!-- Day plan -->
-      ${data.day ? `<div class="sap-plan">${esc(data.day)}</div>` : ''}
+        <!-- First task -->
+        ${ft.title ? `
+          <div class="sap-first-task">
+            <div class="sap-first-task-eyebrow">First step</div>
+            <div class="sap-first-task-title">${esc(ft.title)}</div>
+            ${ft.why ? `<div class="sap-first-task-why">${esc(ft.why)}</div>` : ''}
+            <div class="sap-first-task-meta">
+              ${ft.estimate ? `<span class="sap-first-task-tag">${esc(ft.estimate)}</span>` : ''}
+              ${ft.domain   ? `<span class="sap-first-task-tag">${esc(ft.domain)}</span>`   : ''}
+              ${ft.due      ? `<span class="sap-first-task-tag">Due: ${esc(ft.due)}</span>` : ''}
+            </div>
+          </div>
+        ` : ''}
 
-      <!-- Dismiss -->
-      <button class="sap-btn-dismiss" onclick="dismissSapphira()">Got it</button>
+        <!-- Day plan -->
+        ${data.day ? `<div class="sap-plan">${esc(data.day)}</div>` : ''}
+
+        <!-- Dismiss -->
+        <button class="sap-btn-dismiss" onclick="dismissSapphira()">Got it</button>
+
+      </div>
+
+      <!-- Right: portrait -->
+      <div class="sap-portrait-wrap">
+        <img
+          src="images/sapphira.png"
+          alt="Sapphira"
+          class="sap-portrait"
+          onerror="this.parentElement.style.display='none'"
+        >
+        <div class="sap-portrait-fade"></div>
+      </div>
 
     </div>
   `;
@@ -249,7 +265,6 @@ async function callClaudeViaProxy(payload) {
 
   if (result.error) throw new Error(result.error);
 
-  // Anthropic response shape: result.content[0].text
   const text = result.content?.[0]?.text || '';
   return JSON.parse(text.replace(/```json|```/g, '').trim());
 }
@@ -257,7 +272,6 @@ async function callClaudeViaProxy(payload) {
 // ── Init ──────────────────────────────────────────────────────────────────
 
 async function initSapphira() {
-  // Serve from cache if already run today
   const cachedDate = localStorage.getItem(CACHE_DATE);
   const cached     = localStorage.getItem(CACHE_KEY);
 

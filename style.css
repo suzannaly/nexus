@@ -43,15 +43,13 @@ body {
 #admin-bar a:hover { color: var(--accent1); }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   SAPPHIRA PANEL — her own visual language inside the Nexus shell
-   Cormorant Garamond for her words. Cobalt adapted from the JSX design.
+   SAPPHIRA PANEL
    ═══════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap');
 
 #sapphira-panel {
   position: relative;
-  padding: 0;
   background: linear-gradient(180deg,
     rgba(8, 12, 85, 0.0) 0%,
     rgba(6, 9, 60, 0.55) 100%
@@ -62,7 +60,6 @@ body {
 
 #sapphira-panel:empty { display: none; }
 
-/* Subtle top glow line — signals her presence */
 #sapphira-panel::before {
   content: '';
   position: absolute;
@@ -76,12 +73,46 @@ body {
   );
 }
 
-.sap-inner {
-  padding: 20px 24px 24px;
-  max-width: 900px;
+/* Two-column layout: content left, portrait right */
+.sap-layout {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  align-items: stretch;
+  min-height: 200px;
 }
 
-/* ── Panel header: avatar + name + date + pulse ── */
+.sap-inner {
+  padding: 20px 24px 24px;
+}
+
+/* ── Portrait ── */
+.sap-portrait-wrap {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sap-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 20%;
+  display: block;
+  filter: saturate(1.05) contrast(1.02) brightness(0.9);
+}
+
+/* Fade edges so portrait blends into the panel */
+.sap-portrait-fade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right,  var(--surface) 0%, transparent 30%),
+    linear-gradient(to bottom, transparent 60%, var(--surface) 100%),
+    linear-gradient(to top,    transparent 85%, var(--surface) 100%);
+  pointer-events: none;
+}
+
+/* ── Panel header ── */
 .sap-header {
   display: flex;
   align-items: center;
@@ -115,7 +146,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 58% 30%;
+  object-position: 58% 20%;
   filter: saturate(1.05) contrast(1.05);
 }
 
@@ -161,8 +192,7 @@ body {
 }
 
 .sap-pulse {
-  width: 6px;
-  height: 6px;
+  width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--primary);
   box-shadow: 0 0 8px rgba(147, 209, 237, 0.7);
@@ -182,7 +212,7 @@ body {
   font-family: monospace;
 }
 
-/* ── Status report line ── */
+/* ── Status report eyebrow ── */
 .sap-status-label-row {
   display: flex;
   align-items: center;
@@ -192,8 +222,7 @@ body {
 
 .sap-status-rule {
   display: inline-block;
-  width: 22px;
-  height: 1px;
+  width: 22px; height: 1px;
   background: rgba(147, 209, 237, 0.4);
 }
 
@@ -213,7 +242,7 @@ body {
   font-family: monospace;
 }
 
-/* ── Top line — the main orientation sentence ── */
+/* ── Top line ── */
 .sap-topline {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(18px, 2.2vw, 26px);
@@ -244,7 +273,7 @@ body {
   margin-bottom: 16px;
 }
 
-/* ── Reasoning — collapsible ── */
+/* ── Reasoning ── */
 .sap-reasoning-toggle {
   display: inline-flex;
   align-items: center;
@@ -314,9 +343,8 @@ body {
   letter-spacing: 0.1em;
 }
 
-/* ── First task hero ── */
+/* ── First task ── */
 .sap-first-task {
-  position: relative;
   border-left: 2px solid var(--primary);
   padding: 14px 16px;
   margin-bottom: 14px;
@@ -355,6 +383,7 @@ body {
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .sap-first-task-tag {
@@ -376,7 +405,7 @@ body {
   border-left: 1px solid rgba(147, 209, 237, 0.12);
 }
 
-/* ── GOT IT button ── */
+/* ── Dismiss ── */
 .sap-btn-dismiss {
   background: none;
   border: 1px solid rgba(147, 209, 237, 0.2);
@@ -396,7 +425,7 @@ body {
   color: var(--primary);
 }
 
-/* ── Loading state ── */
+/* ── Loading ── */
 .sap-loading {
   display: flex;
   align-items: center;
@@ -443,6 +472,12 @@ body {
 
 .sap-btn-retry:hover { border-color: var(--primary); color: var(--primary); }
 
+/* Collapse portrait on narrow screens */
+@media (max-width: 600px) {
+  .sap-layout { grid-template-columns: 1fr; }
+  .sap-portrait-wrap { display: none; }
+}
+
 /* ── ANCHOR ───────────────────────────────────────────────────────────── */
 #anchor {
   display: flex;
@@ -459,7 +494,6 @@ body {
   max-width: 340px;
   background: var(--surface2);
   border: 1px solid var(--border);
-  color: var(--text);
   padding: 0;
   cursor: pointer;
   border-radius: 6px;
