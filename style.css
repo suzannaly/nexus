@@ -42,139 +42,403 @@ body {
 
 #admin-bar a:hover { color: var(--accent1); }
 
-/* ── SAPPHIRA PANEL ───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   SAPPHIRA PANEL — her own visual language inside the Nexus shell
+   Cormorant Garamond for her words. Cobalt adapted from the JSX design.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+
 #sapphira-panel {
-  padding: 24px 28px;
-  background: var(--surface);
+  position: relative;
+  padding: 0;
+  background: linear-gradient(180deg,
+    rgba(8, 12, 85, 0.0) 0%,
+    rgba(6, 9, 60, 0.55) 100%
+  );
   border-bottom: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  overflow: hidden;
 }
 
 #sapphira-panel:empty { display: none; }
 
-.sap-orientation {
-  font-size: 14px;
-  line-height: 1.65;
-  color: var(--text);
-  max-width: 720px;
+/* Subtle top glow line — signals her presence */
+#sapphira-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(147, 209, 237, 0.5) 30%,
+    rgba(172, 89, 241, 0.4) 70%,
+    transparent
+  );
 }
 
-.sap-mode-row {
+.sap-inner {
+  padding: 20px 24px 24px;
+  max-width: 900px;
+}
+
+/* ── Panel header: avatar + name + date + pulse ── */
+.sap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(147, 209, 237, 0.1);
+}
+
+.sap-header-left {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
-.sap-mode-badge {
+.sap-avatar {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow:
+    0 0 20px rgba(147, 209, 237, 0.25),
+    inset 0 0 0 1px rgba(147, 209, 237, 0.35);
+}
+
+.sap-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 30%;
+  filter: saturate(1.05) contrast(1.05);
+}
+
+.sap-avatar-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 12px rgba(6, 9, 60, 0.6);
+  pointer-events: none;
+}
+
+.sap-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.sap-name-sep { color: rgba(147, 209, 237, 0.4); margin: 0 5px; }
+
+.sap-name-sub {
+  font-style: italic;
+  font-weight: 400;
+  font-size: 15px;
+  color: rgba(147, 209, 237, 0.6);
+}
+
+.sap-date {
   font-size: 10px;
+  color: rgba(147, 209, 237, 0.45);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 3px;
-  background: rgba(147, 209, 237, 0.1);
-  border: 1px solid rgba(147, 209, 237, 0.3);
-  color: var(--primary);
-  white-space: nowrap;
-  font-weight: 600;
+  margin-top: 3px;
+  font-family: monospace;
 }
 
-.sap-mode-reason {
-  font-size: 12px;
-  color: var(--muted);
-  font-style: italic;
-  line-height: 1.4;
+.sap-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.sap-plan {
-  font-size: 13px;
-  line-height: 1.7;
+.sap-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 8px rgba(147, 209, 237, 0.7);
+  animation: sap-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes sap-breathe {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50%       { opacity: 1;   transform: scale(1.1); }
+}
+
+.sap-status-label {
+  font-size: 9px;
+  color: rgba(147, 209, 237, 0.4);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: monospace;
+}
+
+/* ── Status report line ── */
+.sap-status-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.sap-status-rule {
+  display: inline-block;
+  width: 22px;
+  height: 1px;
+  background: rgba(147, 209, 237, 0.4);
+}
+
+.sap-status-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(147, 209, 237, 0.55);
+  font-family: monospace;
+}
+
+.sap-status-mode {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(240, 240, 240, 0.5);
+  font-family: monospace;
+}
+
+/* ── Top line — the main orientation sentence ── */
+.sap-topline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 2.2vw, 26px);
+  font-weight: 400;
+  line-height: 1.35;
   color: var(--text);
-  opacity: 0.85;
-  max-width: 680px;
-  border-left: 1px solid var(--border);
-  padding-left: 14px;
+  margin-bottom: 16px;
 }
 
-.sap-first-task-wrap {
-  border-left: 2px solid var(--primary);
-  padding: 10px 16px;
-  background: rgba(147, 209, 237, 0.05);
-  border-radius: 0 4px 4px 0;
-  max-width: 600px;
+.sap-topline-quote {
+  font-style: italic;
+  color: var(--primary);
+  font-size: 1.1em;
 }
 
-.sap-first-task-label {
+/* ── Mode badge ── */
+.sap-mode-badge {
+  display: inline-block;
   font-size: 9px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 5px;
+  padding: 3px 10px;
+  border-radius: 2px;
+  background: rgba(147, 209, 237, 0.08);
+  border: 1px solid rgba(147, 209, 237, 0.25);
+  color: var(--primary);
+  font-family: monospace;
+  margin-bottom: 16px;
 }
 
+/* ── Reasoning — collapsible ── */
+.sap-reasoning-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  color: rgba(147, 209, 237, 0.5);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-family: monospace;
+  margin-bottom: 14px;
+  transition: color 0.2s;
+}
+
+.sap-reasoning-toggle:hover { color: var(--primary); }
+
+.sap-reasoning-chev {
+  display: inline-block;
+  font-size: 13px;
+  transition: transform 0.25s ease;
+  font-family: serif;
+  color: rgba(147, 209, 237, 0.5);
+}
+
+.sap-reasoning-chev.open { transform: rotate(90deg); }
+
+.sap-reasoning-body {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+  max-height: 0;
+  opacity: 0;
+}
+
+.sap-reasoning-body.open {
+  max-height: 600px;
+  opacity: 1;
+}
+
+.sap-reasoning-inner {
+  padding: 4px 0 14px 16px;
+  border-left: 1px solid rgba(147, 209, 237, 0.15);
+  margin-left: 2px;
+  margin-bottom: 4px;
+}
+
+.sap-reasoning-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(240, 240, 240, 0.55);
+}
+
+.sap-reasoning-idx {
+  font-family: monospace;
+  font-style: normal;
+  font-size: 9px;
+  color: rgba(147, 209, 237, 0.35);
+  padding-top: 3px;
+  flex-shrink: 0;
+  letter-spacing: 0.1em;
+}
+
+/* ── First task hero ── */
 .sap-first-task {
-  font-size: 15px;
+  position: relative;
+  border-left: 2px solid var(--primary);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  background: rgba(147, 209, 237, 0.04);
+  border-radius: 0 4px 4px 0;
+}
+
+.sap-first-task-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(147, 209, 237, 0.45);
+  font-family: monospace;
+  margin-bottom: 7px;
+}
+
+.sap-first-task-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 1.8vw, 22px);
   font-weight: 500;
   color: var(--primary);
-  line-height: 1.35;
+  line-height: 1.3;
+  margin-bottom: 8px;
 }
 
-.sap-reasoning {
-  font-size: 11px;
-  color: var(--muted);
+.sap-first-task-why {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(240, 240, 240, 0.5);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.sap-first-task-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.sap-first-task-tag {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(147, 209, 237, 0.4);
+  font-family: monospace;
+}
+
+/* ── Day plan ── */
+.sap-plan {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
   line-height: 1.65;
-  max-width: 660px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+  color: rgba(240, 240, 240, 0.7);
+  margin-bottom: 18px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(147, 209, 237, 0.12);
 }
 
-.sap-actions { display: flex; gap: 10px; }
-
+/* ── GOT IT button ── */
 .sap-btn-dismiss {
   background: none;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  border: 1px solid rgba(147, 209, 237, 0.2);
+  color: rgba(147, 209, 237, 0.5);
+  font-size: 9px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   padding: 6px 16px;
-  border-radius: 3px;
+  border-radius: 2px;
   cursor: pointer;
-  transition: all 0.15s;
+  font-family: monospace;
+  transition: all 0.2s;
 }
 
-.sap-btn-dismiss:hover { border-color: var(--primary); color: var(--primary); }
+.sap-btn-dismiss:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
 
-.sap-loading { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+/* ── Loading state ── */
+.sap-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 24px;
+}
 
 .sap-loading-dot {
-  width: 6px; height: 6px;
+  width: 5px; height: 5px;
   border-radius: 50%;
   background: var(--primary);
-  animation: sap-pulse 1.4s ease-in-out infinite;
+  animation: sap-breathe 1.4s ease-in-out infinite;
   flex-shrink: 0;
 }
 
-.sap-loading-text { font-size: 12px; color: var(--muted); letter-spacing: 0.05em; }
-
-@keyframes sap-pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.85); }
-  50%       { opacity: 1;   transform: scale(1); }
+.sap-loading-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(147, 209, 237, 0.45);
 }
 
-.sap-error { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+.sap-error {
+  font-size: 12px;
+  color: rgba(147, 209, 237, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  font-family: monospace;
+}
 
 .sap-btn-retry {
   background: none;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 11px;
+  border: 1px solid rgba(147, 209, 237, 0.2);
+  color: rgba(147, 209, 237, 0.5);
+  font-size: 10px;
   padding: 4px 12px;
-  border-radius: 3px;
+  border-radius: 2px;
   cursor: pointer;
-  transition: all 0.15s;
+  font-family: monospace;
+  transition: all 0.2s;
 }
 
 .sap-btn-retry:hover { border-color: var(--primary); color: var(--primary); }
@@ -190,7 +454,6 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-/* FIX A5: images now fill their button responsively instead of hardcoded 400px */
 .anchor-btn {
   flex: 1;
   max-width: 340px;
@@ -271,7 +534,6 @@ body {
 }
 
 #anchor-close:hover { color: var(--alert); }
-
 #anchor-body h2 { color: var(--primary); margin-bottom: 12px; letter-spacing: 0.08em; }
 
 /* ── TASKS SECTION ────────────────────────────────────────────────────── */
@@ -342,11 +604,11 @@ body {
   flex-shrink: 0;
 }
 
-.priority-high   { background: rgba(249, 99, 99, 0.15);  color: #F96363; border: 1px solid rgba(249,99,99,0.3); }
-.priority-medium { background: rgba(245,206, 65, 0.12);  color: #F5CE41; border: 1px solid rgba(245,206,65,0.3); }
-.priority-low    { background: rgba(41, 227,192, 0.10);  color: #29E3C0; border: 1px solid rgba(41,227,192,0.25); }
+.priority-high   { background: rgba(249,99,99,0.15);   color: #F96363; border: 1px solid rgba(249,99,99,0.3); }
+.priority-medium { background: rgba(245,206,65,0.12);  color: #F5CE41; border: 1px solid rgba(245,206,65,0.3); }
+.priority-low    { background: rgba(41,227,192,0.10);  color: #29E3C0; border: 1px solid rgba(41,227,192,0.25); }
 
-/* ── CATEGORY TAGS (shared across index + tasks page) ─────────────────── */
+/* ── CATEGORY TAGS ────────────────────────────────────────────────────── */
 .cat-work   { background: #1a2a38; color: #5a7fa8; }
 .cat-school { background: #221a38; color: #7a6fa8; }
 .cat-home   { background: #1a2a1a; color: #7a9e6f; }
