@@ -1,9 +1,9 @@
 // sapphira.js — renders Sapphira's briefing into #sapphira-panel
-// Calls Claude via the GAS proxy (key stays server-side).
+// Claude API call routes through GAS proxy — key never touches the browser.
 
 const SAPPHIRA_GAS = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
-const CACHE_KEY   = 'sapphira-cache';
-const CACHE_DATE  = 'sapphira-cache-date';
+const CACHE_KEY    = 'sapphira-cache';
+const CACHE_DATE   = 'sapphira-cache-date';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -34,10 +34,10 @@ function showLoading() {
 
 // ── Error state ───────────────────────────────────────────────────────────
 
-function showError() {
+function showError(msg) {
   getPanel().innerHTML = `
     <div class="sap-error">
-      could not reach Sapphira
+      ${esc(msg || 'could not reach Sapphira')}
       <button class="sap-btn-retry" onclick="initSapphira()">retry</button>
     </div>
   `;
@@ -48,26 +48,29 @@ function showError() {
 function renderBriefing(data) {
   const panel = getPanel();
 
-  const now = new Date();
+  const now     = new Date();
   const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const dateStr = now.toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+  });
 
-  // Reasoning items
   const reasoningItems = Array.isArray(data.reasoning)
     ? data.reasoning.map((r, i) => `
         <div class="sap-reasoning-item">
           <span class="sap-reasoning-idx">${String(i + 1).padStart(2, '0')}</span>
           <span>${esc(r)}</span>
-        </div>
-      `).join('')
-    : `<div class="sap-reasoning-item"><span class="sap-reasoning-idx">01</span><span>${esc(data.reasoning || '')}</span></div>`;
+        </div>`).join('')
+    : `<div class="sap-reasoning-item">
+         <span class="sap-reasoning-idx">01</span>
+         <span>${esc(data.reasoning || '')}</span>
+       </div>`;
 
-  const firstTask = data.firstTask || {};
+  const ft = data.firstTask || {};
 
   panel.innerHTML = `
     <div class="sap-inner">
 
-      <!-- Header: avatar + name + pulse -->
+      <!-- Header -->
       <div class="sap-header">
         <div class="sap-header-left">
           <div class="sap-avatar">
@@ -90,7 +93,7 @@ function renderBriefing(data) {
         </div>
       </div>
 
-      <!-- Status report label + mode -->
+      <!-- Status report eyebrow -->
       <div class="sap-status-label-row">
         <span class="sap-status-rule"></span>
         <span class="sap-status-eyebrow">Status Report</span>
@@ -100,7 +103,7 @@ function renderBriefing(data) {
 
       <!-- Top line -->
       <div class="sap-topline">
-        <span class="sap-topline-quote">"</span>${esc(data.topLine || data.orientation || '')}<span class="sap-topline-quote">"</span>
+        <span class="sap-topline-quote">"</span>${esc(data.topLine || '')}<span class="sap-topline-quote">"</span>
       </div>
 
       <!-- Mode badge -->
@@ -110,7 +113,9 @@ function renderBriefing(data) {
       <button class="sap-reasoning-toggle" onclick="toggleReasoning(this)">
         <span class="sap-reasoning-chev">›</span>
         <span>Her reasoning</span>
-        <span style="opacity:0.4;font-size:8px;margin-left:4px;">${Array.isArray(data.reasoning) ? data.reasoning.length : 1} threads</span>
+        <span style="opacity:0.4;font-size:8px;margin-left:4px;">
+          ${Array.isArray(data.reasoning) ? data.reasoning.length : 1} threads
+        </span>
       </button>
       <div class="sap-reasoning-body">
         <div class="sap-reasoning-inner">
@@ -119,15 +124,15 @@ function renderBriefing(data) {
       </div>
 
       <!-- First task -->
-      ${firstTask.title ? `
+      ${ft.title ? `
         <div class="sap-first-task">
           <div class="sap-first-task-eyebrow">First step</div>
-          <div class="sap-first-task-title">${esc(firstTask.title)}</div>
-          ${firstTask.why ? `<div class="sap-first-task-why">${esc(firstTask.why)}</div>` : ''}
+          <div class="sap-first-task-title">${esc(ft.title)}</div>
+          ${ft.why ? `<div class="sap-first-task-why">${esc(ft.why)}</div>` : ''}
           <div class="sap-first-task-meta">
-            ${firstTask.estimate ? `<span class="sap-first-task-tag">${esc(firstTask.estimate)}</span>` : ''}
-            ${firstTask.domain  ? `<span class="sap-first-task-tag">${esc(firstTask.domain)}</span>` : ''}
-            ${firstTask.due     ? `<span class="sap-first-task-tag">Due: ${esc(firstTask.due)}</span>` : ''}
+            ${ft.estimate ? `<span class="sap-first-task-tag">${esc(ft.estimate)}</span>` : ''}
+            ${ft.domain   ? `<span class="sap-first-task-tag">${esc(ft.domain)}</span>`   : ''}
+            ${ft.due      ? `<span class="sap-first-task-tag">Due: ${esc(ft.due)}</span>` : ''}
           </div>
         </div>
       ` : ''}
@@ -164,31 +169,32 @@ function dismissSapphira() {
   setTimeout(() => { panel.style.display = 'none'; }, 500);
 }
 
-// ── Data fetch ────────────────────────────────────────────────────────────
+// ── Fetch Sheets data ─────────────────────────────────────────────────────
 
-async function fetchSapphiraData() {
-  // Gather context from GAS
-  const [tasks, context, anchor] = await Promise.all([
+async function fetchSheetData() {
+  const [tasks, context] = await Promise.all([
     fetch(`${SAPPHIRA_GAS}?tab=Tasks`).then(r => r.json()).catch(() => []),
     fetch(`${SAPPHIRA_GAS}?tab=Context`).then(r => r.json()).catch(() => []),
-    fetch(`${SAPPHIRA_GAS}?tab=Anchor`).then(r => r.json()).catch(() => []),
   ]);
 
-  const activeTasks = tasks.filter(t => t.Done !== 'TRUE' && t.Title);
+  const activeTasks = (tasks || []).filter(t => t.Done !== 'TRUE' && t.Title);
   const contextMap  = Object.fromEntries((context || []).map(r => [r.Key, r.Value]));
 
   return { activeTasks, contextMap };
 }
 
-// ── Claude call ───────────────────────────────────────────────────────────
+// ── Build Claude payload ──────────────────────────────────────────────────
 
-async function callClaude(activeTasks, contextMap) {
+function buildPayload(activeTasks, contextMap) {
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   });
 
   const taskList = activeTasks.slice(0, 12).map((t, i) =>
-    `${i + 1}. ${t.Title}${t.Priority ? ` [${t.Priority}]` : ''}${t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : ''}${t.Category ? ` · ${t.Category}` : ''}`
+    `${i + 1}. ${t.Title}` +
+    (t.Priority ? ` [${t.Priority}]` : '') +
+    (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
+    (t.Category ? ` · ${t.Category}` : '')
   ).join('\n');
 
   const contextStr = Object.entries(contextMap)
@@ -200,7 +206,7 @@ The user is autistic, a morning person, works overnight warehouse shifts Thu–S
 
 You receive: today's date, active tasks, and context flags. You reason about what kind of day this is and what the single most important first move is.
 
-Output ONLY valid JSON in this exact shape — no markdown, no preamble:
+Output ONLY valid JSON — no markdown, no preamble, no explanation:
 {
   "mode": "short mode name (e.g. Brainwork day, Rest day, Logistics day)",
   "topLine": "one sentence: the clearest true thing about today",
@@ -225,18 +231,25 @@ ${contextStr}
 
 Deliver the morning reading.`;
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userMessage }]
-    })
-  });
+  return {
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userMessage }]
+  };
+}
 
-  const result = await response.json();
+// ── Call Claude via GAS proxy ─────────────────────────────────────────────
+
+async function callClaudeViaProxy(payload) {
+  const encoded = encodeURIComponent(JSON.stringify(payload));
+  const url     = `${SAPPHIRA_GAS}?sapphira=1&payload=${encoded}`;
+  const res     = await fetch(url);
+  const result  = await res.json();
+
+  if (result.error) throw new Error(result.error);
+
+  // Anthropic response shape: result.content[0].text
   const text = result.content?.[0]?.text || '';
   return JSON.parse(text.replace(/```json|```/g, '').trim());
 }
@@ -244,7 +257,7 @@ Deliver the morning reading.`;
 // ── Init ──────────────────────────────────────────────────────────────────
 
 async function initSapphira() {
-  // Check cache — only run once per day
+  // Serve from cache if already run today
   const cachedDate = localStorage.getItem(CACHE_DATE);
   const cached     = localStorage.getItem(CACHE_KEY);
 
@@ -252,19 +265,22 @@ async function initSapphira() {
     try {
       renderBriefing(JSON.parse(cached));
       return;
-    } catch(e) { /* fall through to fresh call */ }
+    } catch(e) { /* fall through */ }
   }
 
   showLoading();
 
   try {
-    const { activeTasks, contextMap } = await fetchSapphiraData();
-    const briefing = await callClaude(activeTasks, contextMap);
-    localStorage.setItem(CACHE_KEY, JSON.stringify(briefing));
+    const { activeTasks, contextMap } = await fetchSheetData();
+    const payload  = buildPayload(activeTasks, contextMap);
+    const briefing = await callClaudeViaProxy(payload);
+
+    localStorage.setItem(CACHE_KEY,  JSON.stringify(briefing));
     localStorage.setItem(CACHE_DATE, todayStr());
+
     renderBriefing(briefing);
   } catch(e) {
     console.error('Sapphira error:', e);
-    showError();
+    showError(e.message);
   }
 }
