@@ -207,11 +207,12 @@ function buildPayload(activeTasks, contextMap) {
   });
 
   const taskList = activeTasks.slice(0, 12).map((t, i) =>
-    `${i + 1}. ${t.Title}` +
-    (t.Priority ? ` [${t.Priority}]` : '') +
-    (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
-    (t.Category ? ` · ${t.Category}` : '')
-  ).join('\n');
+  `${i + 1}. ${t.Title}` +
+  (t.Priority ? ` [${t.Priority}]` : '') +
+  (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
+  (t.Category ? ` · ${t.Category}` : '') +
+  (t.Notes ? ` — ${t.Notes}` : '')   // ← ADD THIS LINE
+).join('\n');
 
   const contextStr = Object.entries(contextMap)
     .map(([k, v]) => `${k}: ${v}`).join('\n') || 'No context flags set.';
