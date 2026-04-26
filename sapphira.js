@@ -211,7 +211,7 @@ function buildPayload(activeTasks, contextMap) {
   (t.Priority ? ` [${t.Priority}]` : '') +
   (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
   (t.Category ? ` · ${t.Category}` : '') +
-  (t.Notes ? ` — ${t.Notes}` : '')   // ← ADD THIS LINE
+  (t.Notes ? ` — ${t.Notes}` : '')  
 ).join('\n');
 
   const contextStr = Object.entries(contextMap)
@@ -221,7 +221,22 @@ function buildPayload(activeTasks, contextMap) {
 
 The user is autistic, a morning person, works overnight warehouse shifts Thu–Sat, and is sharpest 6–10am Mon/Tue. They are managing caregiving for family members (Dan, who is finishing cancer treatment) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
 
-You receive: today's date, active tasks, and context flags. You reason about what kind of day this is and what the single most important first move is.
+You receive: today's date, active tasks (with notes), and context flags. Use ALL context flags in your reasoning.
+
+CONTEXT FLAG GUIDE:
+- DanStatus: Dan's general health status (stable, rough, crisis)
+- DanAppointment: true if Dan has a medical appointment today — increases caregiving load
+- DanNeedsExtra: true if Dan needs more from the user today without it being a crisis
+- KidDay / KidCount: whether kids are present and how many — affects focus availability
+- EnergyOverride: user's energy/sleep state today (low / ok / good) — overrides default assumptions
+- WorkShiftTonight: true if user works overnight tonight — a nap window must be protected in the day plan
+- BBSick: true if BB (child) is sick — major caregiving disruption, reorg priorities around this
+- ModeOverride: if set, use this as the day mode instead of inferring one (e.g. "Rest day")
+- TodayConstraint: a one-line hard constraint on the day (e.g. "interview at 3pm", "no childcare until noon")
+- BackgroundStressor: the thing creating low-level anxiety regardless of tasks — weave awareness of this into your reasoning and framing, don't just optimize tasks in a vacuum
+- Note: freeform context from the user
+
+You reason about what kind of day this is and what the single most important first move is.
 
 Output ONLY valid JSON — no markdown, no preamble, no explanation:
 {
