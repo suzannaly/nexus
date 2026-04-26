@@ -211,7 +211,7 @@ function buildPayload(activeTasks, contextMap) {
   (t.Priority ? ` [${t.Priority}]` : '') +
   (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
   (t.Category ? ` · ${t.Category}` : '') +
-  (t.Notes ? ` — ${t.Notes}` : '')   // ← ADD THIS LINE
+  (t.Notes ? ` — ${t.Notes}` : '')   
 ).join('\n');
 
   const contextStr = Object.entries(contextMap)
