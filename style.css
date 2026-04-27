@@ -888,3 +888,168 @@ body {
   transition: background 0.15s;
 }
 .lrn-open-all:hover { background: #122a1e; }
+/* ── Self-Care Process ───────────────────────────────────────────── */
+
+#process-section {
+  padding: 1rem 1rem 0.5rem;
+}
+
+.prc-heading {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #888);
+  margin-bottom: 0.75rem;
+}
+
+/* Progress bar */
+.prc-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.prc-progress-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.prc-progress-fill {
+  height: 100%;
+  background: #7F77DD;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.prc-progress-label {
+  font-size: 10px;
+  color: var(--color-text-tertiary, #666);
+  white-space: nowrap;
+}
+
+/* Step pills */
+.prc-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+/* Current card */
+.prc-card {
+  background: var(--color-bg-secondary, #111827);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.prc-card--complete {
+  border-color: #1a6035;
+}
+
+.prc-accent {
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+}
+
+.prc-card-inner {
+  padding: 1rem 1rem 1rem 1.2rem;
+}
+
+.prc-phase-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.prc-step-number {
+  font-size: 10px;
+  color: var(--color-text-tertiary, #666);
+  margin-bottom: 8px;
+}
+
+.prc-item {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary, #f0f0f0);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.prc-notes {
+  font-size: 11px;
+  color: var(--color-text-secondary, #aaa);
+  line-height: 1.5;
+  padding: 6px 9px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  border-left: 2px solid rgba(255,255,255,0.1);
+  margin-bottom: 12px;
+}
+
+.prc-optional {
+  font-size: 10px;
+  color: #f2c94c;
+  margin-bottom: 10px;
+}
+
+/* Action buttons */
+.prc-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.prc-done-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 7px;
+  border: 0.5px solid;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.prc-done-btn:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.prc-skip-btn {
+  padding: 8px 14px;
+  border-radius: 7px;
+  border: 0.5px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: var(--color-text-tertiary, #666);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.prc-skip-btn:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+/* Complete state */
+.prc-complete-msg {
+  font-size: 13px;
+  color: #6fcf97;
+  margin-bottom: 12px;
+}
+
+.prc-reset-btn {
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: 0.5px solid #1a6035;
+  background: #0e3d20;
+  color: #6fcf97;
+  font-size: 11px;
+  cursor: pointer;
+}
+.prc-reset-btn:hover {
+  background: #122a1e;
+}
