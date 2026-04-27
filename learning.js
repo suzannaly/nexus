@@ -2,7 +2,7 @@
 // Fetches live data from the Learning tab in Google Sheets via GAS.
 // Call initLearning() to render.
 
-const GAS_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
 
 // ─── Accent colors per zone ───────────────────────────────────────────────────
 const ZONE_CONFIG = {
