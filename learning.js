@@ -1,113 +1,22 @@
 // learning.js — Nexus Learning Tracks
-// Drop-in module. Call initLearning() to render.
-// No external dependencies.
+// Fetches live data from the Learning tab in Google Sheets via GAS.
+// Call initLearning() to render.
 
-const LEARNING_TRACKS = [
-  {
-    id: 'codecademy',
-    name: 'BI Data Analyst Path',
-    sub: 'Codecademy',
-    accent: '#2a6bb5',
-    status: 'on track',
-    statusType: 'active',
-    progress: 42,
-    progressText: '42% · Unit 4 of 9',
-    weekTarget: 'Complete SQL window functions module. Finish 2 practice projects.',
-    syllabus: ['SQL basics', 'Advanced SQL', 'Python', 'Pandas', 'Tableau', 'Excel', 'Capstone'],
-    currentUnit: 1, // index of current syllabus item (0-based)
-    sessions: [
-      { label: 'Codecademy lesson', sub: 'Resume Unit 4 — SQL', url: 'https://www.codecademy.com/learn' },
-      { label: 'Practice sandbox', sub: 'SQLiteOnline', url: 'https://sqliteonline.com/' },
-      { label: 'Notes doc', sub: 'Weekly SQL notes', url: 'https://docs.google.com' },
-    ]
-  },
-  {
-    id: 'calculus',
-    name: 'Calculus',
-    sub: 'Khan Academy · low pressure',
-    accent: '#1D9E75',
-    status: 'low pressure',
-    statusType: 'slow',
-    progress: 18,
-    progressText: '18% · Limits',
-    weekTarget: 'Watch 3 videos on derivatives. 20 min sessions only — no pressure.',
-    syllabus: ['Limits', 'Derivatives', 'Integrals', 'Applications'],
-    currentUnit: 0,
-    sessions: [
-      { label: 'Khan Academy', sub: 'Derivatives unit', url: 'https://www.khanacademy.org/math/calculus-1' },
-    ]
-  },
-  {
-    id: 'coursera',
-    name: 'IBM Data Analyst + Power BI',
-    sub: 'Coursera · Phase 2',
-    accent: '#7F77DD',
-    status: 'phase 2',
-    statusType: 'ready',
-    progress: 10,
-    progressText: 'Phase 2 starting',
-    weekTarget: 'Watch orientation videos. Set up Python notebook environment.',
-    syllabus: ['Data tools', 'Python notebooks', 'SQL', 'Power BI', 'Capstone'],
-    currentUnit: 0,
-    sessions: [
-      { label: 'Coursera', sub: 'IBM Data Analyst', url: 'https://www.coursera.org' },
-      { label: 'Google Colab', sub: 'Notebook environment', url: 'https://colab.research.google.com' },
-    ]
-  },
-  {
-    id: 'nexus',
-    name: 'Nexus / Sapphira Dev',
-    sub: 'Active build',
-    accent: '#BA7517',
-    status: 'building',
-    statusType: 'active',
-    progress: 65,
-    progressText: 'Phase E — Polish',
-    weekTarget: 'Calendar API · Sapphira reads task notes · icon placement.',
-    syllabus: ['Phases A–D', 'Phase E', 'Calendar API', 'Mobile', 'Sapphira agent'],
-    currentUnit: 1,
-    sessions: [
-      { label: 'VS Code', sub: 'suzannaly/nexus', url: 'vscode://file' }, // update to your local path
-      { label: 'GAS editor', sub: 'Apps Script dashboard', url: 'https://script.google.com' },
-      { label: 'Live site', sub: 'suzannaly.github.io/nexus', url: 'https://suzannaly.github.io/nexus' },
-    ]
-  },
-  {
-    id: 'chda',
-    name: 'CHDA Exam Prep',
-    sub: 'Book first · exam when ready',
-    accent: '#D85A30',
-    status: 'slow burn',
-    statusType: 'slow',
-    progress: 5,
-    progressText: 'Chapter 1',
-    weekTarget: 'Read Chapter 1. 20 min sessions — no timeline pressure.',
-    syllabus: ['Ch.1 Foundations', 'Ch.2 Data Mgmt', 'Ch.3 Analytics', 'Practice exam'],
-    currentUnit: 0,
-    sessions: [
-      { label: 'CHDA textbook', sub: 'Physical / PDF', url: '' }, // fill in if PDF link exists
-      { label: 'Study notes', sub: 'CHDA notes doc', url: 'https://docs.google.com' },
-    ]
-  },
-  {
-    id: 'typing',
-    name: 'Typing Fundamentals',
-    sub: 'keybr.com · 15 min sessions',
-    accent: '#888780',
-    status: 'daily habit',
-    statusType: 'active',
-    progress: 30,
-    progressText: '~55 WPM avg',
-    weekTarget: 'One 15-min session per day. Focus on accuracy over speed this week.',
-    syllabus: ['Home row', 'Numbers / symbols', 'Target 70 WPM', 'Maintain'],
-    currentUnit: 1,
-    sessions: [
-      { label: 'keybr.com', sub: 'Daily session', url: 'https://www.keybr.com' },
-    ]
-  }
-];
+const GAS_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Accent colors per zone ───────────────────────────────────────────────────
+const ZONE_CONFIG = {
+  'Codecademy': { accent: '#2a6bb5', statusLabel: 'on track',    statusType: 'active' },
+  'Calculus':   { accent: '#1D9E75', statusLabel: 'low pressure', statusType: 'slow'   },
+  'Coursera':   { accent: '#7F77DD', statusLabel: 'phase 2',      statusType: 'ready'  },
+  'Nexus':      { accent: '#BA7517', statusLabel: 'building',     statusType: 'active' },
+  'CHDA':       { accent: '#D85A30', statusLabel: 'slow burn',    statusType: 'slow'   },
+  'Typing':     { accent: '#888780', statusLabel: 'daily habit',  statusType: 'active' },
+};
+
+const DEFAULT_CONFIG = { accent: '#555', statusLabel: 'active', statusType: 'active' };
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function statusBg(type) {
   return {
@@ -117,64 +26,54 @@ function statusBg(type) {
   }[type] || '';
 }
 
-function buildSyllabus(track) {
-  return track.syllabus.map((s, i) => {
-    let style = 'background:var(--learning-tag-bg,#1a1f2e);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)';
-    if (i < track.currentUnit)  style = 'background:#0e3d20;color:#6fcf97;border:0.5px solid #1a6035;text-decoration:line-through';
-    if (i === track.currentUnit) style = 'background:#0d2a45;color:#7ab3f5;border:0.5px solid #2a5080;font-weight:500';
-    return `<span style="font-size:10px;padding:3px 8px;border-radius:20px;${style}">${s}</span>`;
-  }).join('');
+function formatLastDone(raw) {
+  if (!raw) return 'never';
+  const d = new Date(raw);
+  if (isNaN(d)) return raw;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function buildSessionItems(track) {
-  return track.sessions.map(s => {
-    const clickable = s.url ? `onclick="openSession('${s.url}')" style="cursor:pointer"` : '';
-    return `
-      <div class="lrn-session-item" ${clickable}>
-        <div class="lrn-session-dot" style="background:${track.accent}"></div>
-        <div>
-          <div style="font-size:12px;color:var(--color-text-primary)">${s.label}</div>
-          <div style="font-size:10px;color:var(--color-text-tertiary)">${s.sub}</div>
-        </div>
-      </div>`;
-  }).join('');
-}
+// ─── Group rows by Zone, pick current item per zone ───────────────────────────
 
-function openSession(url) {
-  if (!url) return;
-  window.open(url, '_blank');
-}
+function groupByZone(rows) {
+  const zones = {};
+  rows.forEach(row => {
+    if (!zones[row.Zone]) zones[row.Zone] = [];
+    zones[row.Zone].push(row);
+  });
 
-function openAllSessions(trackId) {
-  const track = LEARNING_TRACKS.find(t => t.id === trackId);
-  if (!track) return;
-  track.sessions.forEach(s => { if (s.url) window.open(s.url, '_blank'); });
+  return Object.entries(zones).map(([zone, items]) => {
+    items.sort((a, b) => a.Order - b.Order);
+    const current = items.find(i => i.Status === 'current') || items[0];
+    const config  = ZONE_CONFIG[zone] || DEFAULT_CONFIG;
+    return { zone, items, current, ...config };
+  });
 }
 
 // ─── Card renderer ────────────────────────────────────────────────────────────
 
 function buildCard(track, isOpen) {
-  const accentStyle = `background:${track.accent}`;
+  const { zone, current, accent, statusLabel, statusType } = track;
   return `
-    <div class="lrn-card ${isOpen ? 'lrn-card--open' : ''}" id="card-${track.id}" onclick="toggleLearning('${track.id}')">
-      <div class="lrn-accent" style="${accentStyle}"></div>
+    <div class="lrn-card ${isOpen ? 'lrn-card--open' : ''}" id="card-${zone}" onclick="toggleLearning('${zone}')">
+      <div class="lrn-accent" style="background:${accent}"></div>
       <div class="lrn-card-inner">
         <div class="lrn-card-header">
           <div>
-            <div class="lrn-name">${track.name}</div>
-            <div class="lrn-sub">${track.sub}</div>
+            <div class="lrn-name">${zone}</div>
+            <div class="lrn-sub">${current.Item}</div>
           </div>
-          <span class="lrn-chip" style="${statusBg(track.statusType)}">${track.status}</span>
+          <span class="lrn-chip" style="${statusBg(statusType)}">${statusLabel}</span>
         </div>
         <div class="lrn-bar-wrap">
-          <div class="lrn-bar-fill" style="width:${track.progress}%;background:${track.accent}"></div>
+          <div class="lrn-bar-fill" style="width:${current.Progress}%;background:${accent}"></div>
         </div>
-        <div class="lrn-bar-label">${track.progressText}</div>
+        <div class="lrn-bar-label">${current.Progress}% · ${current.Notes}</div>
         <div class="lrn-week">
           <div class="lrn-week-label">this week</div>
-          ${track.weekTarget}
+          ${current.WeekTarget}
         </div>
-        <button class="lrn-launch-btn" onclick="event.stopPropagation();toggleLearning('${track.id}')">
+        <button class="lrn-launch-btn" onclick="event.stopPropagation();toggleLearning('${zone}')">
           open session ›
         </button>
       </div>
@@ -184,26 +83,54 @@ function buildCard(track, isOpen) {
 // ─── Detail panel renderer ────────────────────────────────────────────────────
 
 function buildDetail(track) {
+  const { zone, items, current, accent } = track;
+
+  const syllabus = items.map(item => {
+    let style = 'background:var(--learning-tag-bg,#1a1f2e);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)';
+    if (item.Status === 'done')    style = 'background:#0e3d20;color:#6fcf97;border:0.5px solid #1a6035;text-decoration:line-through';
+    if (item.Status === 'current') style = 'background:#0d2a45;color:#7ab3f5;border:0.5px solid #2a5080;font-weight:500';
+    return `<span style="font-size:10px;padding:3px 8px;border-radius:20px;${style}">${item.Item}</span>`;
+  }).join('');
+
+  const sessionRow = current.URL ? `
+    <div class="lrn-session-item" onclick="openSession('${current.URL}')" style="cursor:pointer">
+      <div class="lrn-session-dot" style="background:${accent}"></div>
+      <div>
+        <div style="font-size:12px;color:var(--color-text-primary)">${zone}</div>
+        <div style="font-size:10px;color:var(--color-text-tertiary)">
+          ${current.Duration} min · last done ${formatLastDone(current.LastDone)}
+        </div>
+      </div>
+    </div>` : '';
+
   return `
-    <div class="lrn-detail" id="detail-${track.id}">
-      <div class="lrn-detail-title">${track.name} — session</div>
-      <div class="lrn-syllabus">${buildSyllabus(track)}</div>
-      <div class="lrn-sessions">${buildSessionItems(track)}</div>
-      <button class="lrn-open-all" onclick="openAllSessions('${track.id}')">
-        open all tabs
+    <div class="lrn-detail" id="detail-${zone}">
+      <div class="lrn-detail-title">${zone} — session</div>
+      <div class="lrn-syllabus">${syllabus}</div>
+      <div class="lrn-sessions">${sessionRow}</div>
+      <button class="lrn-open-all" onclick="openSession('${current.URL}')">
+        launch ${zone}
       </button>
     </div>`;
 }
 
+// ─── Session launcher ─────────────────────────────────────────────────────────
+
+function openSession(url) {
+  if (!url) return;
+  window.open(url, '_blank');
+}
+
 // ─── State + render ───────────────────────────────────────────────────────────
 
-let openTrackId = null;
+let openZoneId   = null;
+let learningData = [];
 
-function toggleLearning(id) {
-  openTrackId = openTrackId === id ? null : id;
+function toggleLearning(zone) {
+  openZoneId = openZoneId === zone ? null : zone;
   renderLearning();
-  if (openTrackId) {
-    const detail = document.getElementById(`detail-${openTrackId}`);
+  if (openZoneId) {
+    const detail = document.getElementById(`detail-${openZoneId}`);
     if (detail) detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
@@ -212,9 +139,15 @@ function renderLearning() {
   const section = document.getElementById('learning-section');
   if (!section) return;
 
-  const cards = LEARNING_TRACKS.map(t => buildCard(t, openTrackId === t.id)).join('');
-  const detail = openTrackId
-    ? buildDetail(LEARNING_TRACKS.find(t => t.id === openTrackId))
+  if (!learningData.length) {
+    section.innerHTML = `<h2 class="lrn-heading">Learning</h2><p style="font-size:12px;color:var(--color-text-tertiary);padding:0.5rem 0;">Loading tracks…</p>`;
+    return;
+  }
+
+  const tracks = groupByZone(learningData);
+  const cards  = tracks.map(t => buildCard(t, openZoneId === t.zone)).join('');
+  const detail = openZoneId
+    ? buildDetail(tracks.find(t => t.zone === openZoneId))
     : '';
 
   section.innerHTML = `
@@ -224,6 +157,19 @@ function renderLearning() {
   `;
 }
 
-function initLearning() {
+// ─── Fetch + init ─────────────────────────────────────────────────────────────
+
+async function initLearning() {
+  renderLearning(); // show loading state immediately
+
+  try {
+    const res  = await fetch(`${GAS_URL}?tab=Learning`);
+    const rows = await res.json();
+    learningData = Array.isArray(rows) ? rows : [];
+  } catch (err) {
+    console.error('learning.js: failed to fetch Learning tab', err);
+    learningData = [];
+  }
+
   renderLearning();
 }
