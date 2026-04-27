@@ -188,20 +188,22 @@ function dismissSapphira() {
 // ── Fetch Sheets data ─────────────────────────────────────────────────────
 
 async function fetchSheetData() {
-  const [tasks, context] = await Promise.all([
+  const [tasks, context, calendar] = await Promise.all([
     fetch(`${SAPPHIRA_GAS}?tab=Tasks`).then(r => r.json()).catch(() => []),
     fetch(`${SAPPHIRA_GAS}?tab=Context`).then(r => r.json()).catch(() => []),
+    fetch(`${SAPPHIRA_GAS}?calendar=1`).then(r => r.json()).catch(() => []),
   ]);
 
   const activeTasks = (tasks || []).filter(t => t.Done !== 'TRUE' && t.Title);
   const contextMap  = Object.fromEntries((context || []).map(r => [r.Key, r.Value]));
+  const todayEvents = Array.isArray(calendar) ? calendar : [];
 
-  return { activeTasks, contextMap };
+  return { activeTasks, contextMap, todayEvents };
 }
 
 // ── Build Claude payload ──────────────────────────────────────────────────
 
-function buildPayload(activeTasks, contextMap) {
+function buildPayload(activeTasks, contextMap, todayEvents) {
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   });
@@ -216,7 +218,13 @@ function buildPayload(activeTasks, contextMap) {
 
   const contextStr = Object.entries(contextMap)
     .map(([k, v]) => `${k}: ${v}`).join('\n') || 'No context flags set.';
-
+ const calendarStr = todayEvents.length
+    ? todayEvents.map(ev => {
+        const start = ev.allDay ? 'all day' : new Date(ev.start).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const end   = ev.allDay ? '' : ` – ${new Date(ev.end).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+        return `[${ev.calendar}] ${ev.title} · ${start}${end}${ev.location ? ' · ' + ev.location : ''}`;
+      }).join('\n')
+    : 'No events today.';
   const systemPrompt = `You are Sapphira — a calm, precise daily orientation engine for a personal operating system called Nexus. You are not a chatbot. You deliver one clear morning reading.
 
 The user is autistic, a morning person, works overnight warehouse shifts Thu–Sat, and is sharpest 6–10am Mon/Tue. They are managing caregiving for family members (Dan, who is finishing cancer treatment) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
@@ -253,15 +261,19 @@ Output ONLY valid JSON — no markdown, no preamble, no explanation:
   }
 }`;
 
-  const userMessage = `Today is ${today}.
+ const userMessage = `Today is ${today}.
 
 ACTIVE TASKS:
 ${taskList || 'No active tasks.'}
+
+TODAY'S CALENDAR (Suzy + Dan):
+${calendarStr}
 
 CONTEXT FLAGS:
 ${contextStr}
 
 Deliver the morning reading.`;
+
 
   return {
     model: 'claude-sonnet-4-6',
@@ -301,8 +313,8 @@ async function initSapphira() {
   showLoading();
 
   try {
-    const { activeTasks, contextMap } = await fetchSheetData();
-    const payload  = buildPayload(activeTasks, contextMap);
+    const { activeTasks, contextMap, todayEvents } = await fetchSheetData();
+const payload  = buildPayload(activeTasks, contextMap, todayEvents);
     const briefing = await callClaudeViaProxy(payload);
 
     localStorage.setItem(CACHE_KEY,  JSON.stringify(briefing));
