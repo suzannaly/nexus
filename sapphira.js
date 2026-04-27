@@ -1,4 +1,4 @@
-// sapphira.js — renders Sapphira's briefing into #sapphira-panel
+// sapphira.js — renders Sapphira's briefings into #sapphira-panel
 // Claude API call routes through GAS proxy — key never touches the browser.
 
 const SAPPHIRA_GAS = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
