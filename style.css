@@ -473,9 +473,8 @@ body {
 .sap-btn-retry:hover { border-color: var(--primary); color: var(--primary); }
 
 /* Collapse portrait on narrow screens */
-@media (max-width: 600px) {
-  .sap-layout { grid-template-columns: 1fr; }
-  .sap-portrait-wrap { display: none; }
+@media (max-width: 900px) {
+  .sap-layout { grid-template-columns: 1fr 250px; }
 }
 
 /* ── ANCHOR ───────────────────────────────────────────────────────────── */
