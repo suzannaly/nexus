@@ -1053,3 +1053,190 @@ body {
 .prc-reset-btn:hover {
   background: #122a1e;
 }
+/* ── Fitness / The Mountain ──────────────────────────────────────── */
+
+#fitness-section {
+  padding: 1rem 1rem 0.5rem;
+}
+
+.fit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.fit-heading {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #888);
+  margin: 0;
+}
+
+/* Mode toggle */
+.fit-mode-toggle {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 0.5px solid;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.fit-mode-full {
+  background: #1a2a0a;
+  color: #a3d977;
+  border-color: #3a5a1a;
+}
+.fit-mode-rest {
+  background: #1a1a3a;
+  color: #9a9aff;
+  border-color: #3a3a6a;
+}
+
+/* Progress bar */
+.fit-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.fit-progress-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.fit-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.fit-progress-label {
+  font-size: 10px;
+  color: var(--color-text-tertiary, #666);
+  white-space: nowrap;
+}
+
+/* Section pills */
+.fit-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.fit-pill {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 0.5px solid;
+  white-space: nowrap;
+}
+
+/* Current card */
+.fit-card {
+  background: var(--color-bg-secondary, #111827);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.fit-card--complete {
+  border-color: #1a6035;
+}
+
+.fit-accent {
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+}
+
+.fit-card-inner {
+  padding: 1rem 1rem 1rem 1.2rem;
+}
+
+.fit-section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.fit-item {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary, #f0f0f0);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.fit-goal {
+  font-size: 11px;
+  color: var(--color-text-tertiary, #666);
+  margin-bottom: 12px;
+}
+
+.fit-optional {
+  font-size: 10px;
+  color: #f2c94c;
+  margin-bottom: 10px;
+}
+
+/* Action buttons */
+.fit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.fit-done-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 7px;
+  border: 0.5px solid;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.fit-done-btn:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.fit-skip-btn {
+  padding: 8px 14px;
+  border-radius: 7px;
+  border: 0.5px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: var(--color-text-tertiary, #666);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.fit-skip-btn:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+/* Complete state */
+.fit-complete-msg {
+  font-size: 13px;
+  color: #6fcf97;
+  margin-bottom: 12px;
+}
+
+.fit-reset-btn {
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: 0.5px solid #1a6035;
+  background: #0e3d20;
+  color: #6fcf97;
+  font-size: 11px;
+  cursor: pointer;
+}
+.fit-reset-btn:hover {
+  background: #122a1e;
+}
