@@ -474,7 +474,7 @@ body {
 
 /* Collapse portrait on narrow screens */
 @media (max-width: 900px) {
-  .sap-layout { grid-template-columns: 1fr 250px; }
+  .sap-layout { grid-template-columns: 1fr 500px; }
 }
 
 /* ── ANCHOR ───────────────────────────────────────────────────────────── */
