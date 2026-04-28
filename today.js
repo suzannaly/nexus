@@ -13,7 +13,10 @@ let completedChores = new Set();
 const ZONE_IMAGES = {
   Kitchen: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/kitchen.png",
   Bathroom: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bathroom.png",
-  Living: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/living.png"
+  Upstairs: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bed.png",
+  Downstairs: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/play.png"
+Daily Tidy: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/supplies.png"
+Wheel: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/wheel.png"
 };
 
 // Collapse state — all start closed
