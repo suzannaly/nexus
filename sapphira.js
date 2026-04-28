@@ -229,7 +229,7 @@ function buildPayload(activeTasks, contextMap, todayEvents) {
 
 The user is autistic, a morning person, works overnight warehouse shifts Thu–Sat, and is sharpest 6–10am Mon/Tue. They are managing caregiving for family members (Dan, who is finishing cancer treatment) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
 
-You receive: today's date, active tasks (with notes), and context flags. Use ALL context flags in your reasoning.
+You receive: today's date, active tasks (with notes and done status), and context flags. Use ALL context flags in your reasoning.
 
 CONTEXT FLAG GUIDE:
 - DanStatus: Dan's general health status (stable, rough, crisis)

@@ -172,10 +172,10 @@ function renderDaily() {
 
   return `
     <div class="chore-group">
-      <div class="chore-group-header" onclick="toggleGroup('daily') img: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/supplies.png";>
+      <div class="chore-group-header" onclick="toggleGroup('daily')>
         <div class="chore-group-left">
           <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Daily Tidy</span>
+          <span class="chore-group-title">Daily Tidy <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/supplies.png" class="chore-heading-img" alt=""></span>
           ${allDone ? '<span class="chore-all-done">✓</span>' : ''}
         </div>
         <span class="chore-group-count">${done}/${total}</span>
@@ -232,7 +232,7 @@ function renderStandards() {
       <div class="chore-group-header" onclick="toggleGroup('standard')">
         <div class="chore-group-left">
           <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Standards</span>
+          <span class="chore-group-title">Standards <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/standards.png" class="chore-heading-img" alt=""></span>
           ${allDone === allTotal ? '<span class="chore-all-done">✓</span>' : ''}
         </div>
         <span class="chore-group-count">${allDone}/${allTotal}</span>
@@ -297,7 +297,7 @@ function renderWheel() {
     return `
       <div class="chore-zone">
         <div class="chore-zone-header" onclick="event.stopPropagation();toggleZone('${zoneKey}')">
-          <div class="chore-group-left" img: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/wheel.png">
+          <div class="chore-group-left"
             <span class="chore-chevron chore-chevron--sm">${zIsOpen ? '▾' : '▸'}</span>
             <span class="chore-zone-label-text">${zone}</span>
             ${allDoneZone ? '<span class="chore-all-done">✓</span>' : ''}
@@ -313,7 +313,7 @@ function renderWheel() {
       <div class="chore-group-header" onclick="toggleGroup('wheel')">
         <div class="chore-group-left">
           <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Wheel</span>
+          <span class="chore-group-title">Wheel <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/wheel.png" class="chore-heading-img" alt=""></span>
         </div>
         <span class="chore-group-count">${doneAll}/${totalAll} this month</span>
       </div>
