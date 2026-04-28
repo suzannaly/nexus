@@ -10,6 +10,12 @@ let calendarEvents  = [];
 let choresData      = [];
 let completedChores = new Set();
 
+const ZONE_IMAGES = {
+  Kitchen: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/kitchen.png",
+  Bathroom: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bathroom.png",
+  Living: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/living.png"
+};
+
 // Collapse state — all start closed
 let openGroups = new Set(); // 'daily' | 'standard' | 'wheel'
 let openZones  = new Set(); // 'standard-Kitchen' | 'wheel-Bathroom' etc.
@@ -205,11 +211,12 @@ function renderStandards() {
     }).join('') : '';
 
     return `
-      <div class="chore-zone">
+      <div class="chore-zone ${zone}">
         <div class="chore-zone-header" onclick="event.stopPropagation();toggleZone('${zoneKey}')">
           <div class="chore-group-left">
             <span class="chore-chevron chore-chevron--sm">${zIsOpen ? '▾' : '▸'}</span>
-            <span class="chore-zone-label-text">${zone}</span>
+            <img src="${ZONE_IMAGES[zone] || ''}" class="chore-heading-img" alt="">
+<span class="chore-zone-label-text">${zone}</span>
             ${zAllDone ? '<span class="chore-all-done">✓</span>' : ''}
           </div>
           <span class="chore-zone-count">${done}/${zItems.length}</span>
@@ -315,16 +322,17 @@ function renderWheel() {
 function renderChores() {
   if (!choresData.length) return '<p style="font-size:12px;color:var(--color-text-tertiary)">Loading chores…</p>';
   return `
-    <div class="chores-container">
-      ${renderDaily()}
-      ${renderStandards()}
-      ${renderWheel()}
-    </div>`;
+  <div class="chores-container three-col">
+    <div>${renderDaily()}</div>
+    <div>${renderStandards()}</div>
+    <div>${renderWheel()}</div>
+  </div>
+`;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TASKS
-// ══════════════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════
 
 function renderTasksTab() {
   return `<div id="task-preview"></div>`;

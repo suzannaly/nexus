@@ -1721,3 +1721,24 @@ body {
   color: #C9D1FF;
   border-color: #3A4AA0;
 }
+.chore-zone.Kitchen {
+  background-image:
+    linear-gradient(rgba(15,20,74,0.85), rgba(15,20,74,0.85)),
+    url("https://raw.githubusercontent.com/suzannaly/nexus/main/images/kitchen.png");
+}
+
+.chore-zone.Bathroom {
+  background-image:
+    linear-gradient(rgba(15,20,74,0.85), rgba(15,20,74,0.85)),
+    url("https://raw.githubusercontent.com/suzannaly/nexus/main/images/bathroom.png");
+}
+.chore-zone.Living {
+  background-image:
+    linear-gradient(rgba(15,20,74,0.85), rgba(15,20,74,0.85)),
+    url("https://raw.githubusercontent.com/suzannaly/nexus/main/images/living.png");
+}
+.chores-container.three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
