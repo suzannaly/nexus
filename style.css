@@ -685,6 +685,7 @@ body {
 
 /* ── HEALTH ───────────────────────────────────────────────────────────── */
 #health-section {
+  background-color: #ffe2a4;
   padding: 20px;
   border-top: 1px solid var(--border);
 }
@@ -719,7 +720,7 @@ body {
 
 /* Card */
 .lrn-card {
-  background: var(--color-bg-secondary, #111827);
+  background: var(--color-bg-secondary, #c5c5c5);
   border: 0.5px solid var(--color-border, rgba(255,255,255,0.08));
   border-radius: 10px;
   cursor: pointer;
@@ -824,7 +825,7 @@ body {
 
 /* Detail panel */
 .lrn-detail {
-  background: var(--color-bg-secondary, #111827);
+  background: var(--color-bg-secondary, #c6c8cc);
   border: 0.5px solid #2a5a90;
   border-radius: 10px;
   padding: 1.1rem 1.25rem;
@@ -891,6 +892,7 @@ body {
 /* ── Self-Care Process ───────────────────────────────────────────── */
 
 #process-section {
+  background-color: #a7abe0;
   padding: 1rem 1rem 0.5rem;
 }
 
@@ -899,7 +901,7 @@ body {
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-text-secondary, #888);
+  color: var(--color-text-secondary, #111010);
   margin-bottom: 0.75rem;
 }
 
@@ -919,7 +921,7 @@ body {
 }
 .prc-progress-fill {
   height: 100%;
-  background: #7F77DD;
+  background: #55dd17;
   border-radius: 2px;
   transition: width 0.3s ease;
 }
@@ -939,7 +941,7 @@ body {
 
 /* Current card */
 .prc-card {
-  background: var(--color-bg-secondary, #111827);
+  background: var(--color-bg-secondary, hsl(264, 47%, 79%));
   border: 0.5px solid rgba(255,255,255,0.08);
   border-radius: 10px;
   position: relative;
@@ -970,21 +972,21 @@ body {
 
 .prc-step-number {
   font-size: 10px;
-  color: var(--color-text-tertiary, #666);
+  color: var(--color-text-tertiary, #252323);
   margin-bottom: 8px;
 }
 
 .prc-item {
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-text-primary, #f0f0f0);
+  color: var(--color-text-primary, #201f1f);
   line-height: 1.4;
   margin-bottom: 8px;
 }
 
 .prc-notes {
   font-size: 11px;
-  color: var(--color-text-secondary, #aaa);
+  color: var(--color-text-secondary, #2e2d2d);
   line-height: 1.5;
   padding: 6px 9px;
   background: rgba(255,255,255,0.04);
@@ -1056,6 +1058,7 @@ body {
 /* ── Fitness / The Mountain ──────────────────────────────────────── */
 
 #fitness-section {
+  background-color: #a3a3e0;
   padding: 1rem 1rem 0.5rem;
 }
 
@@ -1071,7 +1074,7 @@ body {
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-text-secondary, #888);
+  color: var(--color-text-secondary, #0f0f0f);
   margin: 0;
 }
 
@@ -1137,7 +1140,7 @@ body {
 
 /* Current card */
 .fit-card {
-  background: var(--color-bg-secondary, #111827);
+  background: var(--color-bg-secondary, #9f89d3);
   border: 0.5px solid rgba(255,255,255,0.08);
   border-radius: 10px;
   position: relative;
@@ -1169,7 +1172,7 @@ body {
 .fit-item {
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-text-primary, #f0f0f0);
+  color: var(--color-text-primary, #272525);
   line-height: 1.4;
   margin-bottom: 6px;
 }
@@ -1244,6 +1247,7 @@ body {
 
 #today-section {
   padding: 0.75rem 1rem 0.5rem;
+  background-color: #83e2dd;
 }
 
 /* Tab bar */
@@ -1288,7 +1292,7 @@ body {
 }
 
 .cal-day {
-  background: var(--color-bg-secondary, #111827);
+  background: var(--color-bg-secondary, #bcbdbe);
   border: 0.5px solid rgba(255,255,255,0.06);
   border-radius: 8px;
   padding: 8px 6px;
@@ -1297,7 +1301,7 @@ body {
 
 .cal-day--today {
   border-color: #2a5a90;
-  background: #0a1f35;
+  background: #bed9f5;
 }
 
 .cal-day-header {
@@ -1308,7 +1312,7 @@ body {
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--color-text-tertiary, #666);
+  color: var(--color-text-tertiary, #062385);
   margin-bottom: 2px;
 }
 
@@ -1319,7 +1323,7 @@ body {
 .cal-day-num {
   font-size: 18px;
   font-weight: 600;
-  color: var(--color-text-primary, #f0f0f0);
+  color: var(--color-text-primary, #0f0e0e);
   line-height: 1;
 }
 
@@ -1349,7 +1353,7 @@ body {
 
 .cal-event-title {
   font-size: 10px;
-  color: var(--color-text-primary, #f0f0f0);
+  color: var(--color-text-primary, #1a1818);
   line-height: 1.3;
 }
 
@@ -1369,7 +1373,7 @@ body {
 
 /* Group (Daily / Standards / Wheel) */
 .chore-group {
-  background: var(--color-bg-secondary, #111827);
+  background: var(--color-bg-secondary, #31b33c);
   border: 0.5px solid rgba(255,255,255,0.06);
   border-radius: 10px;
   overflow: hidden;
@@ -1407,7 +1411,7 @@ body {
 .chore-group-title {
   font-size: 12px;
   font-weight: 500;
-  color: var(--color-text-primary, #f0f0f0);
+  color: var(--color-text-primary, #1a1919);
 }
 
 .chore-group-count {
