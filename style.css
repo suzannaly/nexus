@@ -1,7 +1,7 @@
 html {
   --bg: #080C55;
-  --surface: #0d1266;
-  --surface2: #131a7a;
+  --surface: #c5e4f8;
+  --surface2: #a9aef3;
   --border: #1e2a8a;
   --text: #f0f0f0;
   --muted: #2160e9;
@@ -11,7 +11,7 @@ html {
   --alert: #F96363;
   --warning: #F5CE41;
   --hyperlink: #0F0FF5;
-  --taskheader: #060e31;
+  --taskheader: #bd92da;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -576,7 +576,6 @@ body {
 
 /* ── TASKS SECTION ────────────────────────────────────────────────────── */
 #tasks-section {
-  background-color: #29E3C0;
   padding: 20px;
   border-bottom: 1px solid var(--border);
 }
