@@ -1742,3 +1742,9 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
+.chore-heading-img {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: 6px;
+}
