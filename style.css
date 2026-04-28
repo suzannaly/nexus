@@ -609,12 +609,12 @@ body {
 
 .task-preview-num {
   font-size: 10px;
-  color: var(--muted);
+  color: #080C55;;
   font-variant-numeric: tabular-nums;
   min-width: 14px;
 }
 
-.task-preview-title { font-size: 13px; color: var(--text); flex: 1; }
+.task-preview-title { font-size: 13px; color: #080C55; flex: 1; }
 
 .task-preview-cat {
   font-size: 10px;

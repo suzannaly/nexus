@@ -134,7 +134,10 @@ function renderTaskPreview(tasks) {
     });
   }
 
-  const active = tasks.filter(t => t.Done !== 'TRUE' && t.Title);
+const active = tasks.filter(t => {
+  const done = String(t.Done).toUpperCase().trim();
+  return done !== 'TRUE' && done !== '1' && t.Title;
+});
   const preview = active.slice(0, 3);
 
   if (preview.length === 0) {
