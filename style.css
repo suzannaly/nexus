@@ -1399,33 +1399,33 @@ body {
 }
 
 .chore-chevron {
-  font-size: 11px;
+  font-size: 20px;
   color: var(--color-text-tertiary, #666);
   width: 12px;
 }
 
 .chore-chevron--sm {
-  font-size: 10px;
+  font-size: 20px;
 }
 
 .chore-group-title {
-  font-size: 12px;
+  font-size: 20px;
   font-weight: 500;
   color: var(--color-text-primary, #1a1919);
 }
 
 .chore-group-count {
-  font-size: 10px;
+  font-size: 14px;
   color: var(--color-text-tertiary, #666);
 }
 
 .chore-all-done {
-  font-size: 10px;
+  font-size: 16px;
   color: #6fcf97;
 }
 
 .chore-all-done-msg {
-  font-size: 11px;
+  font-size: 16px;
   color: #6fcf97;
   padding: 6px 0 4px;
 }
@@ -1743,8 +1743,8 @@ body {
   gap: 12px;
 }
 .chore-heading-img {
-  width: 24px;
-  height: 24px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 6px;
 }
