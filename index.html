@@ -13,6 +13,7 @@
     <a href="#">Dan</a>
     <a href="#">Projects</a>
     <a href="#">Kids</a>
+    <a href="#">Backend</a>
     <span id="flag-indicator"></span>
   </header>
 
@@ -46,11 +47,8 @@
     </div>
   </div>
 
-  <!-- TASKS PREVIEW -->
-  <section id="tasks-section">
-    <a href="tasks.html"><h2>Tasks</h2></a>
-    <div id="task-preview"></div>
-  </section>
+  <<!-- TODAY -->
+<section id="today-section"></section>
 
   <!-- BOTTOM SPLIT -->
   <div id="bottom-split">
@@ -95,6 +93,8 @@
     // Sapphira calls Claude via GAS proxy — no API key in this file.
     initSapphira();
   </script>
+  <script src="today.js"></script>
+<script>initToday();</script>
  <script src="learning.js"></script>
 <script>initLearning();</script> 
 <script src="process.js"></script>
