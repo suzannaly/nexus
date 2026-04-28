@@ -70,9 +70,11 @@ function getWeekDays() {
 }
 
 function isSameDay(a, b) {
-  return a.getFullYear() === b.getFullYear() &&
-         a.getMonth()    === b.getMonth()    &&
-         a.getDate()     === b.getDate();
+  const da = new Date(a);
+  const db = new Date(b);
+  return da.getFullYear() === db.getFullYear() &&
+         da.getMonth()    === db.getMonth()    &&
+         da.getDate()     === db.getDate();
 }
 
 function formatTime(iso) {
@@ -87,7 +89,7 @@ function renderCalendar() {
 
   const columns = weekDays.map((day, i) => {
     const isToday   = isSameDay(day, today);
-    const dayEvents = calendarEvents.filter(e => isSameDay(new Date(e.start), day));
+    const dayEvents = calendarEvents.filter(e => isSameDay(e.start, day));
 
     const eventHTML = dayEvents.length
       ? dayEvents.map(e => `
