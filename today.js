@@ -3,6 +3,26 @@
 // Call initToday() to render.
 
 const TODAY_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
+const IMG = 'https://raw.githubusercontent.com/suzannaly/nexus/main/images/';
+
+// ─── Image map ────────────────────────────────────────────────────────────────
+const GROUP_IMAGES = {
+  daily:    `${IMG}supplies.png`,
+  standard: `${IMG}note.png`,
+  wheel:    `${IMG}wheel.png`,
+};
+
+const ZONE_IMAGES = {
+  'Kitchen':         `${IMG}kitchen.png`,
+  'Bathroom':        `${IMG}bathroom.png`,
+  'Upstairs':        `${IMG}bed.png`,
+  'Downstairs':      `${IMG}play.png`,
+  'Living Room':     `${IMG}living.png`,
+  'Dining/Playroom': `${IMG}playroom.png`,
+  'Bedroom':         `${IMG}bed.png`,
+  'Girls Room':      `${IMG}girls.png`,
+  'Outside':         `${IMG}energy.png`,
+};
 
 // ─── State ────────────────────────────────────────────────────────────────────
 let activeTab       = 'calendar';
@@ -10,17 +30,9 @@ let calendarEvents  = [];
 let choresData      = [];
 let completedChores = new Set();
 
-const ZONE_IMAGES = {
-  Kitchen: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/kitchen.png",
-  Bathroom: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bathroom.png",
-  Upstairs: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bed.png",
-  Downstairs: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/play.png",
-  
-};
-
 // Collapse state — all start closed
-let openGroups = new Set(); // 'daily' | 'standard' | 'wheel'
-let openZones  = new Set(); // 'standard-Kitchen' | 'wheel-Bathroom' etc.
+let openGroups = new Set();
+let openZones  = new Set();
 
 // ─── Tab switcher ─────────────────────────────────────────────────────────────
 
@@ -120,9 +132,7 @@ function isThisMonth(dateStr) {
 }
 
 async function completeChore(list, zone, item) {
-  const key = `${list}-${zone}-${item}`;
-  completedChores.add(key);
-
+  completedChores.add(`${list}-${zone}-${item}`);
   try {
     await fetch(TODAY_GAS_URL, {
       method: 'POST',
@@ -137,7 +147,6 @@ async function completeChore(list, zone, item) {
   } catch (err) {
     console.warn('today.js: chore write-back failed', err);
   }
-
   renderToday();
 }
 
@@ -146,16 +155,50 @@ function skipChore(list, zone, item) {
   renderToday();
 }
 
+// ── Group header with image ───────────────────────────────────────────────────
+
+function groupHeader(id, label, count, total, isOpen) {
+  const img    = GROUP_IMAGES[id] || '';
+  const allDone = count === total;
+  return `
+    <div class="chore-group-header" onclick="toggleGroup('${id}')">
+      ${img ? `<img class="chore-group-img" src="${img}" alt="${label}">` : ''}
+      <div class="chore-group-left">
+        <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
+        <span class="chore-group-title">${label}</span>
+        ${allDone ? '<span class="chore-all-done">✓</span>' : ''}
+      </div>
+      <span class="chore-group-count">${count}/${total}</span>
+    </div>`;
+}
+
+// ── Zone header with image ────────────────────────────────────────────────────
+
+function zoneHeader(zoneKey, zone, count, total, isOpen, monthly) {
+  const img     = ZONE_IMAGES[zone] || '';
+  const allDone = count === total;
+  const countLabel = monthly ? `${count}/${total} this month` : `${count}/${total}`;
+  return `
+    <div class="chore-zone-header" onclick="event.stopPropagation();toggleZone('${zoneKey}')">
+      ${img ? `<img class="chore-zone-img" src="${img}" alt="${zone}">` : ''}
+      <div class="chore-group-left">
+        <span class="chore-chevron chore-chevron--sm">${isOpen ? '▾' : '▸'}</span>
+        <span class="chore-zone-label-text">${zone}</span>
+        ${allDone ? '<span class="chore-all-done">✓</span>' : ''}
+      </div>
+      <span class="chore-zone-count">${countLabel}</span>
+    </div>`;
+}
+
 // ── Daily Tidy ────────────────────────────────────────────────────────────────
 
 function renderDaily() {
   const items  = choresData.filter(r => r.List === 'daily').sort((a,b) => a.Item.localeCompare(b.Item));
   if (!items.length) return '';
 
-  const done    = items.filter(r => completedChores.has(choreKey(r))).length;
-  const total   = items.length;
-  const isOpen  = openGroups.has('daily');
-  const allDone = done === total;
+  const done   = items.filter(r => completedChores.has(choreKey(r))).length;
+  const total  = items.length;
+  const isOpen = openGroups.has('daily');
 
   const checklist = isOpen ? `
     <div class="chore-checklist">
@@ -163,7 +206,7 @@ function renderDaily() {
         const isDone = completedChores.has(choreKey(r));
         return `
           <div class="chore-check-item ${isDone ? 'chore-check-item--done' : ''}"
-               onclick="completeChore('daily','${r.Zone}','${r.Item.replace(/'/g,"\\'")}')">
+               onclick="completeChore('daily','Daily','${r.Item.replace(/'/g,"\\'")}')">
             <div class="chore-check-box">${isDone ? '✓' : ''}</div>
             <div class="chore-check-label">${r.Item}</div>
           </div>`;
@@ -172,14 +215,7 @@ function renderDaily() {
 
   return `
     <div class="chore-group">
-      <div class="chore-group-header" onclick="toggleGroup('daily')">
-        <div class="chore-group-left">
-          <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Daily Tidy</span>
-          ${allDone ? '<span class="chore-all-done">✓</span>' : ''}
-        </div>
-        <span class="chore-group-count">${done}/${total}</span>
-      </div>
+      ${groupHeader('daily', 'Daily Tidy', done, total, isOpen)}
       ${checklist}
     </div>`;
 }
@@ -202,40 +238,29 @@ function renderStandards() {
     const zIsOpen  = openZones.has(zoneKey);
     const zAllDone = done === zItems.length;
 
-    const rows = zIsOpen ? zItems.map(r => {
-      const isDone = completedChores.has(choreKey(r));
-      return `
-        <div class="chore-check-item ${isDone ? 'chore-check-item--done' : ''}"
-             onclick="completeChore('standard','${zone}','${r.Item.replace(/'/g,"\\'")}')">
-          <div class="chore-check-box">${isDone ? '✓' : ''}</div>
-          <div class="chore-check-label">${r.Item}</div>
-        </div>`;
-    }).join('') : '';
+    const rows = zIsOpen ? `
+      <div class="chore-checklist">
+        ${zItems.map(r => {
+          const isDone = completedChores.has(choreKey(r));
+          return `
+            <div class="chore-check-item ${isDone ? 'chore-check-item--done' : ''}"
+                 onclick="completeChore('standard','${zone}','${r.Item.replace(/'/g,"\\'")}')">
+              <div class="chore-check-box">${isDone ? '✓' : ''}</div>
+              <div class="chore-check-label">${r.Item}</div>
+            </div>`;
+        }).join('')}
+      </div>` : '';
 
     return `
       <div class="chore-zone">
-        <div class="chore-zone-header" onclick="event.stopPropagation();toggleZone('${zoneKey}')">
-          <div class="chore-group-left">
-            <span class="chore-chevron chore-chevron--sm">${zIsOpen ? '▾' : '▸'}</span>
-            <span class="chore-zone-label-text">${zone}</span>
-            ${zAllDone ? '<span class="chore-all-done">✓</span>' : ''}
-</div>
-<span class="chore-zone-count">${done}/${zItems.length}</span>
-        </div>
-        ${innerHTML}
+        ${zoneHeader(zoneKey, zone, done, zItems.length, zIsOpen, false)}
+        ${rows}
       </div>`;
   }).join('') : '';
 
   return `
     <div class="chore-group">
-      <div class="chore-group-header" onclick="toggleGroup('standard')">
-        <div class="chore-group-left">
-          <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Standards </span>
-          ${allDone === allTotal ? '<span class="chore-all-done">✓</span>' : ''}
-        </div>
-        <span class="chore-group-count">${allDone}/${allTotal}</span>
-      </div>
+      ${groupHeader('standard', 'Standards', allDone, allTotal, isOpen)}
       ${zoneHTML}
     </div>`;
 }
@@ -247,7 +272,7 @@ function renderWheel() {
   const zones  = [...new Set(items.map(r => r.Zone))];
   if (!zones.length) return '';
 
-  const isOpen  = openGroups.has('wheel');
+  const isOpen   = openGroups.has('wheel');
   const totalAll = items.length;
   const doneAll  = items.filter(r => isThisMonth(r.LastDone) || completedChores.has(choreKey(r))).length;
 
@@ -295,47 +320,31 @@ function renderWheel() {
 
     return `
       <div class="chore-zone">
-        <div class="chore-zone-header" onclick="event.stopPropagation();toggleZone('${zoneKey}')">
-          <div class="chore-group-left">
-            <span class="chore-chevron chore-chevron--sm">${zIsOpen ? '▾' : '▸'}</span>
-            <span class="chore-zone-label-text">${zone}</span>
-            ${allDoneZone ? '<span class="chore-all-done">✓</span>' : ''}
-          </div>
-          <span class="chore-zone-count">${doneSoFar}/${zItems.length} this month</span>
-        </div>
+        ${zoneHeader(zoneKey, zone, doneSoFar, zItems.length, zIsOpen, true)}
         ${innerHTML}
       </div>`;
   }).join('') : '';
 
   return `
     <div class="chore-group">
-      <div class="chore-group-header" onclick="toggleGroup('wheel')">
-        <div class="chore-group-left">
-          <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Wheel </span>
-        </div>
-        <span class="chore-group-count">${doneAll}/${totalAll} this month</span>
-      </div>
+      ${groupHeader('wheel', 'Wheel', doneAll, totalAll, isOpen)}
       ${zoneHTML}
     </div>`;
 }
 
-
-
 function renderChores() {
-  if (!choresData.length) return '<p style="font-size:12px;color:var(--color-text-tertiary)">Loading chores…</p>';
+  if (!choresData.length) return '<p style="font-size:12px;color:#AAB3FF">Loading chores…</p>';
   return `
-  <div class="chores-container three-col">
-    <div>${renderDaily()}</div>
-    <div>${renderStandards()}</div>
-    <div>${renderWheel()}</div>
-  </div>
-`;
+    <div class="chores-container">
+      <div class="chores-col">${renderDaily()}</div>
+      <div class="chores-col">${renderStandards()}</div>
+      <div class="chores-col">${renderWheel()}</div>
+    </div>`;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TASKS
-// ════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════════
 
 function renderTasksTab() {
   return `<div id="task-preview"></div>`;
