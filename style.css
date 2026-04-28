@@ -1573,3 +1573,151 @@ body {
 #fitness-section {
   flex: 1;
 }
+/* =========================
+   UNIFIED CONTRAST OVERRIDE
+   ========================= */
+
+/* --- PROCESS + FITNESS (Option 2) --- */
+#process-section,
+#fitness-section {
+  flex: 1;
+  background: #DDE3FF;
+  color: #111;
+  border: 2px solid #1e2a8a;
+  border-radius: 12px;
+}
+
+.prc-card,
+.fit-card {
+  background: #12174F;
+  color: #F5F7FF;
+  border: 1px solid #93D1ED;
+}
+
+.prc-item,
+.fit-item,
+.prc-step-number,
+.fit-goal,
+.prc-notes {
+  color: #F5F7FF;
+}
+
+.prc-heading,
+.fit-heading {
+  color: #111;
+}
+
+/* --- LEARNING --- */
+#learning-section {
+  background: #0F144A;
+  color: #F5F7FF;
+}
+
+.lrn-card {
+  background: #1A1F6A;
+  border: 1px solid #3A4AA0;
+}
+
+.lrn-name {
+  color: #F5F7FF;
+}
+
+.lrn-sub,
+.lrn-bar-label,
+.lrn-week,
+.lrn-week-label {
+  color: #C9D1FF;
+}
+
+.lrn-detail {
+  background: #151A5A;
+  color: #F5F7FF;
+}
+
+.lrn-detail-title {
+  color: #AAB3FF;
+}
+
+/* --- TODAY / CALENDAR --- */
+#today-section {
+  background: #0F144A;
+  color: #F5F7FF;
+}
+
+.cal-day {
+  background: #1A1F6A;
+  border: 1px solid #3A4AA0;
+}
+
+.cal-day-name {
+  color: #AAB3FF;
+}
+
+.cal-day-num {
+  color: #F5F7FF;
+}
+
+.cal-event {
+  background: #1E2A8A;
+  border: 1px solid #5A6BFF;
+}
+
+.cal-event-title {
+  color: #F5F7FF;
+}
+
+.cal-event-time {
+  color: #93D1ED;
+}
+
+.cal-event-who {
+  color: #C9D1FF;
+}
+
+/* --- CHORES --- */
+.chore-group {
+  background: #151A5A;
+  border: 1px solid #3A4AA0;
+}
+
+.chore-group-title {
+  color: #F5F7FF;
+}
+
+.chore-group-count,
+.chore-zone-label-text,
+.chore-wheel-target {
+  color: #AAB3FF;
+}
+
+.chore-check-item,
+.chore-check-label,
+.chore-wheel-item {
+  color: #F5F7FF;
+}
+
+.chore-check-box {
+  background: #0F144A;
+  border: 1px solid #5A6BFF;
+}
+
+.chore-check-item--done {
+  opacity: 0.6;
+}
+
+.chore-check-item--done .chore-check-box {
+  background: #0E3D20;
+  border-color: #2ECC71;
+}
+
+.chore-wheel-done {
+  background: #0E3D20;
+  color: #6FCF97;
+  border-color: #2ECC71;
+}
+
+.chore-wheel-skip {
+  background: #1A1F6A;
+  color: #C9D1FF;
+  border-color: #3A4AA0;
+}
