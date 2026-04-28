@@ -495,7 +495,7 @@ body {
 
 .anchor-btn {
   flex: 1;
-  max-width: 340px;
+  max-width: auto;
   background: var(--surface2);
   border: 1px solid var(--border);
   padding: 0;
