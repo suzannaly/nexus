@@ -15,8 +15,7 @@ const ZONE_IMAGES = {
   Bathroom: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bathroom.png",
   Upstairs: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bed.png",
   Downstairs: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/play.png",
-  Daily Tidy: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/supplies.png",
-  Wheel: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/wheel.png"
+  
 };
 
 // Collapse state — all start closed
@@ -173,7 +172,7 @@ function renderDaily() {
 
   return `
     <div class="chore-group">
-      <div class="chore-group-header" onclick="toggleGroup('daily')">
+      <div class="chore-group-header" onclick="toggleGroup('daily') img: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/supplies.png";>
         <div class="chore-group-left">
           <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
           <span class="chore-group-title">Daily Tidy</span>
@@ -298,7 +297,7 @@ function renderWheel() {
     return `
       <div class="chore-zone">
         <div class="chore-zone-header" onclick="event.stopPropagation();toggleZone('${zoneKey}')">
-          <div class="chore-group-left">
+          <div class="chore-group-left" img: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/wheel.png">
             <span class="chore-chevron chore-chevron--sm">${zIsOpen ? '▾' : '▸'}</span>
             <span class="chore-zone-label-text">${zone}</span>
             ${allDoneZone ? '<span class="chore-all-done">✓</span>' : ''}
