@@ -1,0 +1,361 @@
+/* ── Today Section ───────────────────────────────────────────────── */
+
+#today-section {
+  padding: 0.75rem 1rem 0.5rem;
+  background: #0F144A;
+  color: #F5F7FF;
+}
+
+/* Tab bar */
+.today-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.08);
+  padding-bottom: 8px;
+}
+
+.today-tab {
+  font-size: 13px;
+  padding: 7px 18px;
+  border-radius: 20px;
+  border: 0.5px solid transparent;
+  background: transparent;
+  color: #AAB3FF;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.today-tab:hover {
+  color: #F5F7FF;
+  background: rgba(255,255,255,0.04);
+}
+.today-tab--active {
+  background: #1E2A8A;
+  color: #93D1ED;
+  border-color: #5A6BFF;
+}
+
+.today-content {
+  min-height: 200px;
+}
+
+/* ── Calendar ────────────────────────────────────────────────────── */
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.cal-day {
+  background: #1A1F6A;
+  border: 1px solid #3A4AA0;
+  border-radius: 8px;
+  padding: 8px 6px;
+  min-height: 100px;
+}
+
+.cal-day--today {
+  border-color: #93D1ED;
+  background: #0d1f5c;
+}
+
+.cal-day-header {
+  margin-bottom: 8px;
+}
+
+.cal-day-name {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #AAB3FF;
+  margin-bottom: 2px;
+}
+
+.cal-day--today .cal-day-name {
+  color: #93D1ED;
+}
+
+.cal-day-num {
+  font-size: 18px;
+  font-weight: 600;
+  color: #F5F7FF;
+  line-height: 1;
+}
+
+.cal-day--today .cal-day-num {
+  color: #93D1ED;
+}
+
+.cal-no-events {
+  font-size: 10px;
+  color: #5A6BCC;
+  font-style: italic;
+}
+
+.cal-event {
+  background: #1E2A8A;
+  border: 1px solid #5A6BFF;
+  border-radius: 4px;
+  padding: 4px 6px;
+  margin-bottom: 4px;
+}
+
+.cal-event-time {
+  font-size: 9px;
+  color: #93D1ED;
+  margin-bottom: 2px;
+}
+
+.cal-event-title {
+  font-size: 10px;
+  color: #F5F7FF;
+  line-height: 1.3;
+}
+
+.cal-event-who {
+  font-size: 9px;
+  color: #AAB3FF;
+  margin-top: 2px;
+}
+
+/* ── Chores three-column layout ──────────────────────────────────── */
+
+.chores-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.chores-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Chore Group ─────────────────────────────────────────────────── */
+
+.chore-group {
+  background: #151A5A;
+  border: 1px solid #3A4AA0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Group header — bigger tap target, image on left */
+.chore-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s;
+  min-height: 56px;
+}
+.chore-group-header:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.chore-group-img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.chore-group-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.chore-chevron {
+  font-size: 18px;
+  color: #AAB3FF;
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.chore-chevron--sm {
+  font-size: 15px;
+}
+
+.chore-group-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #F5F7FF;
+}
+
+.chore-group-count {
+  font-size: 11px;
+  color: #AAB3FF;
+  flex-shrink: 0;
+}
+
+.chore-all-done {
+  font-size: 13px;
+  color: #6fcf97;
+}
+
+.chore-all-done-msg {
+  font-size: 12px;
+  color: #6fcf97;
+  padding: 6px 0 4px;
+}
+
+/* ── Zone ────────────────────────────────────────────────────────── */
+
+.chore-zone {
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+  padding: 0 10px;
+}
+
+/* Zone header — bigger tap target, image on left */
+.chore-zone-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  cursor: pointer;
+  user-select: none;
+  min-height: 48px;
+}
+
+.chore-zone-img {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 5px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.chore-zone-label-text {
+  font-size: 12px;
+  color: #C9D1FF;
+  flex: 1;
+}
+
+.chore-zone-count {
+  font-size: 10px;
+  color: #AAB3FF;
+  flex-shrink: 0;
+}
+
+/* ── Checklist ───────────────────────────────────────────────────── */
+
+.chore-checklist {
+  padding-bottom: 8px;
+}
+
+.chore-check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  transition: opacity 0.15s;
+  min-height: 36px;
+}
+.chore-check-item:last-child { border-bottom: none; }
+.chore-check-item--done { opacity: 0.45; }
+
+.chore-check-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #5A6BFF;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #6fcf97;
+  flex-shrink: 0;
+  background: #0F144A;
+}
+.chore-check-item--done .chore-check-box {
+  background: #0e3d20;
+  border-color: #2ECC71;
+}
+
+.chore-check-label {
+  font-size: 12px;
+  color: #F5F7FF;
+  line-height: 1.3;
+}
+
+/* ── Wheel specifics ─────────────────────────────────────────────── */
+
+.chore-month-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 4px 0 10px;
+}
+.chore-month-fill {
+  height: 100%;
+  background: #7F77DD;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.chore-wheel-target {
+  font-size: 10px;
+  color: #AAB3FF;
+  margin-bottom: 6px;
+}
+
+.chore-wheel-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  min-height: 36px;
+}
+.chore-wheel-item:last-child {
+  border-bottom: none;
+  margin-bottom: 8px;
+}
+
+.chore-wheel-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.chore-wheel-done {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid #2ECC71;
+  background: #0e3d20;
+  color: #6fcf97;
+  font-size: 12px;
+  cursor: pointer;
+}
+.chore-wheel-done:hover { background: #122a1e; }
+
+.chore-wheel-skip {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #3A4AA0;
+  background: #1A1F6A;
+  color: #AAB3FF;
+  font-size: 12px;
+  cursor: pointer;
+}
+.chore-wheel-skip:hover { background: #1E2580; }
+
+/* ── Tasks tab ───────────────────────────────────────────────────── */
+
+#task-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
