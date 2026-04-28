@@ -175,7 +175,7 @@ function renderDaily() {
       <div class="chore-group-header" onclick="toggleGroup('daily')>
         <div class="chore-group-left">
           <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Daily Tidy <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/supplies.png" class="chore-heading-img" alt=""></span>
+          <span class="chore-group-title">Daily Tidy></span>
           ${allDone ? '<span class="chore-all-done">✓</span>' : ''}
         </div>
         <span class="chore-group-count">${done}/${total}</span>
@@ -232,7 +232,7 @@ function renderStandards() {
       <div class="chore-group-header" onclick="toggleGroup('standard')">
         <div class="chore-group-left">
           <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Standards <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/standards.png" class="chore-heading-img" alt=""></span>
+          <span class="chore-group-title">Standards></span>
           ${allDone === allTotal ? '<span class="chore-all-done">✓</span>' : ''}
         </div>
         <span class="chore-group-count">${allDone}/${allTotal}</span>
@@ -313,7 +313,7 @@ function renderWheel() {
       <div class="chore-group-header" onclick="toggleGroup('wheel')">
         <div class="chore-group-left">
           <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
-          <span class="chore-group-title">Wheel <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/wheel.png" class="chore-heading-img" alt=""></span>
+          <span class="chore-group-title">Wheel></span>
         </div>
         <span class="chore-group-count">${doneAll}/${totalAll} this month</span>
       </div>
