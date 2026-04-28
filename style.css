@@ -1564,3 +1564,12 @@ body {
   flex-direction: column;
   gap: 6px;
 }
+.flex-container {
+  display: flex;
+  gap: 12px;
+}
+
+#process-section,
+#fitness-section {
+  flex: 1;
+}
