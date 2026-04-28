@@ -1364,9 +1364,10 @@ body {
 .chores-container {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 6px;
 }
 
+/* Group (Daily / Standards / Wheel) */
 .chore-group {
   background: var(--color-bg-secondary, #111827);
   border: 0.5px solid rgba(255,255,255,0.06);
@@ -1378,17 +1379,35 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
-  border-bottom: 0.5px solid rgba(255,255,255,0.06);
-  background: rgba(255,255,255,0.02);
+  padding: 11px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s;
+}
+.chore-group-header:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.chore-group-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chore-chevron {
+  font-size: 11px;
+  color: var(--color-text-tertiary, #666);
+  width: 12px;
+}
+
+.chore-chevron--sm {
+  font-size: 10px;
 }
 
 .chore-group-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--color-text-secondary, #aaa);
+  color: var(--color-text-primary, #f0f0f0);
 }
 
 .chore-group-count {
@@ -1396,36 +1415,45 @@ body {
   color: var(--color-text-tertiary, #666);
 }
 
-/* Zone label */
-.chore-zone {
-  padding: 8px 12px;
-  border-bottom: 0.5px solid rgba(255,255,255,0.04);
-}
-.chore-zone:last-child { border-bottom: none; }
-
-.chore-zone-label {
+.chore-all-done {
   font-size: 10px;
-  font-weight: 500;
-  color: var(--color-text-tertiary, #666);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
+  color: #6fcf97;
+}
+
+.chore-all-done-msg {
+  font-size: 11px;
+  color: #6fcf97;
+  padding: 6px 0 4px;
+}
+
+/* Zone (within Standards / Wheel) */
+.chore-zone {
+  border-top: 0.5px solid rgba(255,255,255,0.04);
+  padding: 0 12px;
+}
+
+.chore-zone-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.chore-zone-label-text {
+  font-size: 11px;
+  color: var(--color-text-secondary, #aaa);
 }
 
 .chore-zone-count {
-  font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
+  font-size: 10px;
+  color: var(--color-text-tertiary, #666);
 }
 
-/* Checklist items (daily + standards) */
+/* Checklist */
 .chore-checklist {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 6px 12px;
+  padding-bottom: 8px;
 }
 
 .chore-check-item {
@@ -1453,7 +1481,6 @@ body {
   flex-shrink: 0;
   background: rgba(255,255,255,0.03);
 }
-
 .chore-check-item--done .chore-check-box {
   background: #0e3d20;
   border-color: #1a6035;
@@ -1470,7 +1497,7 @@ body {
   background: rgba(255,255,255,0.06);
   border-radius: 2px;
   overflow: hidden;
-  margin-bottom: 8px;
+  margin: 4px 0 8px;
 }
 .chore-month-fill {
   height: 100%;
@@ -1493,8 +1520,10 @@ body {
   padding: 6px 0;
   border-bottom: 0.5px solid rgba(255,255,255,0.03);
 }
-.chore-wheel-item:last-child { border-bottom: none; }
-.chore-wheel-item--done { opacity: 0.4; }
+.chore-wheel-item:last-child {
+  border-bottom: none;
+  margin-bottom: 8px;
+}
 
 .chore-wheel-actions {
   display: flex;

@@ -5,11 +5,14 @@
 const TODAY_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
 
 // ─── State ────────────────────────────────────────────────────────────────────
-let activeTab      = 'calendar';
-let calendarEvents = [];
-let choresData     = [];
-let completedChores = new Set(); // "List-Zone-Item" keys
-let choreMonthReset = {}; // tracks wheel reset state
+let activeTab       = 'calendar';
+let calendarEvents  = [];
+let choresData      = [];
+let completedChores = new Set();
+
+// Collapse state — all start closed
+let openGroups = new Set(); // 'daily' | 'standard' | 'wheel'
+let openZones  = new Set(); // 'standard-Kitchen' | 'wheel-Bathroom' etc.
 
 // ─── Tab switcher ─────────────────────────────────────────────────────────────
 
@@ -18,15 +21,27 @@ function switchTab(tab) {
   renderToday();
 }
 
+// ─── Collapse toggles ─────────────────────────────────────────────────────────
+
+function toggleGroup(group) {
+  openGroups.has(group) ? openGroups.delete(group) : openGroups.add(group);
+  renderToday();
+}
+
+function toggleZone(key) {
+  openZones.has(key) ? openZones.delete(key) : openZones.add(key);
+  renderToday();
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 // CALENDAR
 // ══════════════════════════════════════════════════════════════════════════════
 
 function getWeekDays() {
-  const today = new Date();
-  const day   = today.getDay(); // 0=Sun
+  const today  = new Date();
+  const day    = today.getDay();
   const monday = new Date(today);
-  monday.setDate(today.getDate() - ((day + 6) % 7)); // shift to Monday
+  monday.setDate(today.getDate() - ((day + 6) % 7));
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
@@ -46,12 +61,12 @@ function formatTime(iso) {
 }
 
 function renderCalendar() {
-  const today   = new Date();
+  const today    = new Date();
   const weekDays = getWeekDays();
   const dayNames = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
 
   const columns = weekDays.map((day, i) => {
-    const isToday = isSameDay(day, today);
+    const isToday   = isSameDay(day, today);
     const dayEvents = calendarEvents.filter(e => isSameDay(new Date(e.start), day));
 
     const eventHTML = dayEvents.length
@@ -126,44 +141,60 @@ function skipChore(list, zone, item) {
 // ── Daily Tidy ────────────────────────────────────────────────────────────────
 
 function renderDaily() {
-  const items = choresData.filter(r => r.List === 'daily').sort((a,b) => a.Item.localeCompare(b.Item));
+  const items  = choresData.filter(r => r.List === 'daily').sort((a,b) => a.Item.localeCompare(b.Item));
   if (!items.length) return '';
 
-  const done  = items.filter(r => completedChores.has(choreKey(r))).length;
-  const total = items.length;
+  const done    = items.filter(r => completedChores.has(choreKey(r))).length;
+  const total   = items.length;
+  const isOpen  = openGroups.has('daily');
+  const allDone = done === total;
 
-  const checklist = items.map(r => {
-    const isDone = completedChores.has(choreKey(r));
-    return `
-      <div class="chore-check-item ${isDone ? 'chore-check-item--done' : ''}"
-           onclick="completeChore('daily','${r.Zone}','${r.Item.replace(/'/g,"\\'")}')">
-        <div class="chore-check-box">${isDone ? '✓' : ''}</div>
-        <div class="chore-check-label">${r.Item}</div>
-      </div>`;
-  }).join('');
+  const checklist = isOpen ? `
+    <div class="chore-checklist">
+      ${items.map(r => {
+        const isDone = completedChores.has(choreKey(r));
+        return `
+          <div class="chore-check-item ${isDone ? 'chore-check-item--done' : ''}"
+               onclick="completeChore('daily','${r.Zone}','${r.Item.replace(/'/g,"\\'")}')">
+            <div class="chore-check-box">${isDone ? '✓' : ''}</div>
+            <div class="chore-check-label">${r.Item}</div>
+          </div>`;
+      }).join('')}
+    </div>` : '';
 
   return `
     <div class="chore-group">
-      <div class="chore-group-header">
-        <span class="chore-group-title">Daily Tidy</span>
+      <div class="chore-group-header" onclick="toggleGroup('daily')">
+        <div class="chore-group-left">
+          <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
+          <span class="chore-group-title">Daily Tidy</span>
+          ${allDone ? '<span class="chore-all-done">✓</span>' : ''}
+        </div>
         <span class="chore-group-count">${done}/${total}</span>
       </div>
-      <div class="chore-checklist">${checklist}</div>
+      ${checklist}
     </div>`;
 }
 
 // ── Standards ─────────────────────────────────────────────────────────────────
 
 function renderStandards() {
-  const items  = choresData.filter(r => r.List === 'standard');
-  const zones  = [...new Set(items.map(r => r.Zone))];
+  const items    = choresData.filter(r => r.List === 'standard');
+  const zones    = [...new Set(items.map(r => r.Zone))];
   if (!zones.length) return '';
 
-  const zoneHTML = zones.map(zone => {
-    const zItems = items.filter(r => r.Zone === zone);
-    const done   = zItems.filter(r => completedChores.has(choreKey(r))).length;
+  const allDone  = items.filter(r => completedChores.has(choreKey(r))).length;
+  const allTotal = items.length;
+  const isOpen   = openGroups.has('standard');
 
-    const rows = zItems.map(r => {
+  const zoneHTML = isOpen ? zones.map(zone => {
+    const zItems   = items.filter(r => r.Zone === zone);
+    const done     = zItems.filter(r => completedChores.has(choreKey(r))).length;
+    const zoneKey  = `standard-${zone}`;
+    const zIsOpen  = openZones.has(zoneKey);
+    const zAllDone = done === zItems.length;
+
+    const rows = zIsOpen ? zItems.map(r => {
       const isDone = completedChores.has(choreKey(r));
       return `
         <div class="chore-check-item ${isDone ? 'chore-check-item--done' : ''}"
@@ -171,23 +202,31 @@ function renderStandards() {
           <div class="chore-check-box">${isDone ? '✓' : ''}</div>
           <div class="chore-check-label">${r.Item}</div>
         </div>`;
-    }).join('');
+    }).join('') : '';
 
     return `
       <div class="chore-zone">
-        <div class="chore-zone-label">${zone} <span class="chore-zone-count">${done}/${zItems.length}</span></div>
-        ${rows}
+        <div class="chore-zone-header" onclick="event.stopPropagation();toggleZone('${zoneKey}')">
+          <div class="chore-group-left">
+            <span class="chore-chevron chore-chevron--sm">${zIsOpen ? '▾' : '▸'}</span>
+            <span class="chore-zone-label-text">${zone}</span>
+            ${zAllDone ? '<span class="chore-all-done">✓</span>' : ''}
+          </div>
+          <span class="chore-zone-count">${done}/${zItems.length}</span>
+        </div>
+        ${zIsOpen ? `<div class="chore-checklist">${rows}</div>` : ''}
       </div>`;
-  }).join('');
-
-  const allItems = items;
-  const allDone  = allItems.filter(r => completedChores.has(choreKey(r))).length;
+  }).join('') : '';
 
   return `
     <div class="chore-group">
-      <div class="chore-group-header">
-        <span class="chore-group-title">Standards</span>
-        <span class="chore-group-count">${allDone}/${allItems.length}</span>
+      <div class="chore-group-header" onclick="toggleGroup('standard')">
+        <div class="chore-group-left">
+          <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
+          <span class="chore-group-title">Standards</span>
+          ${allDone === allTotal ? '<span class="chore-all-done">✓</span>' : ''}
+        </div>
+        <span class="chore-group-count">${allDone}/${allTotal}</span>
       </div>
       ${zoneHTML}
     </div>`;
@@ -196,61 +235,78 @@ function renderStandards() {
 // ── Wheel ─────────────────────────────────────────────────────────────────────
 
 function renderWheel() {
-  const items = choresData.filter(r => r.List === 'wheel');
-  const zones = [...new Set(items.map(r => r.Zone))];
+  const items  = choresData.filter(r => r.List === 'wheel');
+  const zones  = [...new Set(items.map(r => r.Zone))];
   if (!zones.length) return '';
 
-  const zoneHTML = zones.map(zone => {
-    const zItems      = items.filter(r => r.Zone === zone);
-    const weeklyTarget = zItems[0]?.WeeklyTarget || 1;
-    const pending     = zItems.filter(r => !isThisMonth(r.LastDone) && !completedChores.has(choreKey(r)));
-    const doneSoFar   = zItems.filter(r => isThisMonth(r.LastDone) || completedChores.has(choreKey(r))).length;
-    const totalItems  = zItems.length;
+  const isOpen  = openGroups.has('wheel');
+  const totalAll = items.length;
+  const doneAll  = items.filter(r => isThisMonth(r.LastDone) || completedChores.has(choreKey(r))).length;
 
-    // Sort by oldest LastDone first
-    const suggested = [...pending]
+  const zoneHTML = isOpen ? zones.map(zone => {
+    const zItems       = items.filter(r => r.Zone === zone);
+    const weeklyTarget = Number(zItems[0]?.WeeklyTarget) || 1;
+    const zoneKey      = `wheel-${zone}`;
+    const zIsOpen      = openZones.has(zoneKey);
+
+    const doneSoFar = zItems.filter(r =>
+      isThisMonth(r.LastDone) || completedChores.has(choreKey(r))
+    ).length;
+    const pct         = Math.round((doneSoFar / zItems.length) * 100);
+    const allDoneZone = doneSoFar === zItems.length;
+
+    const pending = zItems
+      .filter(r => !isThisMonth(r.LastDone) && !completedChores.has(choreKey(r)))
       .sort((a, b) => {
         if (!a.LastDone && !b.LastDone) return 0;
         if (!a.LastDone) return -1;
         if (!b.LastDone) return 1;
         return new Date(a.LastDone) - new Date(b.LastDone);
-      })
-      .slice(0, weeklyTarget);
+      });
 
-    const suggRows = suggested.map(r => {
-      const isDone = completedChores.has(choreKey(r));
-      return `
-        <div class="chore-wheel-item ${isDone ? 'chore-wheel-item--done' : ''}">
-          <div class="chore-check-label">${r.Item}</div>
-          <div class="chore-wheel-actions">
-            <button class="chore-wheel-done" onclick="completeChore('wheel','${zone}','${r.Item.replace(/'/g,"\\'")}')">✓</button>
-            <button class="chore-wheel-skip" onclick="skipChore('wheel','${zone}','${r.Item.replace(/'/g,"\\'")}')">skip</button>
-          </div>
-        </div>`;
-    }).join('');
+    const suggested = pending.slice(0, weeklyTarget);
 
-    // Month progress bar
-    const pct = Math.round((doneSoFar / totalItems) * 100);
+    const innerHTML = zIsOpen ? `
+      <div class="chore-month-bar">
+        <div class="chore-month-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="chore-wheel-target">suggested this week (${weeklyTarget}x):</div>
+      ${suggested.length
+        ? suggested.map(r => `
+            <div class="chore-wheel-item">
+              <div class="chore-check-label">${r.Item}</div>
+              <div class="chore-wheel-actions">
+                <button class="chore-wheel-done"
+                  onclick="event.stopPropagation();completeChore('wheel','${zone}','${r.Item.replace(/'/g,"\\'")}')">✓</button>
+                <button class="chore-wheel-skip"
+                  onclick="event.stopPropagation();skipChore('wheel','${zone}','${r.Item.replace(/'/g,"\\'")}')">skip</button>
+              </div>
+            </div>`).join('')
+        : '<div class="chore-all-done-msg">all done this month ✓</div>'
+      }` : '';
 
     return `
       <div class="chore-zone">
-        <div class="chore-zone-label">
-          ${zone}
-          <span class="chore-zone-count">${doneSoFar}/${totalItems} this month</span>
+        <div class="chore-zone-header" onclick="event.stopPropagation();toggleZone('${zoneKey}')">
+          <div class="chore-group-left">
+            <span class="chore-chevron chore-chevron--sm">${zIsOpen ? '▾' : '▸'}</span>
+            <span class="chore-zone-label-text">${zone}</span>
+            ${allDoneZone ? '<span class="chore-all-done">✓</span>' : ''}
+          </div>
+          <span class="chore-zone-count">${doneSoFar}/${zItems.length} this month</span>
         </div>
-        <div class="chore-month-bar">
-          <div class="chore-month-fill" style="width:${pct}%"></div>
-        </div>
-        <div class="chore-wheel-target">suggested this week (${weeklyTarget}x):</div>
-        ${suggRows || '<div class="cal-no-events" style="padding:6px 0">all done this month ✓</div>'}
+        ${innerHTML}
       </div>`;
-  }).join('');
+  }).join('') : '';
 
   return `
     <div class="chore-group">
-      <div class="chore-group-header">
-        <span class="chore-group-title">Wheel</span>
-        <span class="chore-group-count">monthly rotation</span>
+      <div class="chore-group-header" onclick="toggleGroup('wheel')">
+        <div class="chore-group-left">
+          <span class="chore-chevron">${isOpen ? '▾' : '▸'}</span>
+          <span class="chore-group-title">Wheel</span>
+        </div>
+        <span class="chore-group-count">${doneAll}/${totalAll} this month</span>
       </div>
       ${zoneHTML}
     </div>`;
@@ -304,7 +360,6 @@ function renderToday() {
     <div class="today-content">${content}</div>
   `;
 
-  // If tasks tab, trigger loadTasks() to populate #task-preview
   if (activeTab === 'tasks' && typeof loadTasks === 'function') {
     loadTasks();
   }
@@ -317,7 +372,6 @@ function renderToday() {
 async function initToday() {
   renderToday();
 
-  // Fetch calendar and chores in parallel
   const [calRes, choreRes] = await Promise.allSettled([
     fetch(`${TODAY_GAS_URL}?calendar=1`),
     fetch(`${TODAY_GAS_URL}?tab=Chores`)
@@ -334,12 +388,6 @@ async function initToday() {
     try {
       choresData = await choreRes.value.json();
       if (!Array.isArray(choresData)) choresData = [];
-      // Pre-mark anything already done today
-      choresData.forEach(r => {
-        if (r.Status === 'done' && isThisMonth(r.LastDone)) {
-          // wheel items — pre-mark as done this month (handled by isThisMonth check)
-        }
-      });
     } catch { choresData = []; }
   }
 
