@@ -15,7 +15,7 @@ const ZONE_IMAGES = {
   Bathroom: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bathroom.png",
   Upstairs: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/bed.png",
   Downstairs: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/play.png",
-  "Daily Tidy": "https://raw.githubusercontent.com/suzannaly/nexus/main/images/supplies.png",
+  Daily Tidy: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/supplies.png",
   Wheel: "https://raw.githubusercontent.com/suzannaly/nexus/main/images/wheel.png"
 };
 
