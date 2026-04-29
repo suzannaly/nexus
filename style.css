@@ -76,7 +76,7 @@ body {
 /* Two-column layout: content left, portrait right */
 .sap-layout {
   display: grid;
-  grid-template-columns: minmax(320px, 1fr) minmax(1fr, 600px);
+  grid-template-columns: minmax(320px, 1fr) minmax(600px, 600px);
   align-items: stretch;
   min-height: 200px;
 }
