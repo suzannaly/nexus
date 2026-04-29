@@ -79,30 +79,38 @@ document.querySelectorAll('.anchor-btn').forEach(btn => {
           });
         });
 
-      } else if (phase === 'START') {
-        const tasks = await getData('Tasks');
-        const next = tasks.find(t => t.Done !== 'TRUE' && t.Title);
-        bodyHTML += `
-          <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png"
-            style="width:100%;border-radius:6px;margin-bottom:16px;object-fit:cover;max-height:240px;">
-          <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:8px;">Stand up, find an anchor point, and start to climb.</p>
-          <div style="text-align:center;font-size:18px;font-weight:600;color:var(--primary);">
-            ${next ? next.Title : 'nothing queued — add a task first'}
-          </div>
-        `;
-        modalBody.innerHTML = bodyHTML;
+     } else if (phase === 'START') {
+  // Use Sapphira's firstTask if available, fall back to raw task fetch
+  let taskTitle = null;
+  let taskWhy   = null;
 
-      } else {
-        bodyHTML += `<p>${content}</p>`;
-        modalBody.innerHTML = bodyHTML;
+  const cached = localStorage.getItem('sapphira-cache');
+  if (cached) {
+    try {
+      const briefing = JSON.parse(cached);
+      if (briefing.firstTask?.title) {
+        taskTitle = briefing.firstTask.title;
+        taskWhy   = briefing.firstTask.why || null;
       }
-    } else {
-      modalBody.innerHTML = `<h2>${phase}</h2><p>No content yet.</p>`;
-    }
+    } catch(e) { /* fall through */ }
+  }
 
-    modal.classList.remove('hidden');
-  });
-});
+  if (!taskTitle) {
+    const tasks = await getData('Tasks');
+    const next  = tasks.find(t => t.Done !== 'TRUE' && t.Title);
+    taskTitle   = next ? next.Title : null;
+  }
+
+  bodyHTML += `
+    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png"
+      style="width:100%;border-radius:6px;margin-bottom:16px;object-fit:cover;max-height:240px;">
+    <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:8px;">Stand up, find an anchor point, and start to climb.</p>
+    <div style="text-align:center;font-size:18px;font-weight:600;color:var(--primary);">
+      ${taskTitle || 'nothing queued — add a task first'}
+    </div>
+    ${taskWhy ? `<div style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px;">${esc(taskWhy)}</div>` : ''}
+  `;
+  modalBody.innerHTML = bodyHTML;
 
 closeBtn.addEventListener('click', () => {
   modal.classList.add('hidden');
