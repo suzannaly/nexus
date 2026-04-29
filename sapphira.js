@@ -191,10 +191,10 @@ async function fetchSheetData() {
   const [tasks, context, calendar] = await Promise.all([
     fetch(`${SAPPHIRA_GAS}?tab=Tasks`).then(r => r.json()).catch(() => []),
     fetch(`${SAPPHIRA_GAS}?tab=Context`).then(r => r.json()).catch(() => []),
-    fetch(`${SAPPHIRA_GAS}?calendar=1`).then(r => r.json()).catch(() => []),
+    fetch(`${SAPPHIRA_GAS}?calendar=today`).then(r => r.json()).catch(() => []),
   ]);
 
-  const activeTasks = (tasks || []).filter(t => t.Done !== 'TRUE' && t.Title);
+ const activeTasks = (tasks || []).filter(t => t.Done !== 'TRUE' && t.Done !== true && t.Title);
   const contextMap  = Object.fromEntries((context || []).map(r => [r.Key, r.Value]));
   const todayEvents = Array.isArray(calendar) ? calendar : [];
 
