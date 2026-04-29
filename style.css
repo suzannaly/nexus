@@ -76,13 +76,14 @@ body {
 /* Two-column layout: content left, portrait right */
 .sap-layout {
   display: grid;
-  grid-template-columns: 1fr 600px;
+  grid-template-columns: minmax(320px, 1fr) minmax(1fr, 600px);
   align-items: stretch;
   min-height: 200px;
 }
 
 .sap-inner {
   padding: 20px 24px 24px;
+  min-width: 0; /* prevents grid blowout */
 }
 
 .sap-portrait-wrap {
