@@ -103,8 +103,8 @@ document.querySelectorAll('.anchor-btn').forEach(btn => {
         bodyHTML += `
           <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png"
             style="width:100%;border-radius:6px;margin-bottom:16px;object-fit:cover;max-height:240px;">
-          <p style="text-align:center;font-size:13px;color: #550c6b; ;margin-bottom:8px;">Stand up, find an anchor point, and start to climb.</p>
-          <div style="text-align:center;font-size:18px;font-weight:600;color:var(--primary);">
+          <p style="text-align:center;font-size:13px;color: var(--bg);margin-bottom:8px;">Stand up, find an anchor point, and start to climb.</p>
+          <div style="text-align:center;font-size:18px;font-weight:600;color: #550c6b;">
             ${taskTitle || 'nothing queued — add a task first'}
           </div>
           ${taskWhy ? `<div style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px;">${escHtml(taskWhy)}</div>` : ''}

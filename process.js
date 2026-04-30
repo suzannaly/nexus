@@ -98,19 +98,7 @@ function renderProcess() {
   // Progress bar
   const pct = Math.round((done / total) * 100);
 
-  // Step pills
-  const pills = sorted.map(s => {
-    const isDone    = completedSteps.has(s.Order);
-    const isCurrent = current && s.Order === current.Order;
-    const color     = getPhaseColor(s.Phase);
-    let style = `font-size:10px;padding:3px 8px;border-radius:20px;border:0.5px solid;white-space:nowrap;`;
-    if (isDone)        style += `background:#0e3d20;color:#6fcf97;border-color:#1a6035;text-decoration:line-through;`;
-    else if (isCurrent) style += `background:#0d2a45;color:#7ab3f5;border-color:#2a5080;font-weight:500;`;
-    else                style += `background:var(--color-background-secondary,#1a1f2e);color:var(--color-text-tertiary);border-color:var(--color-border-tertiary);`;
-    return `<span style="${style}">${s.Order}. ${s.Item.length > 20 ? s.Item.slice(0,20)+'…' : s.Item}</span>`;
-  }).join('');
-
-  // Current card
+   // Current card
   let cardHTML = '';
   if (complete) {
     cardHTML = `
@@ -137,10 +125,10 @@ function renderProcess() {
           ${isOpt ? `<div class="prc-optional">optional — do if you want</div>` : ''}
           ${skipTuesdayOnly ? `<div class="prc-optional">Tuesday only — skip today</div>` : ''}
           <div class="prc-actions">
-            <button class="prc-done-btn" style="border-color:${color};color:${color}" onclick="completeStep(${current.Order})">
+            <button class="prc-done-btn" style="border-color:${color};color: #1a0a2e;background:${color}88"
               ✓ done
             </button>
-            <button class="prc-skip-btn" onclick="skipStep(${current.Order})">
+            <button class="prc-done-btn" style="border-color:${color};color: #1a0a2e;background:${color}88"
               skip
             </button>
           </div>
@@ -156,7 +144,7 @@ function renderProcess() {
       </div>
       <span class="prc-progress-label">${done} / ${total}</span>
     </div>
-    <div class="prc-pills">${pills}</div>
+    
     ${cardHTML}
   `;
 }

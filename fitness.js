@@ -7,7 +7,7 @@ const FITNESS_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_o
 // ─── Section config ───────────────────────────────────────────────────────────
 const SECTION_CONFIG = {
   'Base Camp': { accent: '#0c8816', emoji: '⛺' },
-  'Climb':     { accent: '#40c4db', emoji: '🧗' },
+  'Climb':     { accent: '#08a0bb', emoji: '🧗' },
   'Chasm':     { accent: '#3a78ec', emoji: '🌀' },
   'Peak':      { accent: '#0515a5', emoji: '🏔️' },
   'Summit':    { accent: '#7050bd', emoji: '🎯' },
@@ -123,6 +123,23 @@ function resetFitness() {
   completedFitness.clear();
   renderFitness();
 }
+async function saveFitNotes(id, notes) {
+  try {
+    await fetch(FITNESS_GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tab: 'Fitness',
+        matchColumn: 'ID',
+        matchValue: id,
+        updates: { Notes: notes }
+      })
+    });
+  } catch(err) {
+    console.warn('fitness.js: notes write-back failed', err);
+  }
+}
 
 // ─── Render ───────────────────────────────────────────────────────────────────
 
@@ -143,28 +160,33 @@ function renderFitness() {
   const pct     = total ? Math.round((done / total) * 100) : 0;
 
   // Section progress pills
-  const sectionOrder = ['Base Camp', 'Climb', 'Chasm', 'Peak', 'Summit'];
-  const sectionPills = sectionOrder.map(sec => {
-    const secSteps = steps.filter(s => s.Section === sec);
-    if (!secSteps.length) {
-      const isLocked = isRestDay && (sec === 'Peak' || sec === 'Summit');
-      const style = isLocked
-        ? 'background:#1a1a1a;color:#444;border-color:#333;'
-        : 'background:#1a1a2a;color:#444;border-color:#333;';
-      return `<span class="fit-pill" style="${style}">${getSectionEmoji(sec)} ${sec}</span>`;
-    }
-    const secDone = secSteps.filter(s => completedFitness.has(fitKey(s))).length;
-    const color   = getSectionColor(sec);
-    let style;
-    if (secDone === secSteps.length) {
-      style = `background:#0e3d20;color:#6fcf97;border-color:#1a6035;`;
-    } else if (secDone > 0) {
-      style = `background:#0d2a45;color:#7ab3f5;border-color:#2a5080;font-weight:500;`;
-    } else {
-      style = `background:transparent;color:${color};border-color:${color}44;`;
-    }
-    return `<span class="fit-pill" style="${style}">${getSectionEmoji(sec)} ${sec} ${secDone}/${secSteps.length}</span>`;
-  }).join('');
+  const PILL_WIDTHS = {
+  'Summit':   '80px',
+  'Peak':     '95px',
+  'Chasm':    '110px',
+  'Climb':    '125px',
+  'Base Camp':'140px',
+};
+
+// Render pills bottom-to-top (Base Camp first in DOM, Summit last)
+const sectionPills = [...sectionOrder].reverse().map(sec => {
+  const width = PILL_WIDTHS[sec] || '100px';
+  const secSteps = steps.filter(s => s.Section === sec);
+  if (!secSteps.length) {
+    return `<span class="fit-pill" style="width:${width};justify-content:center;background:#1a1a2a;color:#444;border-color:#333;">${getSectionEmoji(sec)} ${sec}</span>`;
+  }
+  const secDone = secSteps.filter(s => completedFitness.has(fitKey(s))).length;
+  const color = getSectionColor(sec);
+  let style;
+  if (secDone === secSteps.length) {
+    style = `background:#0e3d20;color:#6fcf97;border-color:#1a6035;`;
+  } else if (secDone > 0) {
+    style = `background:#0d2a45;color:#7ab3f5;border-color:#2a5080;font-weight:500;`;
+  } else {
+    style = `background:transparent;color:${color};border-color:${color}44;`;
+  }
+  return `<span class="fit-pill" style="width:${width};justify-content:center;${style}">${getSectionEmoji(sec)} ${sec} ${secDone}/${secSteps.length}</span>`;
+}).join('');
 
   // Current card
   let cardHTML = '';
@@ -193,6 +215,10 @@ function renderFitness() {
           <div class="fit-item">${displayItem}</div>
           <div class="fit-goal">${current.Goal || ''}</div>
           ${isOptional ? `<div class="fit-optional">optional — do if you want</div>` : ''}
+          <textarea class="fit-notes-field" id="fit-notes-${current.ID}"
+  placeholder="reps / notes..."
+  onblur="saveFitNotes('${current.ID}', this.value)"
+>${current.Notes || ''}</textarea>
           <div class="fit-actions">
             <button class="fit-done-btn" style="border-color:${color};color:${color}"
               onclick="completeFitStep('${current.Section}', ${current.Order})">
@@ -221,7 +247,7 @@ function renderFitness() {
       </div>
       <span class="fit-progress-label">${done} / ${total}</span>
     </div>
-    <div class="fit-pills">${sectionPills}</div>
+    <div class="fit-pills" style="display:flex;flex-direction:column;align-items:center;gap:4px;">
     ${cardHTML}
   `;
 }

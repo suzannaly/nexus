@@ -896,7 +896,7 @@ body {
 /* ── Self-Care Process ───────────────────────────────────────────── */
 
 #process-section {
-  background-color: #a7abe0;
+  background-color: #9b8fd4;
   padding: 1rem 1rem 0.5rem;
 }
 
@@ -1062,7 +1062,7 @@ body {
 /* ── Fitness / The Mountain ──────────────────────────────────────── */
 
 #fitness-section {
-  background-color: #a3a3e0;
+  background-color: #8fb0d4;;
   padding: 1rem 1rem 0.5rem;
 }
 
@@ -1632,4 +1632,21 @@ body {
   width: 52px;
   height: 52px;
   object-fit: contain;
+}
+.fit-notes-field {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 0.5px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  color: #f0f0f0;
+  font-size: 12px;
+  padding: 7px 10px;
+  resize: none;
+  min-height: 48px;
+  margin-bottom: 10px;
+  font-family: sans-serif;
+}
+.fit-notes-field:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.25);
 }
