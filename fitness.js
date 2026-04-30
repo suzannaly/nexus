@@ -173,7 +173,7 @@ const sectionPills = [...sectionOrder].reverse().map(sec => {
   const width = PILL_WIDTHS[sec] || '100px';
   const secSteps = steps.filter(s => s.Section === sec);
   if (!secSteps.length) {
-    return `<span class="fit-pill" style="width:${width};justify-content:center;${style}">${getSectionEmoji(sec)} ${secDone}/${secSteps.length}</span>`;
+    return `<span class="fit-pill" style="width:${width};justify-content:center;background:#1a1a2a;color:#444;border-color:#333;">${getSectionEmoji(sec)}</span>`;
   }
   const secDone = secSteps.filter(s => completedFitness.has(fitKey(s))).length;
   const color = getSectionColor(sec);
@@ -185,7 +185,7 @@ const sectionPills = [...sectionOrder].reverse().map(sec => {
   } else {
     style = `background:transparent;color:${color};border-color:${color}44;`;
   }
-  return `<span class="fit-pill" style="width:${width};justify-content:center;background:#1a1a2a;color:#444;border-color:#333;">${getSectionEmoji(sec)}</span>`;
+  return `<span class="fit-pill" style="width:${width};justify-content:center;${style}">${getSectionEmoji(sec)} ${secDone}/${secSteps.length}</span>`;
 }).join('');
 
   // Current card
