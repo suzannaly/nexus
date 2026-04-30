@@ -125,12 +125,12 @@ function renderProcess() {
           ${isOpt ? `<div class="prc-optional">optional — do if you want</div>` : ''}
           ${skipTuesdayOnly ? `<div class="prc-optional">Tuesday only — skip today</div>` : ''}
           <div class="prc-actions">
-            <button class="prc-done-btn" style="border-color:${color};color: #1a0a2e;background:${color}88"
-              ✓ done
-            </button>
-            <button class="prc-done-btn" style="border-color:${color};color: #1a0a2e;background:${color}88"
-              skip
-            </button>
+           <button class="prc-done-btn" style="border-color:${color};color:#1a0a2e;background:${color}88" onclick="completeStep(${current.Order})">
+  ✓ done
+</button>
+<button class="prc-skip-btn" style="color:#1a0a2e;border-color:rgba(80,60,120,0.4);background:rgba(180,160,220,0.3)" onclick="skipStep(${current.Order})">
+  skip
+</button>
           </div>
         </div>
       </div>`;

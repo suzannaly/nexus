@@ -151,7 +151,7 @@ function renderFitness() {
     section.innerHTML = `<h2 class="fit-heading">The Mountain</h2><p style="font-size:12px;color:var(--color-text-tertiary);padding:0.5rem 0;">Loading…</p>`;
     return;
   }
-
+const sectionOrder = ['Base Camp', 'Climb', 'Chasm', 'Peak', 'Summit'];
   const steps   = getSessionSteps();
   const total   = steps.length;
   const done    = steps.filter(s => completedFitness.has(fitKey(s))).length;
@@ -247,8 +247,8 @@ const sectionPills = [...sectionOrder].reverse().map(sec => {
       </div>
       <span class="fit-progress-label">${done} / ${total}</span>
     </div>
-    <div class="fit-pills" style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-    ${cardHTML}
+    <div class="fit-pills" style="display:flex;flex-direction:column;align-items:center;gap:4px;">${sectionPills}</div>
+${cardHTML}
   `;
 }
 
