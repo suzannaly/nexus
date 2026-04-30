@@ -532,7 +532,7 @@ body {
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 4px;
-  color: var(--primary);
+  color: var(--bg);
   text-decoration: none;
   font-size: 13px;
   letter-spacing: 0.05em;
@@ -576,7 +576,7 @@ body {
 }
 
 #anchor-close:hover { color: var(--alert); }
-#anchor-body h2 { color: var(--primary); margin-bottom: 12px; letter-spacing: 0.08em; }
+#anchor-body h2 { color: var(--bg); margin-bottom: 12px; letter-spacing: 0.08em; }
 
 /* ── TASKS SECTION ────────────────────────────────────────────────────── */
 #tasks-section {
@@ -1629,7 +1629,7 @@ body {
   box-shadow: 0 0 0 1px var(--primary);
 }
 .money-icon-btn img {
-  width: 26px;
-  height: 26px;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
 }
