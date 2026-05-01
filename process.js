@@ -144,10 +144,12 @@ function renderProcess() {
       </div>
       <span class="prc-progress-label">${done} / ${total}</span>
     </div>
-    
-    ${cardHTML}
+    <div>
     <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png"
       style="max-width: 300px; height: auto; object-fit:cover;border-radius:8px;margin-top:8px;opacity:0.6;">
+      </div>
+    ${cardHTML}
+    
   `;
 }
 
