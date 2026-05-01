@@ -147,7 +147,7 @@ function renderProcess() {
     
     ${cardHTML}
     <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png"
-      style="width:100%;object-fit:cover;border-radius:8px;margin-top:8px;opacity:0.6;">
+      style="max-width: 300px; height: auto; object-fit:cover;border-radius:8px;margin-top:8px;opacity:0.6;">
   `;
 }
 
