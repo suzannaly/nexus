@@ -161,11 +161,11 @@ const sectionOrder = ['Base Camp', 'Climb', 'Chasm', 'Peak', 'Summit'];
 
   // Section progress pills
   const PILL_WIDTHS = {
-  'Summit':   '80px',
-  'Peak':     '95px',
-  'Chasm':    '110px',
+  'Summit':   '50px',
+  'Peak':     '75px',
+  'Chasm':    '100px',
   'Climb':    '125px',
-  'Base Camp':'140px',
+  'Base Camp':'150px',
 };
 
 // Render pills bottom-to-top (Base Camp first in DOM, Summit last)
