@@ -1680,7 +1680,7 @@ body {
 }
 
 #temple-col img {
-  width: 300px;
+  width: auto;
   height: 450px;
   object-fit: cover;
   object-position: bottom;
