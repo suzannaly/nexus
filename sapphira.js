@@ -369,7 +369,7 @@ function renderChatPanel() {
         <div class="sap-header">
           <div class="sap-header-left">
             <div class="sap-avatar">
-              <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sapphira-icon.png" alt="Sapphira">
+              <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sapphira.png" alt="Sapphira">
               <div class="sap-avatar-ring"></div>
             </div>
             <div>
