@@ -1633,7 +1633,7 @@ body {
 }
 .flex-container {
   display: grid;
- grid-template-columns: 1fr 300px 3fr;
+ grid-template-columns: 1fr 310px 2fr;
   border-top: 1px solid var(--border);
 }
 
