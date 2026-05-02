@@ -667,7 +667,7 @@ body {
 }
 
 #money-section {
-  padding: 30px;
+  padding: 100px;
   border-right: 1px solid var(--border);
   background: #DAF6E1;
 }
