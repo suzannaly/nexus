@@ -893,6 +893,7 @@ body {
   transition: background 0.15s;
 }
 .lrn-open-all:hover { background: #122a1e; }
+
 /* ── Self-Care Process ───────────────────────────────────────────── */
 
 #process-section {
@@ -1294,8 +1295,8 @@ body {
 }
 
 .today-tab img {
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   opacity: 0.6;
   transition: opacity 0.15s;
@@ -1632,18 +1633,19 @@ body {
 }
 .flex-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+ grid-template-columns: 1fr 200px 1fr;
   border-top: 1px solid var(--border);
 }
-.money-icon-btn {
+
+css.money-icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--surface2);
+  background: rgba(255,255,255,0.5);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .money-icon-btn:hover {
@@ -1651,10 +1653,11 @@ body {
   box-shadow: 0 0 0 1px var(--primary);
 }
 .money-icon-btn img {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   object-fit: contain;
 }
+
 .fit-notes-field {
   width: 100%;
   background: rgba(255,255,255,0.06);
