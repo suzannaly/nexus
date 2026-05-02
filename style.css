@@ -1679,7 +1679,5 @@ body {
 #temple-col img {
   width: auto;
   height: 450px;
-  object-fit: cover;
-  object-position: bottom;
   opacity: 0.85;
 }
