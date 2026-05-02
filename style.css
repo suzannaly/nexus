@@ -1676,13 +1676,12 @@ body {
   border-color: rgba(255,255,255,0.25);
 }
 #temple-col {
-  overflow: hidden;
-   max-height: 400px;
+   max-height: 450px;
 }
 
 #temple-col img {
-  width: auto;
-  height: 300;
+  width: 300px;
+  height: 450px;
   object-fit: cover;
   object-position: bottom;
   opacity: 0.85;
