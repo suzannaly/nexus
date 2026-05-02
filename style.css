@@ -72,6 +72,27 @@ body {
     transparent
   );
 }
+#sap-bar-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+#sap-bar-btn img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 58% 20%;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+#sap-bar-btn:hover img { opacity: 1; }
 
 /* Two-column layout: content left, portrait right */
 .sap-layout {
