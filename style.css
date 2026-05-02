@@ -1675,9 +1675,6 @@ body {
   outline: none;
   border-color: rgba(255,255,255,0.25);
 }
-#temple-col {
-   max-height: 450px;
-}
 
 #temple-col img {
   width: auto;
