@@ -681,11 +681,10 @@ body {
 }
 .money-icon-btn {
   display: flex;
-  gap: 16px;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.5);
@@ -696,8 +695,8 @@ body {
   box-shadow: 0 0 0 1px var(--primary);
 }
 .money-icon-btn img {
-  width: 56px;
-  height: 56px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
 }
 
