@@ -195,3 +195,20 @@ async function loadTasks() {
 }
 
 loadTasks();
+async function loadBudgetIframe() {
+  try {
+    const res = await fetch(`${GAS_URL}?budget=1`);
+    const { budgetGid, ledgerGid } = await res.json();
+    
+    if (budgetGid) {
+      const iframe = document.querySelector('#sheets-section iframe');
+      if (iframe) {
+        iframe.src = `https://docs.google.com/spreadsheets/d/1XFHp-0PM0pm3Ns4mQerjx9RJiYaUFzGFtxHRe_9cByA/edit?gid=${budgetGid}&single=true&widget=true&headers=false`;
+      }
+    }
+  } catch(e) {
+    console.warn('Budget iframe load failed:', e);
+  }
+}
+
+loadBudgetIframe();
