@@ -1680,4 +1680,5 @@ body {
   width: auto;
   height: 450px;
   opacity: 0.85;
+  object-align: center;
 }
