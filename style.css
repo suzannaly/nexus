@@ -1320,11 +1320,11 @@ body {
 .today-tabs {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   margin-bottom: 12px;
   border-bottom: 0.5px solid rgba(0,0,0,0.08);
   padding-bottom: 8px;
- 
 }
 
 .today-tab {
@@ -1341,8 +1341,6 @@ body {
   width: 64px;
   height: 64px;
   object-fit: contain;
-  align-items: center;
-  gap: 16px;
   opacity: 0.6;
   transition: opacity 0.15s;
 }
