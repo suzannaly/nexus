@@ -360,7 +360,7 @@ function renderChatPanel() {
 
   const messagesHTML = chatHistory.map(m => `
     <div class="sap-chat-msg sap-chat-msg--${m.role}">
-      <div class="sap-chat-bubble">${m.content}</div>
+    <div class="sap-chat-bubble">${m.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
     </div>`).join('');
 
   panel.innerHTML = `
