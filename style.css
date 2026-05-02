@@ -1321,7 +1321,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 32px;
   margin-bottom: 12px;
   border-bottom: 0.5px solid rgba(0,0,0,0.08);
   padding-bottom: 8px;
@@ -1338,10 +1338,10 @@ body {
 }
 
 .today-tab img {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
-  opacity: 0.6;
+  opacity: 1;
   transition: opacity 0.15s;
 }
 
