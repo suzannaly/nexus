@@ -434,17 +434,18 @@ async function sendChatMessage() {
 }
 
 // ── Call GAS chat route ───────────────────────────────────────────────────
-
 async function callChatViaProxy(message) {
   const payload = {
     action: 'chat',
     message,
-    history: chatHistory.slice(-10) // last 10 messages for context
+    history: chatHistory.slice(-10)
   };
-  const encoded = encodeURIComponent(JSON.stringify(payload));
-  const url     = `${SAPPHIRA_GAS}?chat=1&payload=${encoded}`;
-  const res     = await fetch(url);
-  const result  = await res.json();
+  const res = await fetch(SAPPHIRA_GAS, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const result = await res.json();
   if (result.error) throw new Error(result.error);
   return result.reply;
 }
