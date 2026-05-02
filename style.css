@@ -767,7 +767,7 @@ body {
 
 /* Card */
 .lrn-card {
-  background: var(--color-bg-secondary, #c5c5c5);
+  background: var(--color-bg-secondary, #d5e2ec);
   border: 0.5px solid var(--color-border, rgba(255,255,255,0.08));
   border-radius: 10px;
   cursor: pointer;
@@ -832,14 +832,14 @@ body {
 }
 .lrn-bar-label {
   font-size: 10px;
-  color: var(--color-text-tertiary, #666);
+  color: var(--color-text-tertiary, #11abb1);
   margin-bottom: 9px;
 }
 
 /* Week target */
 .lrn-week {
   font-size: 11px;
-  color: var(--color-text-secondary, #aaa);
+  color: var(--color-text-secondary, #0a0000);
   line-height: 1.5;
   padding: 7px 9px;
   background: rgba(255,255,255,0.04);
@@ -851,7 +851,7 @@ body {
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-text-tertiary, #555);
+  color: var(--color-text-tertiary, #0a0000);
   margin-bottom: 4px;
 }
 
@@ -1322,7 +1322,7 @@ body {
   margin-bottom: 12px;
   border-bottom: 0.5px solid rgba(0,0,0,0.08);
   padding-bottom: 8px;
-  align-items: center;
+ 
 }
 
 .today-tab {
@@ -1332,6 +1332,7 @@ body {
   background: transparent;
   cursor: pointer;
   transition: all 0.15s;
+   align-items: center;
 }
 
 .today-tab img {
