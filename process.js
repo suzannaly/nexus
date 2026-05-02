@@ -96,7 +96,7 @@ function renderProcess() {
   const complete = done >= total;
   const pct     = Math.round((done / total) * 100);
 
-  const templeImg = `<img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png" class="prc-card-image" alt="temple">`;
+  
 
   let cardHTML = '';
   if (complete) {
@@ -107,7 +107,7 @@ function renderProcess() {
             <div class="prc-complete-msg">✓ Process complete for today</div>
             <button class="prc-reset-btn" onclick="resetProcess()">reset</button>
           </div>
-          ${templeImg}
+      
         </div>
       </div>`;
   } else if (current) {
@@ -132,7 +132,7 @@ function renderProcess() {
               <button class="prc-skip-btn" style="color:#1a0a2e;border-color:rgba(80,60,120,0.4);background:rgba(180,160,220,0.3)" onclick="skipStep(${current.Order})">skip</button>
             </div>
           </div>
-          ${templeImg}
+  
         </div>
       </div>`;
   }
