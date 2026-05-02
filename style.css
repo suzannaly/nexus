@@ -1703,3 +1703,83 @@ body {
   object-align: center;
   vertical-align: middle;
 }
+/* ── Sapphira chat ───────────────────────────────────────────────────── */
+.sap-chat-messages {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-right: 4px;
+}
+
+.sap-chat-empty {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(147, 209, 237, 0.45);
+}
+
+.sap-chat-msg { display: flex; }
+.sap-chat-msg--user { justify-content: flex-end; }
+.sap-chat-msg--assistant { justify-content: flex-start; }
+
+.sap-chat-bubble {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  line-height: 1.55;
+  padding: 8px 14px;
+  border-radius: 12px;
+  max-width: 85%;
+}
+
+.sap-chat-msg--user .sap-chat-bubble {
+  background: rgba(147, 209, 237, 0.12);
+  border: 1px solid rgba(147, 209, 237, 0.25);
+  color: var(--text);
+}
+
+.sap-chat-msg--assistant .sap-chat-bubble {
+  background: rgba(172, 89, 241, 0.08);
+  border: 1px solid rgba(172, 89, 241, 0.2);
+  color: var(--text);
+}
+
+.sap-chat-typing { color: rgba(147, 209, 237, 0.5); }
+
+.sap-chat-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.sap-chat-input {
+  flex: 1;
+  background: rgba(147, 209, 237, 0.06);
+  border: 1px solid rgba(147, 209, 237, 0.2);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.sap-chat-input:focus { border-color: var(--primary); }
+
+.sap-chat-send {
+  background: rgba(147, 209, 237, 0.1);
+  border: 1px solid rgba(147, 209, 237, 0.25);
+  color: var(--primary);
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.sap-chat-send:hover {
+  background: rgba(147, 209, 237, 0.2);
+  border-color: var(--primary);
+}

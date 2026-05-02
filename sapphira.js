@@ -326,3 +326,125 @@ const payload  = buildPayload(activeTasks, contextMap, todayEvents);
     showError(e.message);
   }
 }
+// ── Chat state ────────────────────────────────────────────────────────────
+
+let chatHistory = [];
+
+// ── Open / switch to chat ─────────────────────────────────────────────────
+
+function openSapphiraChat() {
+  const panel = getPanel();
+
+  if (panel.style.display === 'none' || panel.style.maxHeight === '0px') {
+    // Panel is collapsed — open it in chat mode
+    panel.style.display = 'block';
+    panel.style.opacity = '0';
+    panel.style.maxHeight = '0';
+    panel.style.overflow = 'hidden';
+    panel.style.transition = 'opacity 0.4s ease, max-height 0.5s ease';
+    renderChatPanel();
+    setTimeout(() => {
+      panel.style.opacity = '1';
+      panel.style.maxHeight = '600px';
+    }, 10);
+  } else {
+    // Panel is open (briefing showing) — swap to chat
+    renderChatPanel();
+  }
+}
+
+// ── Render chat panel ─────────────────────────────────────────────────────
+
+function renderChatPanel() {
+  const panel = getPanel();
+
+  const messagesHTML = chatHistory.map(m => `
+    <div class="sap-chat-msg sap-chat-msg--${m.role}">
+      <div class="sap-chat-bubble">${m.content}</div>
+    </div>`).join('');
+
+  panel.innerHTML = `
+    <div class="sap-layout">
+      <div class="sap-inner">
+        <div class="sap-header">
+          <div class="sap-header-left">
+            <div class="sap-avatar">
+              <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sapphira-icon.png" alt="Sapphira">
+              <div class="sap-avatar-ring"></div>
+            </div>
+            <div>
+              <div class="sap-name">Sapphira <span class="sap-name-sep">·</span> <span class="sap-name-sub">chat</span></div>
+              <div class="sap-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+            </div>
+          </div>
+          <div class="sap-header-right">
+            <div class="sap-pulse"></div>
+            <span class="sap-status-label">online</span>
+          </div>
+        </div>
+
+        <div id="sap-chat-messages" class="sap-chat-messages">
+          ${messagesHTML.length ? messagesHTML : '<div class="sap-chat-empty">Ask me anything about today.</div>'}
+        </div>
+
+        <div class="sap-chat-input-row">
+          <input id="sap-chat-input" class="sap-chat-input" type="text" placeholder="Message Sapphira…"
+            onkeydown="if(event.key==='Enter')sendChatMessage()">
+          <button class="sap-chat-send" onclick="sendChatMessage()">→</button>
+        </div>
+
+        <div style="margin-top:10px">
+          <button class="sap-btn-dismiss" onclick="dismissSapphira()">got it</button>
+        </div>
+      </div>
+      <div class="sap-portrait-wrap">
+        <img class="sap-portrait" src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sapphira.png" alt="">
+        <div class="sap-portrait-fade"></div>
+      </div>
+    </div>`;
+}
+
+// ── Send message ──────────────────────────────────────────────────────────
+
+async function sendChatMessage() {
+  const input = document.getElementById('sap-chat-input');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  chatHistory.push({ role: 'user', content: text });
+  renderChatPanel();
+
+  // Show typing indicator
+  const messages = document.getElementById('sap-chat-messages');
+  const typing = document.createElement('div');
+  typing.className = 'sap-chat-msg sap-chat-msg--assistant';
+  typing.innerHTML = '<div class="sap-chat-bubble sap-chat-typing">…</div>';
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const reply = await callChatViaProxy(text);
+    chatHistory.push({ role: 'assistant', content: reply });
+    renderChatPanel();
+  } catch(e) {
+    chatHistory.push({ role: 'assistant', content: 'Something went wrong. Try again.' });
+    renderChatPanel();
+  }
+}
+
+// ── Call GAS chat route ───────────────────────────────────────────────────
+
+async function callChatViaProxy(message) {
+  const payload = {
+    action: 'chat',
+    message,
+    history: chatHistory.slice(-10) // last 10 messages for context
+  };
+  const encoded = encodeURIComponent(JSON.stringify(payload));
+  const url     = `${SAPPHIRA_GAS}?chat=1&payload=${encoded}`;
+  const res     = await fetch(url);
+  const result  = await res.json();
+  if (result.error) throw new Error(result.error);
+  return result.reply;
+}
