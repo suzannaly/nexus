@@ -1677,11 +1677,12 @@ body {
 }
 #temple-col {
   overflow: hidden;
+   max-height: 400px;
 }
 
 #temple-col img {
   width: auto;
-  height: 350;
+  height: 300;
   object-fit: cover;
   object-position: bottom;
   opacity: 0.85;
