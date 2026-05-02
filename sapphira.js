@@ -440,11 +440,9 @@ async function callChatViaProxy(message) {
     message,
     history: chatHistory.slice(-10)
   };
-  const res = await fetch(SAPPHIRA_GAS, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
+  const encoded = encodeURIComponent(JSON.stringify(payload));
+  const url = `${SAPPHIRA_GAS}?chat=1&payload=${encoded}`;
+  const res = await fetch(url);
   const result = await res.json();
   if (result.error) throw new Error(result.error);
   return result.reply;
