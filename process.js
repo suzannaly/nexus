@@ -89,28 +89,30 @@ function renderProcess() {
     return;
   }
 
-  const sorted   = [...processData].sort((a, b) => a.Order - b.Order);
-  const total    = sorted.length;
-  const done     = completedSteps.size;
-  const current  = getCurrentStep();
+  const sorted  = [...processData].sort((a, b) => a.Order - b.Order);
+  const total   = sorted.length;
+  const done    = completedSteps.size;
+  const current = getCurrentStep();
   const complete = done >= total;
+  const pct     = Math.round((done / total) * 100);
 
-  // Progress bar
-  const pct = Math.round((done / total) * 100);
+  const templeImg = `<img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png" class="prc-card-image" alt="temple">`;
 
-   // Current card
   let cardHTML = '';
   if (complete) {
     cardHTML = `
       <div class="prc-card prc-card--complete">
         <div class="prc-card-inner">
-          <div class="prc-complete-msg">✓ Process complete for today</div>
-          <button class="prc-reset-btn" onclick="resetProcess()">reset</button>
+          <div class="prc-card-text">
+            <div class="prc-complete-msg">✓ Process complete for today</div>
+            <button class="prc-reset-btn" onclick="resetProcess()">reset</button>
+          </div>
+          ${templeImg}
         </div>
       </div>`;
   } else if (current) {
-    const color    = getPhaseColor(current.Phase);
-    const isOpt    = current.SessionType === 'optional';
+    const color = getPhaseColor(current.Phase);
+    const isOpt = current.SessionType === 'optional';
     const isTuesday = new Date().getDay() === 2;
     const skipTuesdayOnly = current.Notes && current.Notes.includes('Tuesday') && !isTuesday;
 
@@ -118,20 +120,19 @@ function renderProcess() {
       <div class="prc-card" style="border-color:${color}22">
         <div class="prc-accent" style="background:${color}"></div>
         <div class="prc-card-inner">
-          <div class="prc-phase-label" style="color:${color}">${current.Phase}</div>
-          <div class="prc-step-number">Step ${current.Order} of ${total}</div>
-          <div class="prc-item">${current.Item}</div>
-          ${current.Notes ? `<div class="prc-notes">${current.Notes}</div>` : ''}
-          ${isOpt ? `<div class="prc-optional">optional — do if you want</div>` : ''}
-          ${skipTuesdayOnly ? `<div class="prc-optional">Tuesday only — skip today</div>` : ''}
-          <div class="prc-actions">
-           <button class="prc-done-btn" style="border-color:${color};color:#1a0a2e;background:${color}88" onclick="completeStep(${current.Order})">
-  ✓ done
-</button>
-<button class="prc-skip-btn" style="color:#1a0a2e;border-color:rgba(80,60,120,0.4);background:rgba(180,160,220,0.3)" onclick="skipStep(${current.Order})">
-  skip
-</button>
+          <div class="prc-card-text">
+            <div class="prc-phase-label" style="color:${color}">${current.Phase}</div>
+            <div class="prc-step-number">Step ${current.Order} of ${total}</div>
+            <div class="prc-item">${current.Item}</div>
+            ${current.Notes ? `<div class="prc-notes">${current.Notes}</div>` : ''}
+            ${isOpt ? `<div class="prc-optional">optional — do if you want</div>` : ''}
+            ${skipTuesdayOnly ? `<div class="prc-optional">Tuesday only — skip today</div>` : ''}
+            <div class="prc-actions">
+              <button class="prc-done-btn" style="border-color:${color};color:#1a0a2e;background:${color}88" onclick="completeStep(${current.Order})">✓ done</button>
+              <button class="prc-skip-btn" style="color:#1a0a2e;border-color:rgba(80,60,120,0.4);background:rgba(180,160,220,0.3)" onclick="skipStep(${current.Order})">skip</button>
+            </div>
           </div>
+          ${templeImg}
         </div>
       </div>`;
   }
@@ -144,12 +145,7 @@ function renderProcess() {
       </div>
       <span class="prc-progress-label">${done} / ${total}</span>
     </div>
-    <div>
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png"
-      style="max-width: 300px; height: auto; object-fit:cover;border-radius:8px;margin-top:8px;opacity:0.6;">
-      </div>
     ${cardHTML}
-    
   `;
 }
 

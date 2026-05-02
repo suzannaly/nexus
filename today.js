@@ -24,6 +24,8 @@ const ZONE_IMAGES = {
   'Outside':         `${IMG}energy.png`,
 };
 
+
+
 // ─── State ────────────────────────────────────────────────────────────────────
 let activeTab       = 'calendar';
 let calendarEvents  = [];
@@ -369,7 +371,7 @@ function renderToday() {
   const tabBar = tabs.map(t => `
     <button class="today-tab ${activeTab === t.id ? 'today-tab--active' : ''}"
       onclick="switchTab('${t.id}')">
-      ${t.label}
+      <img src="${IMG}${t.id === 'calendar' ? 'calendar' : t.id === 'chores' ? 'chores' : 'decision'}.png" alt="${t.label}">
     </button>`).join('');
 
   let content = '';

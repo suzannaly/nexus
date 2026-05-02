@@ -689,7 +689,7 @@ body {
 
 /* ── HEALTH ───────────────────────────────────────────────────────────── */
 #health-section {
-  background-color: #ffe2a4;
+  background-color: #FDF2E3;
   padding: 20px;
   border-top: 1px solid var(--border);
 }
@@ -942,6 +942,13 @@ body {
   gap: 6px;
   margin-bottom: 12px;
 }
+.prc-pill {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 2px solid;
+  white-space: nowrap;
+}
 
 /* Current card */
 .prc-card {
@@ -964,7 +971,22 @@ body {
 
 .prc-card-inner {
   padding: 1rem 1rem 1rem 1.2rem;
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 12px;
+  align-items: start;
 }
+.prc-card-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  object-position: bottom;
+  border-radius: 8px;
+  opacity: 0.75;
+  grid-row: 1 / -1;
+  align-self: center;
+}
+.prc-card-text { min-width: 0; }
 
 .prc-phase-label {
   font-size: 10px;
@@ -1138,7 +1160,7 @@ body {
   font-size: 16px;
   padding: 3px 8px;
   border-radius: 20px;
-  border: 0.5px solid;
+  border: 2px solid;
   white-space: nowrap;
   text-align: center;
 }
@@ -1248,46 +1270,45 @@ body {
 .fit-reset-btn:hover {
   background: #122a1e;
 }
-/* ── Today Section ───────────────────────────────────────────────── */
-
 #today-section {
   padding: 0.75rem 1rem 0.5rem;
-  background: #0F144A;
+  background: #FDE7E7;
   color: #F5F7FF;
 }
 
-/* Tab bar */
 .today-tabs {
   display: flex;
   gap: 4px;
   margin-bottom: 12px;
-  border-bottom: 0.5px solid rgba(255,255,255,0.08);
+  border-bottom: 0.5px solid rgba(0,0,0,0.08);
   padding-bottom: 8px;
 }
 
 .today-tab {
-  font-size: 13px;
-  padding: 7px 18px;
-  border-radius: 20px;
+  padding: 6px 10px;
+  border-radius: 10px;
   border: 0.5px solid transparent;
   background: transparent;
-  color: #AAB3FF;
   cursor: pointer;
   transition: all 0.15s;
 }
-.today-tab:hover {
-  color: #F5F7FF;
-  background: rgba(255,255,255,0.04);
+
+.today-tab img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  opacity: 0.6;
+  transition: opacity 0.15s;
 }
+
+.today-tab:hover img { opacity: 0.9; }
+
 .today-tab--active {
-  background: #1E2A8A;
-  color: #93D1ED;
+  background: rgba(30, 42, 138, 0.12);
   border-color: #5A6BFF;
 }
 
-.today-content {
-  min-height: 200px;
-}
+.today-tab--active img { opacity: 1; }
 
 /* ── Calendar ────────────────────────────────────────────────────── */
 
