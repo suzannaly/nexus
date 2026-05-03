@@ -372,10 +372,10 @@ function renderChatPanel() {
       <div class="sap-inner">
         <div class="sap-header">
           <div class="sap-header-left">
-            <div class="sap-avatar">
-              <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sapphira.png" alt="Sapphira">
-              <div class="sap-avatar-ring"></div>
-            </div>
+            <div class="sap-avatar" onclick="resetSapphira()" title="Refresh Sapphira" style="cursor:pointer">
+  <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sapphira.png" alt="Sapphira">
+  <div class="sap-avatar-ring"></div>
+</div>
             <div>
               <div class="sap-name">Sapphira <span class="sap-name-sep">·</span> <span class="sap-name-sub">chat</span></div>
               <div class="sap-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
@@ -450,4 +450,10 @@ async function callChatViaProxy(message) {
   const result = await res.json();
   if (result.error) throw new Error(result.error);
   return result.reply;
+}
+// ── Reset Sapphira ───────────────────────────────────────────────────
+function resetSapphira() {
+  sessionStorage.removeItem('sapphira-cache');
+  sessionStorage.removeItem('sapphira-cache-date');
+  askSapphira();
 }
