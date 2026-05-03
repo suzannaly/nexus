@@ -408,7 +408,7 @@ await fetch(
   '&matchColumn=ID' +
   '&matchValue=' + encodeURIComponent(id) +
   '&updates=' + encodeURIComponent(JSON.stringify({ Done: 'TRUE' })),
-  { method: 'GET' }
+  { method: 'GET', mode: 'no-cors' }
 );
   } catch(err) {
     console.warn('today.js: task complete write-back failed', err);
