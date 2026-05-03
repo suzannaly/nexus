@@ -138,16 +138,14 @@ function isThisMonth(dateStr) {
 async function completeChore(list, zone, item) {
   completedChores.add(`${list}-${zone}-${item}`);
   try {
-    await fetch(TODAY_GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tab: 'Chores',
-        matchColumn: 'Item',
-        matchValue: item,
-        updates: { LastDone: getTodayDate_chores(), Status: 'done' }
-      })
-    });
+    await fetch(
+  TODAY_GAS_URL +
+  '?tab=Chores' +
+  '&matchColumn=Item' +
+  '&matchValue=' + encodeURIComponent(item) +
+  '&updates=' + encodeURIComponent(JSON.stringify({ LastDone: getTodayDate_chores(), Status: 'done' })),
+  { method: 'GET', mode: 'no-cors' }
+);
   } catch (err) {
     console.warn('today.js: chore write-back failed', err);
   }
@@ -440,7 +438,7 @@ async function addTask() {
   TODAY_GAS_URL +
   '?tab=Tasks' +
   '&row=' + encodeURIComponent(JSON.stringify(newTask)),
-  { method: 'GET' }
+  { method: 'GET', mode: 'no-cors' }
 );
   } catch(err) {
     console.warn('today.js: task add failed', err);
