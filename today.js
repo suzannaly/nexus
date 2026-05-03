@@ -404,16 +404,14 @@ async function completeTask(id, title) {
   completedTasks.add(String(id));
   renderToday();
   try {
-    await fetch(TODAY_GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tab: 'Tasks',
-        matchColumn: 'ID',
-        matchValue: id,
-        updates: { Done: 'TRUE' }
-      })
-    });
+await fetch(
+  TODAY_GAS_URL +
+  '?tab=Tasks' +
+  '&matchColumn=ID' +
+  '&matchValue=' + encodeURIComponent(id) +
+  '&updates=' + encodeURIComponent(JSON.stringify({ Done: 'TRUE' })),
+  { method: 'GET' }
+);
   } catch(err) {
     console.warn('today.js: task complete write-back failed', err);
   }
@@ -438,14 +436,12 @@ async function addTask() {
   renderToday();
 
   try {
-    await fetch(TODAY_GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tab: 'Tasks',
-        row: newTask
-      })
-    });
+    await fetch(
+  TODAY_GAS_URL +
+  '?tab=Tasks' +
+  '&row=' + encodeURIComponent(JSON.stringify(newTask)),
+  { method: 'GET' }
+);
   } catch(err) {
     console.warn('today.js: task add failed', err);
   }
