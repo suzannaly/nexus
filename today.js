@@ -358,9 +358,9 @@ let completedTasks = new Set();
 function renderTasksTab() {
   const order = JSON.parse(localStorage.getItem('nexus-task-order') || '[]');
   let active = tasksData.filter(t => {
-    const done = String(t.Done).toUpperCase().trim();
-    return done !== 'TRUE' && done !== '1' && t.Title && !completedTasks.has(t.ID);
-  });
+  const done = String(t.Done).toUpperCase().trim();
+  return done !== 'TRUE' && done !== '1' && t.Title && !completedTasks.has(String(t.ID));
+});
 
   if (order.length) {
     active.sort((a, b) => {
@@ -400,8 +400,8 @@ function renderTasksTab() {
 }
 
 // ── Complete task ─────────────────────────────────────────────────────────
-async function completeTask(id, title) {
-  completedTasks.add(id);
+aasync function completeTask(id, title) {
+  completedTasks.add(String(id));
   renderToday();
   try {
     await fetch(TODAY_GAS_URL, {
