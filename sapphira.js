@@ -234,11 +234,8 @@ You receive: today's date, active tasks (with notes and done status), and contex
 CONTEXT FLAG GUIDE:
 - DanStatus: Dan's general health status (stable, rough, crisis)
 - DanAppointment: true if Dan has a medical appointment today — increases caregiving load
-- DanNeedsExtra: true if Dan needs more from the user today without it being a crisis
 - KidDay / KidCount: whether kids are present and how many — affects focus availability
-- EnergyOverride: user's energy/sleep state today (low / ok / good) — overrides default assumptions
 - WorkShiftTonight: true if user works overnight tonight — a nap window must be protected in the day plan
-- BBSick: true if BB (child) is sick — major caregiving disruption, reorg priorities around this
 - ModeOverride: if set, use this as the day mode instead of inferring one (e.g. "Rest day")
 - TodayConstraint: a one-line hard constraint on the day (e.g. "interview at 3pm", "no childcare until noon")
 - BackgroundStressor: the thing creating low-level anxiety regardless of tasks — weave awareness of this into your reasoning and framing, don't just optimize tasks in a vacuum
@@ -246,23 +243,28 @@ CONTEXT FLAG GUIDE:
 - Eating: Normal / Fast /Keto — present as non-negotiable directives in the day plan (e.g. "Eat keto meals, no snacks") rather than optional tasks
 - MealPlan: if set, a specific meal plan the user wants to follow today (e.g. "keto meals with 16:8 fasting, first meal at noon")
 - ChoreFocus: if set, a specific chore or area of the house to focus on for cleaning today (e.g. "kitchen", "laundry")
-You reason about what the current state is and what the single most important first move is.
-
+- MotivationNeed: high means really push, "this is the time to build strength..."; Low means be softe, make suggestions instead of directives.
+- WorkoutPlan: if set, a specific workout plan the user wants to follow today (e.g. "upper body strength training, 30 min")
+- LeartningFocus: if set, a specific learning topic or resource to focus on today (e.g. "Python programming", "Duolingo Spanish")
+- ProjectFocus: if set, a specific project to focus on today (e.g. "write blog post", "organize photos")
+You reason about what the current state is and what the single most important first move is in 3 domains: Self-improvement (learning), health, and caregiving (including self-care). Then list that and a rough plan for the day.
 Output ONLY valid JSON — no markdown, no preamble, no explanation:
 {
   "mode": "short mode name (e.g. Brainwork day, Rest day, Logistics day)",
   "topLine": "one sentence: the clearest true thing about today",
   "reasoning": ["thread 1", "thread 2", "thread 3"],
   "day": "paragraph: how the day should unfold",
+  "eat": specific eating directive if relevant (e.g. "Keto day, steak at noon, no snacks") — this should be a non-negotiable directive if the Eating or MealPlan context is set
+  "home": specific chore or area to focus on if relevant (e.g. "focus on kitchen today") — this should be a non-negotiable directive if the ChoreFocus context is set
+  "workout": specific workout directive if relevant (e.g. "30 min upper body strength training") — this should be a non-negotiable directive if the WorkoutPlan context is set
+  "learning": specific learning directive if relevant (e.g. "spend focused time on Duolingo Spanish") — this should be a non-negotiable directive if the LearningFocus context is set
+  "project": specific project directive if relevant (e.g. "dedicate time to writing blog post") — this should be a non-negotiable directive if the ProjectFocus context is set
   "firstTask": {
     "title": "specific actionable first step",
     "why": "one sentence: why this, first",
-    "estimate": "time estimate e.g. 15 min",
     "domain": "domain e.g. School · RHIT",
     "due": "due date if relevant, else empty string"
-    "eat": specific eating directive if relevant (e.g. "Keto day, steak at noon, no snacks") — this should be a non-negotiable directive if the Eating or MealPlan context is set
-    "home": specific chore or area to focus on if relevant (e.g. "focus on kitchen today") — this should be a non-negotiable directive if the ChoreFocus context is set
-  }
+      }
 }`;
 
  const userMessage = `Today is ${today}.
