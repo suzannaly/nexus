@@ -1582,17 +1582,17 @@ body {
 }
 
 .chore-chevron--sm {
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .chore-group-title {
-  font-size: 14px;
+  font-size: 28px;
   font-weight: 500;
   color: #F5F7FF;
 }
 
 .chore-group-count {
-  font-size: 11px;
+  font-size: 18px;
   color: #AAB3FF;
   flex-shrink: 0;
 }
@@ -1636,13 +1636,13 @@ body {
 }
 
 .chore-zone-label-text {
-  font-size: 12px;
+  font-size: 20px;
   color: #C9D1FF;
   flex: 1;
 }
 
 .chore-zone-count {
-  font-size: 10px;
+  font-size: 14px;
   color: #AAB3FF;
   flex-shrink: 0;
 }
@@ -1667,14 +1667,14 @@ body {
 .chore-check-item--done { opacity: 0.45; }
 
 .chore-check-box {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   border: 1px solid #5A6BFF;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 18px;
   color: #6fcf97;
   flex-shrink: 0;
   background: #0F144A;
@@ -1685,7 +1685,7 @@ body {
 }
 
 .chore-check-label {
-  font-size: 12px;
+  font-size: 18px;
   color: #F5F7FF;
   line-height: 1.3;
 }
