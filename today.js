@@ -422,29 +422,31 @@ async function addTask() {
   if (!title) return;
   input.value = '';
 
+  const maxId = tasksData.reduce((max, t) => Math.max(max, Number(t.ID) || 0), 0);
+
   const newTask = {
-  Title: title,
-  Done: 'FALSE',
-  Priority: '',
-  Category: '',
-  Notes: ''
-};
+    ID: maxId + 1,
+    Title: title,
+    Done: 'FALSE',
+    Priority: '',
+    Category: '',
+    Notes: ''
+  };
 
   tasksData.push(newTask);
   renderToday();
 
   try {
     await fetch(
-  TODAY_GAS_URL +
-  '?tab=Tasks' +
-  '&row=' + encodeURIComponent(JSON.stringify(newTask)),
-  { method: 'GET', mode: 'no-cors' }
-);
+      TODAY_GAS_URL +
+      '?tab=Tasks' +
+      '&row=' + encodeURIComponent(JSON.stringify(newTask)),
+      { method: 'GET', mode: 'no-cors' }
+    );
   } catch(err) {
     console.warn('today.js: task add failed', err);
   }
 }
-
 // ══════════════════════════════════════════════════════════════════════════════
 // MAIN RENDER
 // ══════════════════════════════════════════════════════════════════════════════
