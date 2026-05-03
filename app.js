@@ -197,7 +197,7 @@ async function loadTasks() {
 loadTasks();
 async function loadBudgetIframe() {
   try {
-    const res = await fetch(`${GAS_URL}?budget=1`);
+    const res = await fetch(`${TODAY_GAS_URL}?budget=1`);
     const { budgetGid, ledgerGid } = await res.json();
     
     if (budgetGid) {
