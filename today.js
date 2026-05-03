@@ -492,14 +492,11 @@ function renderToday() {
 
 async function initToday() {
   renderToday();
-const [calRes, choreRes, taskRes] = await Promise.allSettled([
-  fetch(`${TODAY_GAS_URL}?calendar=1`),
-  fetch(`${TODAY_GAS_URL}?tab=Chores`),
-  fetch(`${TODAY_GAS_URL}?tab=Tasks`)
-]);
-  const [calRes, choreRes] = await Promise.allSettled([
+
+  const [calRes, choreRes, taskRes] = await Promise.allSettled([
     fetch(`${TODAY_GAS_URL}?calendar=1`),
-    fetch(`${TODAY_GAS_URL}?tab=Chores`)
+    fetch(`${TODAY_GAS_URL}?tab=Chores`),
+    fetch(`${TODAY_GAS_URL}?tab=Tasks`)
   ]);
 
   if (calRes.status === 'fulfilled') {
@@ -515,11 +512,13 @@ const [calRes, choreRes, taskRes] = await Promise.allSettled([
       if (!Array.isArray(choresData)) choresData = [];
     } catch { choresData = []; }
   }
-if (taskRes.status === 'fulfilled') {
-  try {
-    tasksData = await taskRes.value.json();
-    if (!Array.isArray(tasksData)) tasksData = [];
-  } catch { tasksData = []; }
-}
+
+  if (taskRes.status === 'fulfilled') {
+    try {
+      tasksData = await taskRes.value.json();
+      if (!Array.isArray(tasksData)) tasksData = [];
+    } catch { tasksData = []; }
+  }
+
   renderToday();
 }
