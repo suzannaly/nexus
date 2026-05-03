@@ -400,7 +400,7 @@ function renderTasksTab() {
 }
 
 // ── Complete task ─────────────────────────────────────────────────────────
-aasync function completeTask(id, title) {
+async function completeTask(id, title) {
   completedTasks.add(String(id));
   renderToday();
   try {
