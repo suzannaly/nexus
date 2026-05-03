@@ -453,7 +453,7 @@ async function callChatViaProxy(message) {
 }
 // ── Reset Sapphira ───────────────────────────────────────────────────
 function resetSapphira() {
-  sessionStorage.removeItem('sapphira-cache');
-  sessionStorage.removeItem('sapphira-cache-date');
-  askSapphira();
+  localStorage.removeItem('sapphira-cache');
+  localStorage.removeItem('sapphira-cache-date');
+  initSapphira();
 }
