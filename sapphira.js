@@ -243,6 +243,7 @@ CONTEXT FLAG GUIDE:
 - TodayConstraint: a one-line hard constraint on the day (e.g. "interview at 3pm", "no childcare until noon")
 - BackgroundStressor: the thing creating low-level anxiety regardless of tasks — weave awareness of this into your reasoning and framing, don't just optimize tasks in a vacuum
 - Note: freeform context from the user
+- Eating: Normal / Fast /Keto — present as non-negotiable directives in the day plan (e.g. "Eat keto meals, no snacks") rather than optional tasks
 
 You reason about what kind of day this is and what the single most important first move is.
 

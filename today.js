@@ -350,8 +350,105 @@ function renderChores() {
 // TASKS
 // ══════════════════════════════════════════════════════════════════════════════
 
+// ── Task state ────────────────────────────────────────────────────────────
+let tasksData = [];
+let completedTasks = new Set();
+
+// ── Render tasks tab ──────────────────────────────────────────────────────
 function renderTasksTab() {
-  return `<div id="task-preview"></div>`;
+  const order = JSON.parse(localStorage.getItem('nexus-task-order') || '[]');
+  let active = tasksData.filter(t => {
+    const done = String(t.Done).toUpperCase().trim();
+    return done !== 'TRUE' && done !== '1' && t.Title && !completedTasks.has(t.ID);
+  });
+
+  if (order.length) {
+    active.sort((a, b) => {
+      const ai = order.indexOf(a.ID);
+      const bi = order.indexOf(b.ID);
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    });
+  }
+
+  const half = Math.ceil(active.length / 2);
+  const col1 = active.slice(0, half);
+  const col2 = active.slice(half);
+
+  const renderCol = (tasks) => tasks.map(t => `
+    <div class="task-item" onclick="completeTask('${t.ID}', '${escHtml(t.Title)}')">
+      <div class="task-check-box"></div>
+      <div class="task-item-body">
+        <div class="task-item-title">${escHtml(t.Title)}</div>
+        ${t.Priority ? `<span class="task-item-priority priority-${t.Priority.toLowerCase()}">${t.Priority}</span>` : ''}
+      </div>
+    </div>`).join('');
+
+  return `
+    <div class="task-add-row">
+      <input id="task-new-input" class="task-new-input" type="text" placeholder="Add a task…"
+        onkeydown="if(event.key==='Enter')addTask()">
+      <button class="task-new-btn" onclick="addTask()">+</button>
+    </div>
+    <div class="task-two-col">
+      <div class="task-col">${col1.length ? renderCol(col1) : ''}</div>
+      <div class="task-col">${col2.length ? renderCol(col2) : ''}</div>
+    </div>
+    ${active.length === 0 ? '<div class="task-preview-empty">no tasks queued</div>' : ''}
+  `;
+}
+
+// ── Complete task ─────────────────────────────────────────────────────────
+async function completeTask(id, title) {
+  completedTasks.add(id);
+  renderToday();
+  try {
+    await fetch(TODAY_GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tab: 'Tasks',
+        matchColumn: 'ID',
+        matchValue: id,
+        updates: { Done: 'TRUE' }
+      })
+    });
+  } catch(err) {
+    console.warn('today.js: task complete write-back failed', err);
+  }
+}
+
+// ── Add task ──────────────────────────────────────────────────────────────
+async function addTask() {
+  const input = document.getElementById('task-new-input');
+  const title = input.value.trim();
+  if (!title) return;
+  input.value = '';
+
+  const newTask = {
+  Title: title,
+  Done: 'FALSE',
+  Priority: '',
+  Category: '',
+  Notes: ''
+};
+
+  tasksData.push(newTask);
+  renderToday();
+
+  try {
+    await fetch(TODAY_GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tab: 'Tasks',
+        row: newTask
+      })
+    });
+  } catch(err) {
+    console.warn('today.js: task add failed', err);
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -395,7 +492,11 @@ function renderToday() {
 
 async function initToday() {
   renderToday();
-
+const [calRes, choreRes, taskRes] = await Promise.allSettled([
+  fetch(`${TODAY_GAS_URL}?calendar=1`),
+  fetch(`${TODAY_GAS_URL}?tab=Chores`),
+  fetch(`${TODAY_GAS_URL}?tab=Tasks`)
+]);
   const [calRes, choreRes] = await Promise.allSettled([
     fetch(`${TODAY_GAS_URL}?calendar=1`),
     fetch(`${TODAY_GAS_URL}?tab=Chores`)
@@ -414,6 +515,11 @@ async function initToday() {
       if (!Array.isArray(choresData)) choresData = [];
     } catch { choresData = []; }
   }
-
+if (taskRes.status === 'fulfilled') {
+  try {
+    tasksData = await taskRes.value.json();
+    if (!Array.isArray(tasksData)) tasksData = [];
+  } catch { tasksData = []; }
+}
   renderToday();
 }
