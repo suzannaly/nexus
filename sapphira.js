@@ -292,13 +292,13 @@ Deliver the reading.`;
 // ── Call Claude via GAS proxy ─────────────────────────────────────────────
 
 async function callClaudeViaProxy(payload) {
-  const encoded = encodeURIComponent(JSON.stringify(payload));
-  const url     = `${SAPPHIRA_GAS}?sapphira=1&payload=${encoded}`;
-  const res     = await fetch(url);
-  const result  = await res.json();
-
+  const res = await fetch(SAPPHIRA_GAS, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ sapphira: 1, payload })
+  });
+  const result = await res.json();
   if (result.error) throw new Error(result.error);
-
   const text = result.content?.[0]?.text || '';
   return JSON.parse(text.replace(/```json|```/g, '').trim());
 }
