@@ -298,6 +298,9 @@ async function callClaudeViaProxy(payload) {
     body: JSON.stringify({ sapphira: 1, payload })
   });
   const result = await res.json();
+  console.log('RAW RESULT:', result);
+  console.log('RAW REPLY:', result.reply);
+  const result = await res.json();
   if (result.error) throw new Error(result.error);
   const text = result.content?.[0]?.text || '';
   return JSON.parse(text.replace(/```json|```/g, '').trim());
@@ -452,10 +455,7 @@ async function callChatViaProxy(message) {
     body: JSON.stringify(payload)
   });
   
-  const result = await res.json();
-  console.log('RAW RESULT:', result);
-  console.log('RAW REPLY:', result.reply);
-  
+   
   if (result.error) throw new Error(result.error);
   
   let reply = result.reply;
