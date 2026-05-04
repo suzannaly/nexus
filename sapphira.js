@@ -366,7 +366,7 @@ function renderChatPanel() {
 
   const messagesHTML = chatHistory.map(m => `
     <div class="sap-chat-msg sap-chat-msg--${m.role}">
-    <div class="sap-chat-bubble">${m.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
+    <div class="sap-chat-bubble">${String(m.content || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
     </div>`).join('');
 
   panel.innerHTML = `
@@ -431,7 +431,7 @@ async function sendChatMessage() {
 
   try {
     const reply = await callChatViaProxy(text);
-    chatHistory.push({ role: 'assistant', content: reply });
+    chatHistory.push({ role: 'assistant', content: String(reply) })
     renderChatPanel();
   } catch(e) {
     chatHistory.push({ role: 'assistant', content: 'Something went wrong. Try again.' });
