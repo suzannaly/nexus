@@ -446,13 +446,42 @@ async function callChatViaProxy(message) {
     message,
     history: chatHistory.slice(-10)
   };
-  const encoded = encodeURIComponent(JSON.stringify(payload));
-  const url = `${SAPPHIRA_GAS}?chat=1&payload=${encoded}`;
-  const res = await fetch(url);
+  const res = await fetch(SAPPHIRA_GAS, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  });
   const result = await res.json();
   if (result.error) throw new Error(result.error);
-  return result.reply;
+  
+  let reply = result.reply;
+  let actions = [];
+  
+  try {
+    const parsed = JSON.parse(reply);
+    if (parsed.reply) {
+      reply = parsed.reply;
+      actions = parsed.actions || [];
+    }
+  } catch(e) {}
+  
+  if (actions.length > 0) {
+    await Promise.all(actions.map(a =>
+      fetch(SAPPHIRA_GAS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'updateContext',
+          key: a.key,
+          value: a.value
+        })
+      })
+    ));
+  }
+  
+  return { reply, actions };
 }
+
 // ── Reset Sapphira ───────────────────────────────────────────────────
 function resetSapphira() {
   localStorage.removeItem('sapphira-cache');
