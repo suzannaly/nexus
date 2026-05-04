@@ -290,16 +290,12 @@ Deliver the reading.`;
 }
 
 // ── Call Claude via GAS proxy ─────────────────────────────────────────────
-
 async function callClaudeViaProxy(payload) {
   const res = await fetch(SAPPHIRA_GAS, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ sapphira: 1, payload })
   });
-  const result = await res.json();
-  console.log('RAW RESULT:', result);
-  console.log('RAW REPLY:', result.reply);
   const result = await res.json();
   if (result.error) throw new Error(result.error);
   const text = result.content?.[0]?.text || '';
@@ -454,21 +450,27 @@ async function callChatViaProxy(message) {
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(payload)
   });
-  
-   
+
+  const result = await res.json();
+  console.log('RAW RESULT:', result);
+
   if (result.error) throw new Error(result.error);
-  
+
   let reply = result.reply;
   let actions = [];
-  
+
   try {
-    const parsed = JSON.parse(reply);
+    const cleaned = reply.replace(/```json|```/g, '').trim();
+    console.log('CLEANED:', cleaned);
+    const parsed = JSON.parse(cleaned);
     if (parsed.reply) {
       reply = parsed.reply;
       actions = parsed.actions || [];
     }
-  } catch(e) {}
-  
+  } catch(e) {
+    console.log('PARSE ERROR:', e);
+  }
+
   if (actions.length > 0) {
     await Promise.all(actions.map(a =>
       fetch(SAPPHIRA_GAS, {
@@ -482,13 +484,41 @@ async function callChatViaProxy(message) {
       })
     ));
   }
-  
+
   return { reply, actions };
 }
 
-// ── Reset Sapphira ───────────────────────────────────────────────────
-function resetSapphira() {
-  localStorage.removeItem('sapphira-cache');
-  localStorage.removeItem('sapphira-cache-date');
-  initSapphira();
+// ── Send message ──────────────────────────────────────────────────────────
+async function sendChatMessage() {
+  const input = document.getElementById('sap-chat-input');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  chatHistory.push({ role: 'user', content: text });
+  renderChatPanel();
+
+  const messages = document.getElementById('sap-chat-messages');
+  const typing = document.createElement('div');
+  typing.className = 'sap-chat-msg sap-chat-msg--assistant';
+  typing.innerHTML = '<div class="sap-chat-bubble sap-chat-typing">…</div>';
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const { reply, actions } = await callChatViaProxy(text);
+
+    let displayReply = reply;
+    if (actions && actions.length > 0) {
+      const updates = actions.map(a => `${a.key} → ${a.value}`).join(', ');
+      displayReply += `\n\n*Updated: ${updates}*`;
+    }
+
+    chatHistory.push({ role: 'assistant', content: displayReply });
+    renderChatPanel();
+  } catch(e) {
+    console.log('SEND ERROR:', e);
+    chatHistory.push({ role: 'assistant', content: 'Something went wrong. Try again.' });
+    renderChatPanel();
+  }
 }
