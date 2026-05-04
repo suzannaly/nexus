@@ -451,7 +451,11 @@ async function callChatViaProxy(message) {
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(payload)
   });
+  
   const result = await res.json();
+  console.log('RAW RESULT:', result);
+  console.log('RAW REPLY:', result.reply);
+  
   if (result.error) throw new Error(result.error);
   
   let reply = result.reply;
