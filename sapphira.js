@@ -207,7 +207,9 @@ function buildPayload(activeTasks, contextMap, todayEvents) {
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   });
-
+  const timeStr = new Date().toLocaleTimeString('en-US', { 
+  hour: 'numeric', minute: '2-digit', hour12: true 
+});
   const taskList = activeTasks.slice(0, 12).map((t, i) =>
   `${i + 1}. ${t.Title}` +
   (t.Priority ? ` [${t.Priority}]` : '') +
@@ -267,8 +269,7 @@ Output ONLY valid JSON — no markdown, no preamble, no explanation:
       }
 }`;
 
- const userMessage = `Today is ${today}.
-
+ const userMessage = `Today is ${today} at ${timeStr}.`
 ACTIVE TASKS:
 ${taskList || 'No active tasks.'}
 
