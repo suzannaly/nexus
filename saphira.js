@@ -77,7 +77,7 @@ function renderBriefing(data) {
         <div class="sap-header">
           <div class="sap-header-left">
             <div class="sap-avatar">
-              <img src="images/Saphira.png" alt="Saphira"
+              <img src="images/saphira.png" alt="Saphira"
                 onerror="this.style.display='none'">
               <div class="sap-avatar-ring"></div>
             </div>
