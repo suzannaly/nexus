@@ -227,47 +227,165 @@ function buildPayload(activeTasks, contextMap, todayEvents) {
         return `[${ev.calendar}] ${ev.title} · ${start}${end}${ev.location ? ' · ' + ev.location : ''}`;
       }).join('\n')
     : 'No events today.';
-  const systemPrompt = `You are Saphira — a calm, stoic, precise daily orientation engine and mentor for a personal operating system called Nexus. You are not a chatbot. You deliver clear status readings.
+  function buildSaphiraContext(data) {
+  // data is an object with keys mapped from your Nexus sheet
 
-The user is autistic, a morning person, works overnight warehouse shifts Thu–Sat, and is sharpest 6–10am Mon/Tue. They are managing caregiving for family members (Dan, who is finishing cancer treatment) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
+  const date = data["DATE"] || "";
 
+  // Me
+  const motivationNeed = data["MotivationNeed"] || "";
+  const todayConstraint = data["TodayConstraint"] || "";
+  const backgroundStressor = data["BackgroundStressor"] || "";
+  const modeOverride = data["ModeOverride"] || "";
+  const note = data["Note"] || "";
+
+  // Care
+  const danStatus = data["DanStatus"] || "";
+  const danNeeds = data["DanNeeds"] || "";
+  const kidCount = data["KidCount"] || 0;
+  const kidDay = data["KidDay"] || "NO";
+
+  // Work
+  const workShiftTonight = data["WorkShiftTonight"] || "NO";
+  const shiftStart = data["ShiftStart"] || "";
+  const shiftEnd = data["ShiftEnd"] || "";
+
+  // Money
+  const billsToday = data["BillsToday"] || 0;
+  const billsTomorrow = data["BillsTomorrow"] || 0;
+  const bookkeepingLastDone = data["BookkeepingLastDone"] || "";
+
+  // School
+  const learningFocus = data["LearningFocus"] || "";
+  const learningWeekTarget = data["LearningWeekTarget"] || "";
+  const learningPressureLevel = data["LearningPressureLevel"] || "";
+  const projectFocus = data["ProjectFocus"] || "";
+
+  // Home
+  const lastDailyTidy = data["LastDailyTidy"] || "";
+  const choreFocus = data["ChoreFocus"] || "";
+  const wheelFocus = data["WheelFocus"] || "";
+
+  // Health
+  const processComplete = data["ProcessComplete"] || false;
+  const workoutDone = data["WorkoutDone"] || false;
+  const sleepHours = data["SleepHours"] || "";
+  const meds = data["Meds"] || "";
+  const schedule = data["Schedule"] || "";
+  const workoutPlan = data["WorkoutPlan"] || "";
+  const planStart = data["PlanStart"] || "";
+  const mealPlan = data["MealPlan"] || "";
+  const eating = data["Eating"] || "";
+  const eatTime = data["EatTime"] || "";
+
+  const contextBlock = `
+DATE: ${date}
+
+--- ME ---
+MotivationNeed: ${motivationNeed}
+TodayConstraint: ${todayConstraint}
+BackgroundStressor: ${backgroundStressor}
+ModeOverride: ${modeOverride}
+Note: ${note}
+
+--- CARE ---
+DanStatus: ${danStatus}
+DanNeeds: ${danNeeds}
+KidDay: ${kidDay}
+KidCount: ${kidCount}
+
+--- WORK ---
+WorkShiftTonight: ${workShiftTonight}
+ShiftStart: ${shiftStart}
+ShiftEnd: ${shiftEnd}
+
+--- MONEY ---
+BillsToday: ${billsToday}
+BillsTomorrow: ${billsTomorrow}
+BookkeepingLastDone: ${bookkeepingLastDone}
+
+--- SCHOOL ---
+LearningFocus: ${learningFocus}
+LearningWeekTarget: ${learningWeekTarget}
+LearningPressureLevel: ${learningPressureLevel}
+ProjectFocus: ${projectFocus}
+
+--- HOME ---
+LastDailyTidy: ${lastDailyTidy}
+ChoreFocus: ${choreFocus}
+WheelFocus: ${wheelFocus}
+
+--- HEALTH ---
+ProcessComplete: ${processComplete}
+WorkoutDone: ${workoutDone}
+SleepHours: ${sleepHours}
+Meds: ${meds}
+Schedule: ${schedule}
+WorkoutPlan: ${workoutPlan}
+PlanStart: ${planStart}
+MealPlan: ${mealPlan}
+Eating: ${eating}
+EatTime: ${eatTime}
+`.trim();
+
+  return contextBlock;
+}
+
+const systemPrompt = `You are Saphira — a calm, stoic, precise daily orientation engine and mentor for a personal operating system called Nexus. You are not a chatbot. You deliver clear status readings.
+The user is autistic, a morning person, works overnight warehouse shifts Thu–Sat, and is sharpest 6–10am Mon/Tue. They are managing caregiving for family members (Primarily Dan, who has Cancer) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
 You receive: today's date, active tasks (with notes and done status), and context flags. Use ALL context flags in your reasoning.
 
 CONTEXT FLAG GUIDE:
-- DanStatus: Dan's general health status (stable, rough, crisis)
-- DanAppointment: true if Dan has a medical appointment today — increases caregiving load
+- DanStatus: Dan's general health status (stable, under but okay, sick)
+- DanNeeds: specific needs ANYONE -not just dan- has today (tasks, time, other)
 - KidDay / KidCount: whether kids are present and how many — affects focus availability
-- WorkShiftTonight: true if user works overnight tonight — a nap window must be protected in the day plan
+- WorkShiftTonight: true if user works overnight tonight — will be 2 scheduled sleep times
+- ShiftStart / ShiftEnd: shift times if working tonight
 - ModeOverride: if set, use this as the day mode instead of inferring one (e.g. "Rest day")
-- TodayConstraint: a one-line hard constraint on the day (e.g. "interview at 3pm", "no childcare until noon")
-- BackgroundStressor: the thing creating low-level anxiety regardless of tasks — weave awareness of this into your reasoning and framing, don't just optimize tasks in a vacuum
+- TodayConstraint: a one-line hard constraint on the day (e.g. "interview at 3pm")
+- BackgroundStressor: low-level anxiety source — weave awareness into reasoning, do not just optimize tasks in a vacuum
 - Note: freeform context from the user
-- Eating: Normal / Fast /Keto — present as non-negotiable directives in the day plan (e.g. "Eat keto meals, no snacks") rather than optional tasks
-- MealPlan: if set, a specific meal plan the user wants to follow today (e.g. "keto meals with 16:8 fasting, first meal at noon")
-- ChoreFocus: if set, a specific chore or area of the house to focus on for cleaning today (e.g. "kitchen", "laundry")
-- MotivationNeed: high means really push, "this is the time to build strength..."; Low means be softe, make suggestions instead of directives.
-- WorkoutPlan: if set, a specific workout plan the user wants to follow today (e.g. "upper body strength training, 30 min")
-- LearningFocus: if set, a specific learning topic or resource to focus on today (e.g. "Python programming", "Duolingo Spanish")
-- ProjectFocus: if set, a specific project to focus on today (e.g. "write blog post", "organize photos")
-You reason about what the current state is and what the single most important first move is in 3 domains: Self-improvement (learning), health, and caregiving (including self-care). Then list that and a rough plan for the day.
+- Eating: the specific food planned (e.g. "Roast Beef") — present as a non-negotiable directive
+- MealPlan: the eating protocol (e.g. "KETO") — present as a non-negotiable directive
+- EatTime: when the first or main meal is scheduled
+- ChoreFocus / WheelFocus: specific chore or area to focus on — non-negotiable directive if set
+- LastDailyTidy: date of last tidy — factor into urgency of home tasks
+- MotivationNeed: High means push hard, use strong directive language; Low means soften, suggest instead of direct
+- WorkoutPlan: specific workout to do today — non-negotiable directive if set
+- WorkoutDone: whether workout is already complete
+- ProcessComplete: whether morning process is already complete
+- SleepHours: hours when sleep should occur, may be 2 sleeps on each day
+- Meds: medication status
+- Schedule: today's planned activities: how far in the workout, chores (y or n), process (y or n)
+- PlanStart: what time the day’s plan starts
+- LearningFocus: specific learning topic or resource for today — non-negotiable directive if set
+- LearningWeekTarget: what the user is trying to accomplish this week in learning
+- LearningPressureLevel: how much pressure exists around learning this week
+- ProjectFocus: specific project to work on today — non-negotiable directive if set
+- BillsToday / BillsTomorrow: total of bills due today and tomorrow — flag if action is needed
+- BookkeepingLastDone: when bookkeeping was last completed — flag if overdue
+
+You reason about what the current state is and what the single most important first move is in 4 domains: Self-improvement (learning), health, home, and caregiving (including self-care). Then list that and a rough plan for the day.
+
 Output ONLY valid JSON — no markdown, no preamble, no explanation:
 {
   "mode": "short mode name (e.g. Brainwork day, Rest day, Logistics day)",
   "topLine": "one sentence: the clearest true thing about today",
   "reasoning": ["thread 1", "thread 2", "thread 3"],
-  "day": "paragraph: how the day should unfold",
-  "eat": "specific eating directive if relevant (e.g. "Keto day, steak at noon, no snacks") — this should be a non-negotiable directive if the Eating or MealPlan context is set",
-  "home": "specific chore or area to focus on if relevant (e.g. "focus on kitchen today") — this should be a non-negotiable directive if the ChoreFocus context is set",
-  "workout": "specific workout directive if relevant (e.g. "30 min upper body strength training") — this should be a non-negotiable directive if the WorkoutPlan context is set",
-  "learning": "specific learning directive if relevant (e.g. "spend focused time on Duolingo Spanish") — this should be a non-negotiable directive if the LearningFocus context is set",
-  "project": "specific project directive if relevant (e.g. "dedicate time to writing blog post") — this should be a non-negotiable directive if the ProjectFocus context is set",
+  "day": "paragraph: how the day should unfold, use Schedule as minimum guide",
+  "eat": "specific eating directive — non-negotiable if Eating or MealPlan is set (e.g. Keto day, roast beef at 11am, no snacks)",
+  "home": "specific chore directive — non-negotiable if ChoreFocus is set (e.g. focus on kitchen today)",
+  "workout": "specific workout directive — non-negotiable if WorkoutPlan is set (e.g. posterior chain and glutes session today)",
+  "learning": "specific learning directive — non-negotiable if LearningFocus is set",
+  "project": "specific project directive — non-negotiable if ProjectFocus is set",
   "firstTask": {
     "title": "specific actionable first step",
     "why": "one sentence: why this, first",
-    "domain": "domain e.g. School · RHIT",
+    "domain": "domain e.g. Health · Morning Process",
     "due": "due date if relevant, else empty string"
-      }
+  }
 }`;
+
 
  const userMessage = `Today is ${today} at ${timeStr}.
 ACTIVE TASKS:
