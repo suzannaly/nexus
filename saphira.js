@@ -1,9 +1,9 @@
-// sapphira.js — renders Sapphira's briefings into #sapphira-panel
+// Saphira.js — renders Saphira's briefings into #Saphira-panel
 // Claude API call routes through GAS proxy — key never touches the browser.
 
-const SAPPHIRA_GAS = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
-const CACHE_KEY    = 'sapphira-cache';
-const CACHE_DATE   = 'sapphira-cache-date';
+const Saphira_GAS = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
+const CACHE_KEY    = 'Saphira-cache';
+const CACHE_DATE   = 'Saphira-cache-date';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -18,7 +18,7 @@ function todayStr() {
 }
 
 function getPanel() {
-  return document.getElementById('sapphira-panel');
+  return document.getElementById('Saphira-panel');
 }
 
 // ── Loading state ─────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ function showLoading() {
   getPanel().innerHTML = `
     <div class="sap-loading">
       <div class="sap-loading-dot"></div>
-      <span class="sap-loading-text">Sapphira is reading the day…</span>
+      <span class="sap-loading-text">Saphira is reading the day…</span>
     </div>
   `;
 }
@@ -37,8 +37,8 @@ function showLoading() {
 function showError(msg) {
   getPanel().innerHTML = `
     <div class="sap-error">
-      ${esc(msg || 'could not reach Sapphira')}
-      <button class="sap-btn-retry" onclick="initSapphira()">retry</button>
+      ${esc(msg || 'could not reach Saphira')}
+      <button class="sap-btn-retry" onclick="initSaphira()">retry</button>
     </div>
   `;
 }
@@ -77,13 +77,13 @@ function renderBriefing(data) {
         <div class="sap-header">
           <div class="sap-header-left">
             <div class="sap-avatar">
-              <img src="images/sapphira.png" alt="Sapphira"
+              <img src="images/Saphira.png" alt="Saphira"
                 onerror="this.style.display='none'">
               <div class="sap-avatar-ring"></div>
             </div>
             <div>
               <div class="sap-name">
-                Sapphira
+                Saphira
                 <span class="sap-name-sep">·</span>
                 <span class="sap-name-sub">a daily reading</span>
               </div>
@@ -144,15 +144,15 @@ function renderBriefing(data) {
         ${data.day ? `<div class="sap-plan">${esc(data.day)}</div>` : ''}
 
         <!-- Dismiss -->
-        <button class="sap-btn-dismiss" onclick="dismissSapphira()">Got it</button>
+        <button class="sap-btn-dismiss" onclick="dismissSaphira()">Got it</button>
 
       </div>
 
       <!-- Right: portrait -->
       <div class="sap-portrait-wrap">
         <img
-          src="images/sapphira.png"
-          alt="Sapphira"
+          src="images/Saphira.png"
+          alt="Saphira"
           class="sap-portrait"
           onerror="this.parentElement.style.display='none'"
         >
@@ -175,7 +175,7 @@ function toggleReasoning(btn) {
 
 // ── Dismiss ───────────────────────────────────────────────────────────────
 
-function dismissSapphira() {
+function dismissSaphira() {
   const panel = getPanel();
   panel.style.transition = 'opacity 0.4s ease, max-height 0.5s ease';
   panel.style.opacity = '0';
@@ -189,9 +189,9 @@ function dismissSapphira() {
 
 async function fetchSheetData() {
   const [tasks, context, calendar] = await Promise.all([
-    fetch(`${SAPPHIRA_GAS}?tab=Tasks`).then(r => r.json()).catch(() => []),
-    fetch(`${SAPPHIRA_GAS}?tab=Context`).then(r => r.json()).catch(() => []),
-    fetch(`${SAPPHIRA_GAS}?calendar=today`).then(r => r.json()).catch(() => []),
+    fetch(`${Saphira_GAS}?tab=Tasks`).then(r => r.json()).catch(() => []),
+    fetch(`${Saphira_GAS}?tab=Context`).then(r => r.json()).catch(() => []),
+    fetch(`${Saphira_GAS}?calendar=today`).then(r => r.json()).catch(() => []),
   ]);
 
  const activeTasks = (tasks || []).filter(t => t.Done !== 'TRUE' && t.Done !== true && t.Title);
@@ -225,7 +225,7 @@ function buildPayload(activeTasks, contextMap, todayEvents) {
         return `[${ev.calendar}] ${ev.title} · ${start}${end}${ev.location ? ' · ' + ev.location : ''}`;
       }).join('\n')
     : 'No events today.';
-  const systemPrompt = `You are Sapphira — a calm, stoic, precise daily orientation engine and mentor for a personal operating system called Nexus. You are not a chatbot. You deliver clear status readings.
+  const systemPrompt = `You are Saphira — a calm, stoic, precise daily orientation engine and mentor for a personal operating system called Nexus. You are not a chatbot. You deliver clear status readings.
 
 The user is autistic, a morning person, works overnight warehouse shifts Thu–Sat, and is sharpest 6–10am Mon/Tue. They are managing caregiving for family members (Dan, who is finishing cancer treatment) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
 
@@ -291,10 +291,10 @@ Deliver the reading.`;
 
 // ── Call Claude via GAS proxy ─────────────────────────────────────────────
 async function callClaudeViaProxy(payload) {
-  const res = await fetch(SAPPHIRA_GAS, {
+  const res = await fetch(Saphira_GAS, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ sapphira: 1, payload })
+    body: JSON.stringify({ Saphira: 1, payload })
   });
   const result = await res.json();
   if (result.error) throw new Error(result.error);
@@ -304,7 +304,7 @@ async function callClaudeViaProxy(payload) {
 
 // ── Init ──────────────────────────────────────────────────────────────────
 
-async function initSapphira() {
+async function initSaphira() {
   const cachedDate = localStorage.getItem(CACHE_DATE);
   const cached     = localStorage.getItem(CACHE_KEY);
 
@@ -327,7 +327,7 @@ const payload  = buildPayload(activeTasks, contextMap, todayEvents);
 
     renderBriefing(briefing);
   } catch(e) {
-    console.error('Sapphira error:', e);
+    console.error('Saphira error:', e);
     showError(e.message);
   }
 }
@@ -337,7 +337,7 @@ let chatHistory = [];
 
 // ── Open / switch to chat ─────────────────────────────────────────────────
 
-function openSapphiraChat() {
+function openSaphiraChat() {
   const panel = getPanel();
 
   if (panel.style.display === 'none' || panel.style.maxHeight === '0px') {
@@ -373,12 +373,12 @@ function renderChatPanel() {
       <div class="sap-inner">
         <div class="sap-header">
           <div class="sap-header-left">
-            <div class="sap-avatar" onclick="resetSapphira()" title="Refresh Sapphira" style="cursor:pointer">
-  <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sapphira.png" alt="Sapphira">
+            <div class="sap-avatar" onclick="resetSaphira()" title="Refresh Saphira" style="cursor:pointer">
+  <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/Saphira.png" alt="Saphira">
   <div class="sap-avatar-ring"></div>
 </div>
             <div>
-              <div class="sap-name">Sapphira <span class="sap-name-sep">·</span> <span class="sap-name-sub">chat</span></div>
+              <div class="sap-name">Saphira <span class="sap-name-sep">·</span> <span class="sap-name-sub">chat</span></div>
               <div class="sap-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
             </div>
           </div>
@@ -393,17 +393,17 @@ function renderChatPanel() {
         </div>
 
         <div class="sap-chat-input-row">
-          <input id="sap-chat-input" class="sap-chat-input" type="text" placeholder="Message Sapphira…"
+          <input id="sap-chat-input" class="sap-chat-input" type="text" placeholder="Message Saphira…"
             onkeydown="if(event.key==='Enter')sendChatMessage()">
           <button class="sap-chat-send" onclick="sendChatMessage()">→</button>
         </div>
 
         <div style="margin-top:10px">
-          <button class="sap-btn-dismiss" onclick="dismissSapphira()">got it</button>
+          <button class="sap-btn-dismiss" onclick="dismissSaphira()">got it</button>
         </div>
       </div>
       <div class="sap-portrait-wrap">
-        <img class="sap-portrait" src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sapphira.png" alt="">
+        <img class="sap-portrait" src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/Saphira.png" alt="">
         <div class="sap-portrait-fade"></div>
       </div>
     </div>`;
@@ -445,7 +445,7 @@ async function callChatViaProxy(message) {
     message,
     history: chatHistory.slice(-10)
   };
-  const res = await fetch(SAPPHIRA_GAS, {
+  const res = await fetch(Saphira_GAS, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(payload)
@@ -473,7 +473,7 @@ async function callChatViaProxy(message) {
 
   if (actions.length > 0) {
     await Promise.all(actions.map(a =>
-      fetch(SAPPHIRA_GAS, {
+      fetch(Saphira_GAS, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({

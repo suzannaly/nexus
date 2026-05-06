@@ -43,11 +43,11 @@ body {
 #admin-bar a:hover { color: var(--accent1); }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   SAPPHIRA PANEL
+   Saphira PANEL
    ═══════════════════════════════════════════════════════════════════════ */
 
 
-#sapphira-panel {
+#Saphira-panel {
   position: relative;
   background: linear-gradient(180deg,
     rgba(8, 12, 85, 0.0) 0%,
@@ -57,9 +57,9 @@ body {
   overflow: hidden;
 }
 
-#sapphira-panel:empty { display: none; }
+#Saphira-panel:empty { display: none; }
 
-#sapphira-panel::before {
+#Saphira-panel::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -1793,7 +1793,7 @@ body {
   object-align: center;
   vertical-align: middle;
 }
-/* ── Sapphira chat ───────────────────────────────────────────────────── */
+/* ── Saphira chat ───────────────────────────────────────────────────── */
 .sap-chat-messages {
   max-height: 300px;
   overflow-y: auto;

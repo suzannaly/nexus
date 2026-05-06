@@ -83,7 +83,7 @@ document.querySelectorAll('.anchor-btn').forEach(btn => {
         let taskTitle = null;
         let taskWhy   = null;
 
-        const cached = localStorage.getItem('sapphira-cache');
+        const cached = localStorage.getItem('Saphira-cache');
         if (cached) {
           try {
             const briefing = JSON.parse(cached);
