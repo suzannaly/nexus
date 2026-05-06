@@ -247,7 +247,7 @@ CONTEXT FLAG GUIDE:
 - ChoreFocus: if set, a specific chore or area of the house to focus on for cleaning today (e.g. "kitchen", "laundry")
 - MotivationNeed: high means really push, "this is the time to build strength..."; Low means be softe, make suggestions instead of directives.
 - WorkoutPlan: if set, a specific workout plan the user wants to follow today (e.g. "upper body strength training, 30 min")
-- LeartningFocus: if set, a specific learning topic or resource to focus on today (e.g. "Python programming", "Duolingo Spanish")
+- LearningFocus: if set, a specific learning topic or resource to focus on today (e.g. "Python programming", "Duolingo Spanish")
 - ProjectFocus: if set, a specific project to focus on today (e.g. "write blog post", "organize photos")
 You reason about what the current state is and what the single most important first move is in 3 domains: Self-improvement (learning), health, and caregiving (including self-care). Then list that and a rough plan for the day.
 Output ONLY valid JSON — no markdown, no preamble, no explanation:
@@ -256,11 +256,11 @@ Output ONLY valid JSON — no markdown, no preamble, no explanation:
   "topLine": "one sentence: the clearest true thing about today",
   "reasoning": ["thread 1", "thread 2", "thread 3"],
   "day": "paragraph: how the day should unfold",
-  "eat": specific eating directive if relevant (e.g. "Keto day, steak at noon, no snacks") — this should be a non-negotiable directive if the Eating or MealPlan context is set
-  "home": specific chore or area to focus on if relevant (e.g. "focus on kitchen today") — this should be a non-negotiable directive if the ChoreFocus context is set
-  "workout": specific workout directive if relevant (e.g. "30 min upper body strength training") — this should be a non-negotiable directive if the WorkoutPlan context is set
-  "learning": specific learning directive if relevant (e.g. "spend focused time on Duolingo Spanish") — this should be a non-negotiable directive if the LearningFocus context is set
-  "project": specific project directive if relevant (e.g. "dedicate time to writing blog post") — this should be a non-negotiable directive if the ProjectFocus context is set
+  "eat": "specific eating directive if relevant (e.g. "Keto day, steak at noon, no snacks") — this should be a non-negotiable directive if the Eating or MealPlan context is set",
+  "home": "specific chore or area to focus on if relevant (e.g. "focus on kitchen today") — this should be a non-negotiable directive if the ChoreFocus context is set",
+  "workout": "specific workout directive if relevant (e.g. "30 min upper body strength training") — this should be a non-negotiable directive if the WorkoutPlan context is set",
+  "learning": "specific learning directive if relevant (e.g. "spend focused time on Duolingo Spanish") — this should be a non-negotiable directive if the LearningFocus context is set",
+  "project": "specific project directive if relevant (e.g. "dedicate time to writing blog post") — this should be a non-negotiable directive if the ProjectFocus context is set",
   "firstTask": {
     "title": "specific actionable first step",
     "why": "one sentence: why this, first",
@@ -269,7 +269,7 @@ Output ONLY valid JSON — no markdown, no preamble, no explanation:
       }
 }`;
 
- const userMessage = `Today is ${today} at ${timeStr}.`
+ const userMessage = `Today is ${today} at ${timeStr}.
 ACTIVE TASKS:
 ${taskList || 'No active tasks.'}
 
@@ -410,34 +410,6 @@ function renderChatPanel() {
     </div>`;
 }
 
-// ── Send message ──────────────────────────────────────────────────────────
-
-async function sendChatMessage() {
-  const input = document.getElementById('sap-chat-input');
-  const text  = input.value.trim();
-  if (!text) return;
-
-  input.value = '';
-  chatHistory.push({ role: 'user', content: text });
-  renderChatPanel();
-
-  // Show typing indicator
-  const messages = document.getElementById('sap-chat-messages');
-  const typing = document.createElement('div');
-  typing.className = 'sap-chat-msg sap-chat-msg--assistant';
-  typing.innerHTML = '<div class="sap-chat-bubble sap-chat-typing">…</div>';
-  messages.appendChild(typing);
-  messages.scrollTop = messages.scrollHeight;
-
-  try {
-    const reply = await callChatViaProxy(text);
-    chatHistory.push({ role: 'assistant', content: String(reply) })
-    renderChatPanel();
-  } catch(e) {
-    chatHistory.push({ role: 'assistant', content: 'Something went wrong. Try again.' });
-    renderChatPanel();
-  }
-}
 
 // ── Call GAS chat route ───────────────────────────────────────────────────
 async function callChatViaProxy(message) {
