@@ -151,7 +151,7 @@ function renderBriefing(data) {
       <!-- Right: portrait -->
       <div class="sap-portrait-wrap">
         <img
-          src="images/Saphira.png"
+          src="images/saphira.png"
           alt="Saphira"
           class="sap-portrait"
           onerror="this.parentElement.style.display='none'"
