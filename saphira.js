@@ -201,33 +201,7 @@ async function fetchSheetData() {
   return { activeTasks, contextMap, todayEvents };
 }
 
-// ── Build Claude payload ──────────────────────────────────────────────────
-
-function buildPayload(activeTasks, contextMap, todayEvents) {
-  const today = new Date().toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-  });
-  const timeStr = new Date().toLocaleTimeString('en-US', { 
-  hour: 'numeric', minute: '2-digit', hour12: true 
-});
-  const taskList = activeTasks.slice(0, 12).map((t, i) =>
-  `${i + 1}. ${t.Title}` +
-  (t.Priority ? ` [${t.Priority}]` : '') +
-  (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
-  (t.Category ? ` · ${t.Category}` : '') +
-  (t.Notes ? ` — ${t.Notes}` : '')   
-).join('\n');
-
-  const contextStr = Object.entries(contextMap)
-    .map(([k, v]) => `${k}: ${v}`).join('\n') || 'No context flags set.';
- const calendarStr = todayEvents.length
-    ? todayEvents.map(ev => {
-        const start = ev.allDay ? 'all day' : new Date(ev.start).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-        const end   = ev.allDay ? '' : ` – ${new Date(ev.end).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
-        return `[${ev.calendar}] ${ev.title} · ${start}${end}${ev.location ? ' · ' + ev.location : ''}`;
-      }).join('\n')
-    : 'No events today.';
- 
+// ── System prompt ─────────────────────────────────────────────────────────
 
 const systemPrompt = `You are Saphira — a calm, stoic, precise daily orientation engine and mentor for a personal operating system called Nexus. You are not a chatbot, do not present false information, make up something without being explicitly told to do so, or say you can do something you can't. Any information from outside sources must be cited. You deliver clear status readings.
 I am Suzy, I am autistic, a morning person, work overnight warehouse shifts Thu–Sat, and am sharpest 6–10am Mon/Tue. I am managing caregiving for family members (Primarily Dan, who has Cancer) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
@@ -284,6 +258,34 @@ Output ONLY valid JSON — no markdown, no preamble, no explanation:
   }
 }`;
 
+
+
+// ── Build Claude payload ──────────────────────────────────────────────────
+
+function buildPayload(activeTasks, contextMap, todayEvents) {
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+  });
+  const timeStr = new Date().toLocaleTimeString('en-US', { 
+  hour: 'numeric', minute: '2-digit', hour12: true 
+});
+  const taskList = activeTasks.slice(0, 12).map((t, i) =>
+  `${i + 1}. ${t.Title}` +
+  (t.Priority ? ` [${t.Priority}]` : '') +
+  (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
+  (t.Category ? ` · ${t.Category}` : '') +
+  (t.Notes ? ` — ${t.Notes}` : '')   
+).join('\n');
+
+  const contextStr = Object.entries(contextMap)
+    .map(([k, v]) => `${k}: ${v}`).join('\n') || 'No context flags set.';
+ const calendarStr = todayEvents.length
+    ? todayEvents.map(ev => {
+        const start = ev.allDay ? 'all day' : new Date(ev.start).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const end   = ev.allDay ? '' : ` – ${new Date(ev.end).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+        return `[${ev.calendar}] ${ev.title} · ${start}${end}${ev.location ? ' · ' + ev.location : ''}`;
+      }).join('\n')
+    : 'No events today.';
 
 const userMessage = `Today is ${today} at ${timeStr}.
 ACTIVE TASKS:
