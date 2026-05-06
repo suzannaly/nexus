@@ -227,112 +227,11 @@ function buildPayload(activeTasks, contextMap, todayEvents) {
         return `[${ev.calendar}] ${ev.title} · ${start}${end}${ev.location ? ' · ' + ev.location : ''}`;
       }).join('\n')
     : 'No events today.';
-  function buildSaphiraContext(data) {
-  // data is an object with keys mapped from your Nexus sheet
+ const userMessage = `Today is ${today} at ${timeStr}.
+  
 
-  const date = data["DATE"] || "";
-
-  // Me
-  const motivationNeed = data["MotivationNeed"] || "";
-  const todayConstraint = data["TodayConstraint"] || "";
-  const backgroundStressor = data["BackgroundStressor"] || "";
-  const modeOverride = data["ModeOverride"] || "";
-  const note = data["Note"] || "";
-
-  // Care
-  const danStatus = data["DanStatus"] || "";
-  const danNeeds = data["DanNeeds"] || "";
-  const kidCount = data["KidCount"] || 0;
-  const kidDay = data["KidDay"] || "NO";
-
-  // Work
-  const workShiftTonight = data["WorkShiftTonight"] || "NO";
-  const shiftStart = data["ShiftStart"] || "";
-  const shiftEnd = data["ShiftEnd"] || "";
-
-  // Money
-  const billsToday = data["BillsToday"] || 0;
-  const billsTomorrow = data["BillsTomorrow"] || 0;
-  const bookkeepingLastDone = data["BookkeepingLastDone"] || "";
-
-  // School
-  const learningFocus = data["LearningFocus"] || "";
-  const learningWeekTarget = data["LearningWeekTarget"] || "";
-  const learningPressureLevel = data["LearningPressureLevel"] || "";
-  const projectFocus = data["ProjectFocus"] || "";
-
-  // Home
-  const lastDailyTidy = data["LastDailyTidy"] || "";
-  const choreFocus = data["ChoreFocus"] || "";
-  const wheelFocus = data["WheelFocus"] || "";
-
-  // Health
-  const processComplete = data["ProcessComplete"] || false;
-  const workoutDone = data["WorkoutDone"] || false;
-  const sleepHours = data["SleepHours"] || "";
-  const meds = data["Meds"] || "";
-  const schedule = data["Schedule"] || "";
-  const workoutPlan = data["WorkoutPlan"] || "";
-  const planStart = data["PlanStart"] || "";
-  const mealPlan = data["MealPlan"] || "";
-  const eating = data["Eating"] || "";
-  const eatTime = data["EatTime"] || "";
-
-  const contextBlock = `
-DATE: ${date}
-
---- ME ---
-MotivationNeed: ${motivationNeed}
-TodayConstraint: ${todayConstraint}
-BackgroundStressor: ${backgroundStressor}
-ModeOverride: ${modeOverride}
-Note: ${note}
-
---- CARE ---
-DanStatus: ${danStatus}
-DanNeeds: ${danNeeds}
-KidDay: ${kidDay}
-KidCount: ${kidCount}
-
---- WORK ---
-WorkShiftTonight: ${workShiftTonight}
-ShiftStart: ${shiftStart}
-ShiftEnd: ${shiftEnd}
-
---- MONEY ---
-BillsToday: ${billsToday}
-BillsTomorrow: ${billsTomorrow}
-BookkeepingLastDone: ${bookkeepingLastDone}
-
---- SCHOOL ---
-LearningFocus: ${learningFocus}
-LearningWeekTarget: ${learningWeekTarget}
-LearningPressureLevel: ${learningPressureLevel}
-ProjectFocus: ${projectFocus}
-
---- HOME ---
-LastDailyTidy: ${lastDailyTidy}
-ChoreFocus: ${choreFocus}
-WheelFocus: ${wheelFocus}
-
---- HEALTH ---
-ProcessComplete: ${processComplete}
-WorkoutDone: ${workoutDone}
-SleepHours: ${sleepHours}
-Meds: ${meds}
-Schedule: ${schedule}
-WorkoutPlan: ${workoutPlan}
-PlanStart: ${planStart}
-MealPlan: ${mealPlan}
-Eating: ${eating}
-EatTime: ${eatTime}
-`.trim();
-
-  return contextBlock;
-}
-
-const systemPrompt = `You are Saphira — a calm, stoic, precise daily orientation engine and mentor for a personal operating system called Nexus. You are not a chatbot. You deliver clear status readings.
-The user is autistic, a morning person, works overnight warehouse shifts Thu–Sat, and is sharpest 6–10am Mon/Tue. They are managing caregiving for family members (Primarily Dan, who has Cancer) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
+const systemPrompt = `You are Saphira — a calm, stoic, precise daily orientation engine and mentor for a personal operating system called Nexus. You are not a chatbot, do not present false information, make up something without being explicitly told to do so, or say you can do something you can't. Any information from outside sources must be cited. You deliver clear status readings.
+I am Suzy, I am autistic, a morning person, work overnight warehouse shifts Thu–Sat, and am sharpest 6–10am Mon/Tue. I am managing caregiving for family members (Primarily Dan, who has Cancer) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
 You receive: today's date, active tasks (with notes and done status), and context flags. Use ALL context flags in your reasoning.
 
 CONTEXT FLAG GUIDE:
@@ -398,7 +297,6 @@ CONTEXT FLAGS:
 ${contextStr}
 
 Deliver the reading.`;
-
 
   return {
     model: 'claude-sonnet-4-6',
