@@ -375,7 +375,7 @@ function renderChatPanel() {
         <div class="sap-header">
           <div class="sap-header-left">
             <div class="sap-avatar" onclick="resetSaphira()" title="Refresh Saphira" style="cursor:pointer">
-  <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/Saphira.png" alt="Saphira">
+  <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/saphira.png" alt="Saphira">
   <div class="sap-avatar-ring"></div>
 </div>
             <div>
@@ -404,7 +404,7 @@ function renderChatPanel() {
         </div>
       </div>
       <div class="sap-portrait-wrap">
-        <img class="sap-portrait" src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/Saphira.png" alt="">
+        <img class="sap-portrait" src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/saphira.png" alt="">
         <div class="sap-portrait-fade"></div>
       </div>
     </div>`;
