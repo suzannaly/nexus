@@ -496,7 +496,7 @@ async function sendChatMessage() {
   }
 }
 // ── Reset Sapphira ───────────────────────────────────────────────────
-function resetSapphira() {
+function resetSaphira() {
   localStorage.removeItem('sapphira-cache');
   localStorage.removeItem('sapphira-cache-date');
   initSapphira();
