@@ -33,10 +33,12 @@ function formatLastDone(raw) {
 
 function groupByZone(rows) {
   const zones = {};
-  rows.forEach(row => {
-    if (!zones[row.Zone]) zones[row.Zone] = [];
-    zones[row.Zone].push(row);
-  });
+  rows
+    .filter(row => row.Zone && String(row.Zone).trim() !== '')  // ← add this
+    .forEach(row => {
+      if (!zones[row.Zone]) zones[row.Zone] = [];
+      zones[row.Zone].push(row);
+    });
 
   return Object.entries(zones).map(([zone, items]) => {
     items.sort((a, b) => a.Order - b.Order);
