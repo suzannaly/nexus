@@ -91,7 +91,7 @@ async function startSaphira() {
   isGatheringContext = true;
   chatHistory = [{
     role: 'assistant',
-    content: 'Good morning. Before I read the day, I need a few things from you.\n\nHow much motivation are you bringing today — low, medium, or high?'
+    content: 'Good morning. Before I read the day, I need a few things from you.\n\nHow much motivation do you need today — low, medium, or high?'
   }];
   renderChatPanel();
 }
@@ -111,7 +111,7 @@ function resetAndRestart() {
 
   chatHistory = [{
     role: 'assistant',
-    content: 'Re-establishing context. How much motivation are you bringing today — low, medium, or high?'
+    content: 'Re-establishing context. How much motivation do you need today — low, medium, or high?'
   }];
   renderChatPanel();
 }
