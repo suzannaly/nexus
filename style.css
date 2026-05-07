@@ -26,7 +26,7 @@ body {
 /* ── ADMIN HEADER ─────────────────────────────────────────────────────── */
 #admin-bar {
   display: flex;
-  gap: 16px;
+  gap: 10px;
   padding: 16px 20px
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -35,8 +35,9 @@ body {
 
 #admin-bar a {
   color: var(--primary);
+  font-family: 'Dancing Script', cursive;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 20px;
   letter-spacing: 0.05em;
 }
 
@@ -72,7 +73,7 @@ body {
   );
 }
 #sap-bar-btn {
-  margin-left: auto;
+  margin-left: 150px;
   background: none;
   border: none;
   padding: 0;
@@ -82,8 +83,8 @@ body {
 }
 
 #sap-bar-btn img {
-  width: 56px;
-  height: 56px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   object-fit: cover;
   object-position: 58% 20%;
@@ -91,7 +92,36 @@ body {
   transition: opacity 0.2s;
 }
 
-#sap-bar-btn:hover img { opacity: 1; }
+
+
+#sap-bar-btn {
+  position: relative; /* Required to anchor the text */
+  display: inline-block;
+  overflow: 
+}
+
+.hover-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers the text perfectly */
+  opacity: 0;                       /* Hidden by default */
+  transition: opacity 0.3s ease;    /* Smooth fade in */
+  pointer-events: none;             /* Prevents text from blocking clicks */
+  color: rgba(119, 15, 223, 0.842);
+  font-weight: 2;
+  font-family: 'Dancing Script', cursive;
+  font-size: 36px;
+  font-style: italic;
+}
+
+#sap-bar-btn:hover .hover-text {
+  opacity: 1;                       /* Shows text on hover */
+}
+
+#sap-bar-btn:hover img {
+  opacity: 0.5;                     /* Dims image so text is readable */
+}
 
 /* Two-column layout: content left, portrait right */
 .sap-layout {
@@ -153,9 +183,9 @@ body {
 
 .sap-avatar {
   position: relative;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  border-radius: 10%;
   overflow: hidden;
   flex-shrink: 0;
   box-shadow:
@@ -182,43 +212,34 @@ body {
 }
 
 .sap-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--primary);
+ font-family: 'Dancing Script', cursive;
+  font-size: 64px;
+  font-weight: 1000;
+  font-style: italic;
+  color: #663ff5;
   letter-spacing: 0.01em;
   line-height: 1;
 }
 
-.sap-name-sep { color: rgba(147, 209, 237, 0.4); margin: 0 5px; }
-
-.sap-name-sub {
-  font-style: italic;
-  font-weight: 400;
-  font-size: 15px;
-  color: rgba(147, 209, 237, 0.6);
-}
 
 .sap-date {
   font-size: 10px;
-  color: rgba(147, 209, 237, 0.45);
+  color: rgba(133, 160, 247, 0.45);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin-top: 3px;
+  margin-top: 8px;
+  margin-left: 30px;
   font-family: monospace;
 }
 
-.sap-header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+
 
 .sap-pulse {
-  width: 6px; height: 6px;
+  width: 36px; height: 36px;
   border-radius: 50%;
-  background: var(--primary);
-  box-shadow: 0 0 8px rgba(147, 209, 237, 0.7);
+  margin-left: 20px;
+  background: #8eaaeb;
+  box-shadow: 0 0 24px rgba(195, 167, 241, 0.4);
   animation: sap-breathe 2.6s ease-in-out infinite;
 }
 
@@ -228,8 +249,8 @@ body {
 }
 
 .sap-status-label {
-  font-size: 9px;
-  color: rgba(147, 209, 237, 0.4);
+  font-size: 18px;
+  color: rgba(195, 167, 241, 0.4);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   font-family: monospace;
@@ -1795,8 +1816,9 @@ body {
 }
 /* ── Saphira chat ───────────────────────────────────────────────────── */
 .sap-chat-messages {
-  max-height: 300px;
-  overflow-y: auto;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1865,7 +1887,7 @@ body {
   border-radius: 6px;
   padding: 8px 16px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 32px;
   transition: all 0.2s;
 }
 
@@ -1933,7 +1955,7 @@ body {
 }
 .sap-context-img {
   display: block;
-  width: 140px;
+  width: 200px;
   margin: 0 auto 8px;
   border-radius: 8px;
   opacity: 0.92;

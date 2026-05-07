@@ -255,7 +255,7 @@ function renderBriefing(data) {
       </div>
 
       <div class="sap-portrait-wrap">
-        <img src="images/home1.png" alt="Saphira" class="sap-portrait"
+        <img src="images/saphira.png" alt="Saphira" class="sap-portrait"
           onerror="this.parentElement.style.display='none'">
         <div class="sap-portrait-fade"></div>
       </div>
@@ -283,7 +283,7 @@ function renderChatPanel() {
     </div>`;
 }).join('');
 
-  const subtitle   = isGatheringContext ? 'establishing context' : 'chat';
+  const subtitle   = isGatheringContext ? 'establishing context' : '';
   const statusText = isGatheringContext ? 'listening' : 'online';
   const inputHint  = isGatheringContext ? 'Answer Saphira…'    : 'Message Saphira…';
 
@@ -301,8 +301,6 @@ function renderChatPanel() {
             <div>
               <div class="sap-name">
                 Saphira
-                <span class="sap-name-sep">·</span>
-                <span class="sap-name-sub">${subtitle}</span>
               </div>
               <div class="sap-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
             </div>
