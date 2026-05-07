@@ -397,7 +397,7 @@ CONTEXT FLAG GUIDE:
 - DanNeeds: specific needs for ANYONE -not just Dan- today (tasks, time, other)
 - KidDay / KidCount: whether kids are present and how many — affects focus availability
 - WorkShiftTonight: true if user works overnight tonight — will be 2 scheduled sleep times
-- ShiftStart / ShiftEnd: shift times if working tonight
+- ShiftStart / ShiftEnd: shift times if working tonight, commute is 45 minutes.
 - ModeOverride: if set, use this as the day mode instead of inferring one (e.g. "Rest day")
 - TodayConstraint: a one-line hard constraint on the day (e.g. "interview at 3pm")
 - BackgroundStressor: low-level anxiety source — weave awareness into reasoning, do not just optimize tasks in a vacuum
@@ -406,14 +406,14 @@ CONTEXT FLAG GUIDE:
 - MealPlan: the eating protocol (e.g. "KETO") — present as a non-negotiable directive
 - EatTime: when the first or main meal is scheduled
 - ChoreFocus / WheelFocus: specific chore or area to focus on — non-negotiable directive if set
-- LastDailyTidy: date of last tidy — factor into urgency of home tasks
+- LastDailyTidy: date of last DailyTidy — factor into urgency of home tasks
 - MotivationNeed: High means push hard, use strong directive language; Low means soften, suggest instead of direct
 - WorkoutPlan: specific workout to do today — non-negotiable directive if set
 - WorkoutDone: whether workout is already complete
 - ProcessComplete: whether morning process is already complete
-- SleepHours: hours when sleep should occur, may be 2 sleeps on each day
+- SleepHours: time when sleep should occur, may be 2 sleeps on each day e.g. 6;00 AM - 9:00 AM, 1:00 PM-5:00 PM means I sleep between 6am and 9am; then sleep again between 1pm and 5pm.
 - Meds: medication status
-- Schedule: today's planned activities: how far in the workout, chores (y or n), process (y or n)
+- Schedule: today's planned activities: begin them at the PlanStart time; how far in the workout{basecamp- climb- chasm- peak- summit}, chores (y or n), process (y or n)
 - PlanStart: what time the day's plan starts
 - LearningFocus: specific learning topic or resource for today — non-negotiable directive if set
 - LearningWeekTarget: what the user is trying to accomplish this week in learning
