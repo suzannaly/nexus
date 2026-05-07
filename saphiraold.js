@@ -2,27 +2,10 @@
 // Claude API call routes through GAS proxy — key never touches the browser.
 
 const Saphira_GAS = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
-const CACHE_KEY  = 'Saphira-cache';
-const CACHE_DATE = 'Saphira-cache-date';
-
-// ── State ─────────────────────────────────────────────────────────────────
-
-let chatHistory        = [];
-let isGatheringContext = false;
+const CACHE_KEY    = 'Saphira-cache';
+const CACHE_DATE   = 'Saphira-cache-date';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
-
-function getContextImage(text) {
-  const t = text.toLowerCase();
-  if (t.includes('motivation'))    return 'motivation.png';
-  if (t.includes('constraint'))    return 'limitation.png';
-  if (t.includes('stressor'))      return 'stress.png';
-  if (t.includes('focus'))         return 'focus.png';
-  if (t.includes('extra needs'))   return 'care.png';
-  if (t.includes('kids'))          return 'children.png';
-  if (t.includes('anything else')) return 'softnote.png';
-  return null;
-}
 
 function esc(s) {
   return String(s || '')
@@ -36,15 +19,6 @@ function todayStr() {
 
 function getPanel() {
   return document.getElementById('Saphira-panel');
-}
-
-function showPanel() {
-  const panel = getPanel();
-  panel.style.display    = 'block';
-  panel.style.opacity    = '1';
-  panel.style.maxHeight  = '2000px';
-  panel.style.overflow   = 'visible';
-  panel.style.transition = '';
 }
 
 // ── Loading state ─────────────────────────────────────────────────────────
@@ -64,99 +38,9 @@ function showError(msg) {
   getPanel().innerHTML = `
     <div class="sap-error">
       ${esc(msg || 'could not reach Saphira')}
-      <button class="sap-btn-retry" onclick="startSaphira()">retry</button>
+      <button class="sap-btn-retry" onclick="initSaphira()">retry</button>
     </div>
   `;
-}
-
-// ── Entry point: called on page load and from the chat icon ───────────────
-//
-//   • Has today's cache → show briefing immediately
-//   • No cache          → open context-gathering chat
-
-async function startSaphira() {
-  showPanel();
-
-  const cached     = localStorage.getItem(CACHE_KEY);
-  const cachedDate = localStorage.getItem(CACHE_DATE);
-
-  if (cached && cachedDate === todayStr()) {
-    try {
-      renderBriefing(JSON.parse(cached));
-      return;
-    } catch(e) { /* corrupt cache — fall through */ }
-  }
-
-  // No valid cache: start context gathering
-  isGatheringContext = true;
-  chatHistory = [{
-    role: 'assistant',
-    content: 'Good morning. Before I read the day, I need a few things from you.\n\nHow much motivation are you bringing today — low, medium, or high?'
-  }];
-  renderChatPanel();
-}
-
-// ── Reset: avatar click on briefing or chat ───────────────────────────────
-//
-//   Clears today's cache and re-runs the full context-gathering flow.
-//   This is the "establish context + run briefing" button.
-
-function resetAndRestart() {
-  localStorage.removeItem(CACHE_KEY);
-  localStorage.removeItem(CACHE_DATE);
-  chatHistory        = [];
-  isGatheringContext = true;
-
-  showPanel();
-
-  chatHistory = [{
-    role: 'assistant',
-    content: 'Re-establishing context. How much motivation are you bringing today — low, medium, or high?'
-  }];
-  renderChatPanel();
-}
-
-// ── Open freeform chat (from header chat icon when briefing is showing) ───
-
-function openSaphiraChat() {
-  const panel    = getPanel();
-  const isHidden = panel.style.display === 'none'
-                || panel.style.maxHeight === '0px'
-                || panel.style.maxHeight === '0';
-
-  if (isHidden) {
-    // Panel is closed — startSaphira decides whether to show briefing or gather context
-    startSaphira();
-    return;
-  }
-
-  // Panel is open and showing briefing — switch to freeform chat
-  isGatheringContext = false;
-  if (!chatHistory.length) {
-    chatHistory = [{ role: 'assistant', content: 'Ask me anything about today.' }];
-  }
-  renderChatPanel();
-}
-
-// ── Generate Briefing (triggered by button in context-gathering chat) ──────
-
-async function runBriefing() {
-  isGatheringContext = false;
-  showLoading();
-
-  try {
-    const { activeTasks, contextMap, todayEvents } = await fetchSheetData();
-    const payload  = buildPayload(activeTasks, contextMap, todayEvents);
-    const briefing = await callClaudeViaProxy(payload);
-
-    localStorage.setItem(CACHE_KEY,  JSON.stringify(briefing));
-    localStorage.setItem(CACHE_DATE, todayStr());
-
-    renderBriefing(briefing);
-  } catch(e) {
-    console.error('Saphira error:', e);
-    showError(e.message);
-  }
 }
 
 // ── Render briefing ───────────────────────────────────────────────────────
@@ -186,12 +70,15 @@ function renderBriefing(data) {
   panel.innerHTML = `
     <div class="sap-layout">
 
+      <!-- Left: all briefing content -->
       <div class="sap-inner">
 
+        <!-- Header -->
         <div class="sap-header">
           <div class="sap-header-left">
-            <div class="sap-avatar" onclick="resetAndRestart()" title="Re-establish context" style="cursor:pointer">
-              <img src="images/home1.png" alt="Saphira" onerror="this.style.display='none'">
+            <div class="sap-avatar">
+              <img src="images/saphira.png" alt="Saphira"
+                onerror="this.style.display='none'">
               <div class="sap-avatar-ring"></div>
             </div>
             <div>
@@ -209,6 +96,7 @@ function renderBriefing(data) {
           </div>
         </div>
 
+        <!-- Status report eyebrow -->
         <div class="sap-status-label-row">
           <span class="sap-status-rule"></span>
           <span class="sap-status-eyebrow">Status Report</span>
@@ -216,12 +104,15 @@ function renderBriefing(data) {
           <span class="sap-status-mode">${esc(data.mode || '')}</span>
         </div>
 
+        <!-- Top line -->
         <div class="sap-topline">
           <span class="sap-topline-quote">"</span>${esc(data.topLine || '')}<span class="sap-topline-quote">"</span>
         </div>
 
+        <!-- Mode badge -->
         ${data.mode ? `<div class="sap-mode-badge">${esc(data.mode)}</div>` : ''}
 
+        <!-- Reasoning — collapsible -->
         <button class="sap-reasoning-toggle" onclick="toggleReasoning(this)">
           <span class="sap-reasoning-chev">›</span>
           <span>Her reasoning</span>
@@ -235,6 +126,7 @@ function renderBriefing(data) {
           </div>
         </div>
 
+        <!-- First task -->
         ${ft.title ? `
           <div class="sap-first-task">
             <div class="sap-first-task-eyebrow">First step</div>
@@ -248,15 +140,22 @@ function renderBriefing(data) {
           </div>
         ` : ''}
 
+        <!-- Day plan -->
         ${data.day ? `<div class="sap-plan">${esc(data.day)}</div>` : ''}
 
+        <!-- Dismiss -->
         <button class="sap-btn-dismiss" onclick="dismissSaphira()">Got it</button>
 
       </div>
 
+      <!-- Right: portrait -->
       <div class="sap-portrait-wrap">
-        <img src="images/home1.png" alt="Saphira" class="sap-portrait"
-          onerror="this.parentElement.style.display='none'">
+        <img
+          src="images/saphira.png"
+          alt="Saphira"
+          class="sap-portrait"
+          onerror="this.parentElement.style.display='none'"
+        >
         <div class="sap-portrait-fade"></div>
       </div>
 
@@ -264,97 +163,11 @@ function renderBriefing(data) {
   `;
 }
 
-// ── Render chat panel ─────────────────────────────────────────────────────
-
-function renderChatPanel() {
-  const panel = getPanel();
-
-  const messagesHTML = chatHistory.map(m => {
-  const img = (isGatheringContext && m.role === 'assistant')
-    ? getContextImage(m.content) : null;
-  return `
-    <div class="sap-chat-msg sap-chat-msg--${m.role}">
-      ${img ? `<img src="images/${img}" class="sap-context-img" alt="">` : ''}
-      <div class="sap-chat-bubble">
-        ${String(m.content || '')
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\n/g, '<br>')}
-      </div>
-    </div>`;
-}).join('');
-
-  const subtitle   = isGatheringContext ? 'establishing context' : 'chat';
-  const statusText = isGatheringContext ? 'listening' : 'online';
-  const inputHint  = isGatheringContext ? 'Answer Saphira…'    : 'Message Saphira…';
-
-  panel.innerHTML = `
-    <div class="sap-layout">
-      <div class="sap-inner">
-
-        <div class="sap-header">
-          <div class="sap-header-left">
-            <div class="sap-avatar" onclick="resetAndRestart()" title="Re-establish context" style="cursor:pointer">
-              <img src="images/home1.png" alt="Saphira"
-                onerror="this.style.display='none'">
-              <div class="sap-avatar-ring"></div>
-            </div>
-            <div>
-              <div class="sap-name">
-                Saphira
-                <span class="sap-name-sep">·</span>
-                <span class="sap-name-sub">${subtitle}</span>
-              </div>
-              <div class="sap-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
-            </div>
-          </div>
-          <div class="sap-header-right">
-            <div class="sap-pulse"></div>
-            <span class="sap-status-label">${statusText}</span>
-          </div>
-        </div>
-
-        <div id="sap-chat-messages" class="sap-chat-messages">
-          ${messagesHTML || '<div class="sap-chat-empty">Ask me anything about today.</div>'}
-        </div>
-
-        <div class="sap-chat-input-row">
-          <input id="sap-chat-input" class="sap-chat-input" type="text"
-            placeholder="${inputHint}"
-            onkeydown="if(event.key==='Enter')sendChatMessage()">
-          <button class="sap-chat-send" onclick="sendChatMessage()">→</button>
-        </div>
-
-        ${isGatheringContext ? `
-          <button id="sap-run-briefing-btn" class="sap-btn-run-briefing" onclick="runBriefing()">
-            ✦ Generate Today's Briefing
-          </button>
-        ` : ''}
-
-        <div style="margin-top:10px">
-          <button class="sap-btn-dismiss" onclick="dismissSaphira()">got it</button>
-        </div>
-
-      </div>
-
-      <div class="sap-portrait-wrap">
-        <img class="sap-portrait" src="images/saphira.png" alt=""
-          onerror="this.parentElement.style.display='none'">
-        <div class="sap-portrait-fade"></div>
-      </div>
-    </div>`;
-
-  setTimeout(() => {
-    const msgs = document.getElementById('sap-chat-messages');
-    if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    document.getElementById('sap-chat-input')?.focus();
-  }, 50);
-}
-
 // ── Reasoning toggle ──────────────────────────────────────────────────────
 
 function toggleReasoning(btn) {
-  const body   = btn.nextElementSibling;
-  const chev   = btn.querySelector('.sap-reasoning-chev');
+  const body = btn.nextElementSibling;
+  const chev = btn.querySelector('.sap-reasoning-chev');
   const isOpen = body.classList.contains('open');
   body.classList.toggle('open', !isOpen);
   chev.classList.toggle('open', !isOpen);
@@ -365,11 +178,11 @@ function toggleReasoning(btn) {
 function dismissSaphira() {
   const panel = getPanel();
   panel.style.transition = 'opacity 0.4s ease, max-height 0.5s ease';
-  panel.style.opacity    = '0';
-  panel.style.overflow   = 'hidden';
-  panel.style.maxHeight  = panel.offsetHeight + 'px';
+  panel.style.opacity = '0';
+  panel.style.overflow = 'hidden';
+  panel.style.maxHeight = panel.offsetHeight + 'px';
   setTimeout(() => { panel.style.maxHeight = '0'; }, 10);
-  setTimeout(() => { panel.style.display   = 'none'; }, 500);
+  setTimeout(() => { panel.style.display = 'none'; }, 500);
 }
 
 // ── Fetch Sheets data ─────────────────────────────────────────────────────
@@ -381,14 +194,14 @@ async function fetchSheetData() {
     fetch(`${Saphira_GAS}?calendar=today`).then(r => r.json()).catch(() => []),
   ]);
 
-  const activeTasks = (tasks || []).filter(t => t.Done !== 'TRUE' && t.Done !== true && t.Title);
+ const activeTasks = (tasks || []).filter(t => t.Done !== 'TRUE' && t.Done !== true && t.Title);
   const contextMap  = Object.fromEntries((context || []).map(r => [r.Key, r.Value]));
   const todayEvents = Array.isArray(calendar) ? calendar : [];
 
   return { activeTasks, contextMap, todayEvents };
 }
 
-// ── System prompt (briefing) ──────────────────────────────────────────────
+// ── System prompt ─────────────────────────────────────────────────────────
 
 const systemPrompt = `You are Saphira — a calm, stoic, precise daily orientation engine and mentor for a personal operating system called Nexus. You are not a chatbot, do not present false information, make up something without being explicitly told to do so, or say you can do something you can't. Any information from outside sources must be cited. You deliver clear status readings.
 I am Suzy, I am autistic, a morning person, work overnight warehouse shifts Thu–Sat, and am sharpest 6–10am Mon/Tue. I am managing caregiving for family members (Primarily Dan, who has Cancer) and may have kids present on some days. Executive function support is a core need — every output should reduce decisions, not add them.
@@ -416,7 +229,7 @@ CONTEXT FLAG GUIDE:
 - SleepHours: hours when sleep should occur, may be 2 sleeps on each day
 - Meds: medication status
 - Schedule: today's planned activities: how far in the workout, chores (y or n), process (y or n)
-- PlanStart: what time the day's plan starts
+- PlanStart: what time the day’s plan starts
 - LearningFocus: specific learning topic or resource for today — non-negotiable directive if set
 - LearningWeekTarget: what the user is trying to accomplish this week in learning
 - LearningPressureLevel: how much pressure exists around learning this week
@@ -432,9 +245,9 @@ Output ONLY valid JSON — no markdown, no preamble, no explanation:
   "topLine": "one sentence: the clearest true thing about today",
   "reasoning": ["thread 1", "thread 2", "thread 3"],
   "day": "paragraph: how the day should unfold, use Schedule as minimum guide",
-  "eat": "specific eating directive — non-negotiable if Eating or MealPlan is set",
-  "home": "specific chore directive — non-negotiable if ChoreFocus is set",
-  "workout": "specific workout directive — non-negotiable if WorkoutPlan is set",
+  "eat": "specific eating directive — non-negotiable if Eating or MealPlan is set (e.g. Keto day, roast beef at 11am, no snacks)",
+  "home": "specific chore directive — non-negotiable if ChoreFocus is set (e.g. focus on kitchen today)",
+  "workout": "specific workout directive — non-negotiable if WorkoutPlan is set (e.g. posterior chain and glutes session today)",
   "learning": "specific learning directive — non-negotiable if LearningFocus is set",
   "project": "specific project directive — non-negotiable if ProjectFocus is set",
   "firstTask": {
@@ -445,28 +258,28 @@ Output ONLY valid JSON — no markdown, no preamble, no explanation:
   }
 }`;
 
-// ── Build Claude payload (briefing) ───────────────────────────────────────
+
+
+// ── Build Claude payload ──────────────────────────────────────────────────
 
 function buildPayload(activeTasks, contextMap, todayEvents) {
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   });
-  const timeStr = new Date().toLocaleTimeString('en-US', {
-    hour: 'numeric', minute: '2-digit', hour12: true
-  });
-
+  const timeStr = new Date().toLocaleTimeString('en-US', { 
+  hour: 'numeric', minute: '2-digit', hour12: true 
+});
   const taskList = activeTasks.slice(0, 12).map((t, i) =>
-    `${i + 1}. ${t.Title}` +
-    (t.Priority ? ` [${t.Priority}]` : '') +
-    (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
-    (t.Category ? ` · ${t.Category}` : '') +
-    (t.Notes    ? ` — ${t.Notes}`    : '')
-  ).join('\n');
+  `${i + 1}. ${t.Title}` +
+  (t.Priority ? ` [${t.Priority}]` : '') +
+  (t.Deadline ? ` (due ${new Date(t.Deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'})})` : '') +
+  (t.Category ? ` · ${t.Category}` : '') +
+  (t.Notes ? ` — ${t.Notes}` : '')   
+).join('\n');
 
   const contextStr = Object.entries(contextMap)
     .map(([k, v]) => `${k}: ${v}`).join('\n') || 'No context flags set.';
-
-  const calendarStr = todayEvents.length
+ const calendarStr = todayEvents.length
     ? todayEvents.map(ev => {
         const start = ev.allDay ? 'all day' : new Date(ev.start).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         const end   = ev.allDay ? '' : ` – ${new Date(ev.end).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
@@ -474,7 +287,7 @@ function buildPayload(activeTasks, contextMap, todayEvents) {
       }).join('\n')
     : 'No events today.';
 
-  const userMessage = `Today is ${today} at ${timeStr}.
+const userMessage = `Today is ${today} at ${timeStr}.
 ACTIVE TASKS:
 ${taskList || 'No active tasks.'}
 
@@ -494,8 +307,7 @@ Deliver the reading.`;
   };
 }
 
-// ── Call Claude via GAS proxy (briefing) ──────────────────────────────────
-
+// ── Call Claude via GAS proxy ─────────────────────────────────────────────
 async function callClaudeViaProxy(payload) {
   const res = await fetch(Saphira_GAS, {
     method: 'POST',
@@ -508,45 +320,157 @@ async function callClaudeViaProxy(payload) {
   return JSON.parse(text.replace(/```json|```/g, '').trim());
 }
 
-// ── Call GAS chat route ───────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────
 
+async function initSaphira() {
+  const cachedDate = localStorage.getItem(CACHE_DATE);
+  const cached     = localStorage.getItem(CACHE_KEY);
+
+  if (cached && cachedDate === todayStr()) {
+    try {
+      renderBriefing(JSON.parse(cached));
+      return;
+    } catch(e) { /* fall through */ }
+  }
+
+  showLoading();
+
+  try {
+    const { activeTasks, contextMap, todayEvents } = await fetchSheetData();
+const payload  = buildPayload(activeTasks, contextMap, todayEvents);
+    const briefing = await callClaudeViaProxy(payload);
+
+    localStorage.setItem(CACHE_KEY,  JSON.stringify(briefing));
+    localStorage.setItem(CACHE_DATE, todayStr());
+
+    renderBriefing(briefing);
+  } catch(e) {
+    console.error('Saphira error:', e);
+    showError(e.message);
+  }
+}
+// ── Chat state ────────────────────────────────────────────────────────────
+
+let chatHistory = [];
+
+// ── Open / switch to chat ─────────────────────────────────────────────────
+
+function openSaphiraChat() {
+  const panel = getPanel();
+
+  if (panel.style.display === 'none' || panel.style.maxHeight === '0px') {
+    // Panel is collapsed — open it in chat mode
+    panel.style.display = 'block';
+    panel.style.opacity = '0';
+    panel.style.maxHeight = '0';
+    panel.style.overflow = 'hidden';
+    panel.style.transition = 'opacity 0.4s ease, max-height 0.5s ease';
+    renderChatPanel();
+    setTimeout(() => {
+      panel.style.opacity = '1';
+      panel.style.maxHeight = '600px';
+    }, 10);
+  } else {
+    // Panel is open (briefing showing) — swap to chat
+    renderChatPanel();
+  }
+}
+
+// ── Render chat panel ─────────────────────────────────────────────────────
+
+function renderChatPanel() {
+  const panel = getPanel();
+
+  const messagesHTML = chatHistory.map(m => `
+    <div class="sap-chat-msg sap-chat-msg--${m.role}">
+    <div class="sap-chat-bubble">${String(m.content || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
+    </div>`).join('');
+
+  panel.innerHTML = `
+    <div class="sap-layout">
+      <div class="sap-inner">
+        <div class="sap-header">
+          <div class="sap-header-left">
+            <div class="sap-avatar" onclick="resetSaphira()" title="Refresh Saphira" style="cursor:pointer">
+  <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/saphira.png" alt="Saphira">
+  <div class="sap-avatar-ring"></div>
+</div>
+            <div>
+              <div class="sap-name">Saphira <span class="sap-name-sep">·</span> <span class="sap-name-sub">chat</span></div>
+              <div class="sap-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+            </div>
+          </div>
+          <div class="sap-header-right">
+            <div class="sap-pulse"></div>
+            <span class="sap-status-label">online</span>
+          </div>
+        </div>
+
+        <div id="sap-chat-messages" class="sap-chat-messages">
+          ${messagesHTML.length ? messagesHTML : '<div class="sap-chat-empty">Ask me anything about today.</div>'}
+        </div>
+
+        <div class="sap-chat-input-row">
+          <input id="sap-chat-input" class="sap-chat-input" type="text" placeholder="Message Saphira…"
+            onkeydown="if(event.key==='Enter')sendChatMessage()">
+          <button class="sap-chat-send" onclick="sendChatMessage()">→</button>
+        </div>
+
+        <div style="margin-top:10px">
+          <button class="sap-btn-dismiss" onclick="dismissSaphira()">got it</button>
+        </div>
+      </div>
+      <div class="sap-portrait-wrap">
+        <img class="sap-portrait" src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/saphira.png" alt="">
+        <div class="sap-portrait-fade"></div>
+      </div>
+    </div>`;
+}
+
+
+// ── Call GAS chat route ───────────────────────────────────────────────────
 async function callChatViaProxy(message) {
   const payload = {
-    action:  'chat',
-    mode:    isGatheringContext ? 'context' : 'freeform',
+    action: 'chat',
     message,
     history: chatHistory.slice(-10)
   };
-
   const res = await fetch(Saphira_GAS, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(payload)
   });
+
   const result = await res.json();
   console.log('RAW RESULT:', result);
 
   if (result.error) throw new Error(result.error);
 
-  let reply   = result.reply;
+  let reply = result.reply;
   let actions = [];
 
   try {
     const cleaned = reply.replace(/```json|```/g, '').trim();
-    const parsed  = JSON.parse(cleaned);
+    console.log('CLEANED:', cleaned);
+    const parsed = JSON.parse(cleaned);
     if (parsed.reply) {
-      reply   = parsed.reply;
+      reply = parsed.reply;
       actions = parsed.actions || [];
     }
-  } catch(e) { /* plain text reply — fine */ }
+  } catch(e) {
+    console.log('PARSE ERROR:', e);
+  }
 
-  // Write any context updates to sheet
   if (actions.length > 0) {
     await Promise.all(actions.map(a =>
       fetch(Saphira_GAS, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'updateContext', key: a.key, value: a.value })
+        body: JSON.stringify({
+          action: 'updateContext',
+          key: a.key,
+          value: a.value
+        })
       })
     ));
   }
@@ -555,7 +479,6 @@ async function callChatViaProxy(message) {
 }
 
 // ── Send message ──────────────────────────────────────────────────────────
-
 async function sendChatMessage() {
   const input = document.getElementById('sap-chat-input');
   const text  = input.value.trim();
@@ -565,11 +488,10 @@ async function sendChatMessage() {
   chatHistory.push({ role: 'user', content: text });
   renderChatPanel();
 
-  // Show typing indicator
   const messages = document.getElementById('sap-chat-messages');
-  const typing   = document.createElement('div');
-  typing.className   = 'sap-chat-msg sap-chat-msg--assistant';
-  typing.innerHTML   = '<div class="sap-chat-bubble sap-chat-typing">…</div>';
+  const typing = document.createElement('div');
+  typing.className = 'sap-chat-msg sap-chat-msg--assistant';
+  typing.innerHTML = '<div class="sap-chat-bubble sap-chat-typing">…</div>';
   messages.appendChild(typing);
   messages.scrollTop = messages.scrollHeight;
 
@@ -577,25 +499,22 @@ async function sendChatMessage() {
     const { reply, actions } = await callChatViaProxy(text);
 
     let displayReply = reply;
-
-    // In freeform mode, surface any context updates to the user
-    if (!isGatheringContext && actions && actions.length > 0) {
+    if (actions && actions.length > 0) {
       const updates = actions.map(a => `${a.key} → ${a.value}`).join(', ');
       displayReply += `\n\n*Updated: ${updates}*`;
     }
 
     chatHistory.push({ role: 'assistant', content: displayReply });
     renderChatPanel();
-
-    // If Saphira signals she's done gathering, pulse the briefing button
-    if (isGatheringContext && reply.toLowerCase().includes('generate briefing')) {
-      const btn = document.getElementById('sap-run-briefing-btn');
-      if (btn) btn.classList.add('sap-btn-run-briefing--ready');
-    }
-
   } catch(e) {
-    console.error('Saphira chat error:', e);
+    console.log('SEND ERROR:', e);
     chatHistory.push({ role: 'assistant', content: 'Something went wrong. Try again.' });
     renderChatPanel();
   }
+}
+// ── Reset Saphira ───────────────────────────────────────────────────
+function resetSaphira() {
+  localStorage.removeItem('Saphira-cache');
+  localStorage.removeItem('Saphira-cache-date');
+  initSaphira();
 }

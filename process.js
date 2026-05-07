@@ -132,7 +132,7 @@ function renderProcess() {
               <button class="prc-skip-btn" style="color:#1a0a2e;border-color:rgba(80,60,120,0.4);background:rgba(180,160,220,0.3)" onclick="skipStep(${current.Order})">skip</button>
             </div>
           </div>
-  
+          ${current.Image ? `<div class="prc-card-img"><img src="${current.Image}" alt="${current.Item}" /></div>` : ''}
         </div>
       </div>`;
   }

@@ -1873,3 +1873,79 @@ body {
   background: rgba(147, 209, 237, 0.2);
   border-color: var(--primary);
 }
+/* Generate Briefing button — shown at bottom of context-gathering chat */
+.sap-btn-run-briefing {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 11px 18px;
+  background: rgba(100, 60, 180, 0.18);
+  border: 1px solid rgba(140, 100, 220, 0.45);
+  border-radius: 8px;
+  color: rgba(200, 180, 255, 0.75);
+  font-size: 12px;
+  font-family: inherit;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  text-align: center;
+}
+ 
+.sap-btn-run-briefing:hover {
+  background: rgba(120, 70, 200, 0.3);
+  border-color: rgba(160, 120, 240, 0.7);
+  color: rgba(220, 205, 255, 0.95);
+}
+ 
+/* Pulsing "ready" state — added by JS when Saphira signals she's done */
+.sap-btn-run-briefing--ready {
+  background: rgba(120, 70, 200, 0.28);
+  border-color: rgba(160, 120, 240, 0.8);
+  color: rgba(230, 215, 255, 1);
+  animation: sap-briefing-pulse 2s ease-in-out infinite;
+}
+ 
+@keyframes sap-briefing-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(140, 100, 220, 0.0); }
+  50%       { box-shadow: 0 0 0 6px rgba(140, 100, 220, 0.18); }
+}
+ 
+/* Avatar hover tooltip hint — "Re-establish context" */
+.sap-avatar[title] {
+  position: relative;
+}
+ 
+.sap-avatar[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 15, 60, 0.9);
+  color: rgba(180, 160, 220, 0.9);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  padding: 3px 7px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+.sap-context-img {
+  display: block;
+  width: 140px;
+  margin: 0 auto 8px;
+  border-radius: 8px;
+  opacity: 0.92;
+}
+
+.prc-card-img {
+  margin-top: 12px;
+  text-align: center;
+}
+.prc-card-img img {
+  max-width: 100%;
+  max-height: 180px;
+  border-radius: 8px;
+  object-fit: contain;
+}

@@ -21,7 +21,7 @@ const ZONE_IMAGES = {
   'Dining/Playroom': `${IMG}play.png`,
   'Bedroom':         `${IMG}bed.png`,
   'Girls Room':      `${IMG}girls.png`,
-  'Outside':         `${IMG}energy.png`,
+  'Outside':         `${IMG}outside.png`,
 };
 
 
