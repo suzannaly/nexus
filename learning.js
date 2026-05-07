@@ -13,8 +13,6 @@ const ZONE_CONFIG = {
   'Typing':     { accent: '#888780', statusLabel: 'daily habit',  statusType: 'active' },
 };
 
-const DEFAULT_CONFIG = { accent: '#555', statusLabel: 'active', statusType: 'active' };
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function statusBg(type) {
