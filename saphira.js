@@ -394,7 +394,7 @@ You receive: today's date, active tasks (with notes and done status), and contex
 
 CONTEXT FLAG GUIDE:
 - DanStatus: Dan's general health status (stable, under but okay, sick)
-- DanNeeds: specific needs ANYONE -not just dan- has today (tasks, time, other)
+- DanNeeds: specific needs for ANYONE -not just Dan- today (tasks, time, other)
 - KidDay / KidCount: whether kids are present and how many — affects focus availability
 - WorkShiftTonight: true if user works overnight tonight — will be 2 scheduled sleep times
 - ShiftStart / ShiftEnd: shift times if working tonight
