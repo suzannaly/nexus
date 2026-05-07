@@ -8,9 +8,8 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2
 const ZONE_CONFIG = {
   'Codecademy': { accent: '#2a6bb5', statusLabel: 'on track',    statusType: 'active' },
   'Calculus':   { accent: '#1D9E75', statusLabel: 'low pressure', statusType: 'slow'   },
-  'Coursera':   { accent: '#7F77DD', statusLabel: 'phase 2',      statusType: 'ready'  },
-  'Nexus':      { accent: '#BA7517', statusLabel: 'building',     statusType: 'active' },
-  'CHDA':       { accent: '#D85A30', statusLabel: 'slow burn',    statusType: 'slow'   },
+  'Coding Basics':   { accent: '#7F77DD', statusLabel: 'on track',      statusType: 'active'  },
+  'Projects':      { accent: '#BA7517', statusLabel: 'building',     statusType: 'active' },
   'Typing':     { accent: '#888780', statusLabel: 'daily habit',  statusType: 'active' },
 };
 
