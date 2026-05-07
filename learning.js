@@ -11,7 +11,7 @@ const ZONE_CONFIG = {
   'Coding Basics':   { accent: '#7F77DD', statusLabel: 'on track',      statusType: 'active'  }
   'Typing':     { accent: '#888780', statusLabel: 'daily habit',  statusType: 'active' },
 };
-
+const DEFAULT_CONFIG = { accent: '#555', statusLabel: 'active', statusType: 'active' };
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function statusBg(type) {
