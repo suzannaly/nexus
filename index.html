@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nexus</title>
@@ -16,14 +17,15 @@
   <a href="https://docs.google.com/spreadsheets/d/1mJUw-CekG5I74HuPuq3N_YMQ9FyP-ONqS91sDlywecQ/edit" target="_blank">Backend</a>
   <span id="flag-indicator"></span>
   <button id="sap-bar-btn" onclick="openSaphiraChat()">
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/Saphira.png" alt="Saphira">
+    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/saphira.png" alt="Saphira">
+  <span class="hover-text">Saphira</span>
   </button>
 </header>
 
   <!-- Saphira BRIEFING PANEL -->
   <!-- She speaks first. Before anything else. -->
   <section id="Saphira-panel">
-    <!-- renderBriefing() writes here via Saphira.js -->
+    <!-- renderBriefing() writes here via saphira.js -->
   </section>
 
    <!-- ANCHOR -->
@@ -100,10 +102,10 @@
 </div>
   
   <script src="app.js"></script>
-  <script src="Saphira.js"></script>
+  <script src="saphira.js"></script>
   <script>
     // Saphira calls Claude via GAS proxy — no API key in this file.
-    initSaphira();
+    StartSaphira();
   </script>
   <script src="today.js"></script>
 <script>initToday();</script>

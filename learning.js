@@ -8,13 +8,9 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2
 const ZONE_CONFIG = {
   'Codecademy': { accent: '#2a6bb5', statusLabel: 'on track',    statusType: 'active' },
   'Calculus':   { accent: '#1D9E75', statusLabel: 'low pressure', statusType: 'slow'   },
-  'Coursera':   { accent: '#7F77DD', statusLabel: 'phase 2',      statusType: 'ready'  },
-  'Nexus':      { accent: '#BA7517', statusLabel: 'building',     statusType: 'active' },
-  'CHDA':       { accent: '#D85A30', statusLabel: 'slow burn',    statusType: 'slow'   },
+  'Coding Basics':   { accent: '#7F77DD', statusLabel: 'on track',      statusType: 'active'  },
   'Typing':     { accent: '#888780', statusLabel: 'daily habit',  statusType: 'active' },
 };
-
-const DEFAULT_CONFIG = { accent: '#555', statusLabel: 'active', statusType: 'active' };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -37,10 +33,12 @@ function formatLastDone(raw) {
 
 function groupByZone(rows) {
   const zones = {};
-  rows.forEach(row => {
-    if (!zones[row.Zone]) zones[row.Zone] = [];
-    zones[row.Zone].push(row);
-  });
+  rows
+    .filter(row => row.Zone && String(row.Zone).trim() !== '')  // ← add this
+    .forEach(row => {
+      if (!zones[row.Zone]) zones[row.Zone] = [];
+      zones[row.Zone].push(row);
+    });
 
   return Object.entries(zones).map(([zone, items]) => {
     items.sort((a, b) => a.Order - b.Order);
