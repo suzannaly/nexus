@@ -95,17 +95,17 @@ async function completeFitStep(section, order) {
 
   completedFitness.add(fitKey(step));
 
-  // Advance peak rotation
   if (section === 'Peak') peakIndex++;
 
   try {
     await fetch(FITNESS_GAS_URL, {
       method: 'POST',
+      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         tab: 'Fitness',
-        matchColumn: 'Item',
-        matchValue: step.Item,
+        matchColumn: 'ID',
+        matchValue: step.ID,
         updates: { LastDone: getTodayDate_fit() }
       })
     });
@@ -118,7 +118,10 @@ async function completeFitStep(section, order) {
 
 function skipFitStep(section, order) {
   const step = fitnessData.find(s => s.Section === section && s.Order === order);
-  if (step) completedFitness.add(fitKey(step));
+  if (step) {
+    completedFitness.add(fitKey(step));
+    if (section === 'Peak') peakIndex++;
+  }
   renderFitness();
 }
 
