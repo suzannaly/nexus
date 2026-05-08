@@ -60,7 +60,7 @@ function getSessionSteps() {
     });
 
  if (!excluded.includes('Peak')) {
-  const peak = getNextPeak();
+  const peak = getOrAssignPeak();
   if (peak && !completedFitness.has(fitKey(peak))) {
     const peakSectionIndex = sectionOrder.indexOf('Peak');
     const insertAt = nonPeak.findIndex(s => sectionOrder.indexOf(s.Section) > peakSectionIndex);
@@ -79,12 +79,14 @@ function getCurrentFitStep() {
 
 // ─── Next Peak workout in rotation ───────────────────────────────────────────
 
-function getNextPeak() {
+function getOrAssignPeak() {
+  if (assignedPeak) return assignedPeak;
   const peaks = fitnessData
     .filter(s => s.Section === 'Peak' && s.Status === 'active')
     .sort((a, b) => a.Order - b.Order);
   if (!peaks.length) return null;
-  return peaks[peakIndex % peaks.length];
+  assignedPeak = peaks[peakIndex % peaks.length];
+  return assignedPeak;
 }
 
 // ─── Mark complete ────────────────────────────────────────────────────────────
@@ -130,6 +132,7 @@ function skipFitStep(section, order) {
 function toggleRestDay() {
   isRestDay = !isRestDay;
   completedFitness.clear();
+  assignedPeak = null;
   renderFitness();
 }
 
@@ -137,6 +140,7 @@ function toggleRestDay() {
 
 function resetFitness() {
   completedFitness.clear();
+  assignedPeak = null;
   renderFitness();
 }
 async function saveFitNotes(id, notes) {
