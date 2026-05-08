@@ -52,6 +52,25 @@ function getSessionSteps() {
   const sectionOrder = ['Base Camp', 'Climb', 'Chasm', 'Peak', 'Summit'];
   const excluded = isRestDay ? ['Peak', 'Summit'] : [];
 
+  const nonPeak = fitnessData
+    .filter(s => s.Status === 'active' && !excluded.includes(s.Section) && s.Section !== 'Peak')
+    .sort((a, b) => {
+      const si = sectionOrder.indexOf(a.Section) - sectionOrder.indexOf(b.Section);
+      return si !== 0 ? si : a.Order - b.Order;
+    });
+
+  if (!excluded.includes('Peak')) {
+    const peak = getNextPeak();
+    if (peak) {
+      const peakIndex = sectionOrder.indexOf('Peak');
+      const insertAt = nonPeak.findIndex(s => sectionOrder.indexOf(s.Section) > peakIndex);
+      if (insertAt === -1) nonPeak.push(peak);
+      else nonPeak.splice(insertAt, 0, peak);
+    }
+  }
+
+  return nonPeak;
+}
   return fitnessData
     .filter(s => s.Status === 'active' && !excluded.includes(s.Section))
     .sort((a, b) => {
