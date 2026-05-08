@@ -15,10 +15,11 @@ const SECTION_CONFIG = {
 const DEFAULT_SECTION = { accent: '#888780', emoji: '·' };
 
 // ─── State ────────────────────────────────────────────────────────────────────
-let fitnessData     = [];
-let completedFitness = new Set(); // tracks "Section-Order" keys
-let isRestDay       = false;
-let peakIndex       = 0; // which Peak workout is next in rotation
+let fitnessData      = [];
+let completedFitness = new Set();
+let isRestDay        = false;
+let peakIndex        = 0;
+let assignedPeak     = null;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -59,25 +60,24 @@ function getSessionSteps() {
       return si !== 0 ? si : a.Order - b.Order;
     });
 
- if (!excluded.includes('Peak')) {
-  const peak = getOrAssignPeak();
-  if (peak && !completedFitness.has(fitKey(peak))) {
-    const peakSectionIndex = sectionOrder.indexOf('Peak');
-    const insertAt = nonPeak.findIndex(s => sectionOrder.indexOf(s.Section) > peakSectionIndex);
-    if (insertAt === -1) nonPeak.push(peak);
-    else nonPeak.splice(insertAt, 0, peak);
+  if (!excluded.includes('Peak')) {
+    const peak = getOrAssignPeak();
+    if (peak && !completedFitness.has(fitKey(peak))) {
+      const peakSectionIndex = sectionOrder.indexOf('Peak');
+      const insertAt = nonPeak.findIndex(s => sectionOrder.indexOf(s.Section) > peakSectionIndex);
+      if (insertAt === -1) nonPeak.push(peak);
+      else nonPeak.splice(insertAt, 0, peak);
+    }
   }
-}
 
   return nonPeak;
 }
-
 
 function getCurrentFitStep() {
   return getSessionSteps().find(s => !completedFitness.has(fitKey(s))) || null;
 }
 
-// ─── Next Peak workout in rotation ───────────────────────────────────────────
+// ─── Assign Peak workout for this session ─────────────────────────────────────
 
 function getOrAssignPeak() {
   if (assignedPeak) return assignedPeak;
@@ -85,7 +85,7 @@ function getOrAssignPeak() {
     .filter(s => s.Section === 'Peak' && s.Status === 'active')
     .sort((a, b) => a.Order - b.Order);
   if (!peaks.length) return null;
-  assignedPeak = peaks[peakIndex % peaks.length];
+  assignedPeak = peaks[peakIndex % peaks.length] || null;
   return assignedPeak;
 }
 
@@ -143,6 +143,9 @@ function resetFitness() {
   assignedPeak = null;
   renderFitness();
 }
+
+// ─── Save notes ───────────────────────────────────────────────────────────────
+
 async function saveFitNotes(id, notes) {
   try {
     await fetch(FITNESS_GAS_URL, {
@@ -171,7 +174,8 @@ function renderFitness() {
     section.innerHTML = `<h2 class="fit-heading">The Mountain</h2><p style="font-size:12px;color:var(--color-text-tertiary);padding:0.5rem 0;">Loading…</p>`;
     return;
   }
-const sectionOrder = ['Base Camp', 'Climb', 'Chasm', 'Peak', 'Summit'];
+
+  const sectionOrder = ['Base Camp', 'Climb', 'Chasm', 'Peak', 'Summit'];
   const steps   = getSessionSteps();
   const total   = steps.length;
   const done    = steps.filter(s => completedFitness.has(fitKey(s))).length;
@@ -179,36 +183,33 @@ const sectionOrder = ['Base Camp', 'Climb', 'Chasm', 'Peak', 'Summit'];
   const complete = done >= total;
   const pct     = total ? Math.round((done / total) * 100) : 0;
 
-  // Section progress pills
   const PILL_WIDTHS = {
-  'Summit':   '50px',
-  'Peak':     '75px',
-  'Chasm':    '100px',
-  'Climb':    '125px',
-  'Base Camp':'150px',
-};
+    'Summit':   '50px',
+    'Peak':     '75px',
+    'Chasm':    '100px',
+    'Climb':    '125px',
+    'Base Camp':'150px',
+  };
 
-// Render pills bottom-to-top (Base Camp first in DOM, Summit last)
-const sectionPills = [...sectionOrder].reverse().map(sec => {
-  const width = PILL_WIDTHS[sec] || '100px';
-  const secSteps = steps.filter(s => s.Section === sec);
-  if (!secSteps.length) {
-    return `<span class="fit-pill" style="width:${width};justify-content:center;background:#1a1a2a;color:#444;border-color:#333;">${getSectionEmoji(sec)}</span>`;
-  }
-  const secDone = secSteps.filter(s => completedFitness.has(fitKey(s))).length;
-  const color = getSectionColor(sec);
-  let style;
-  if (secDone === secSteps.length) {
-    style = `background:#0e3d20;color:#6fcf97;border-color:#1a6035;`;
-  } else if (secDone > 0) {
-    style = `background:#0d2a45;color:#7ab3f5;border-color:#2a5080;font-weight:500;`;
-  } else {
-    style = `background:transparent;color:${color};border-color:${color}44;`;
-  }
-  return `<span class="fit-pill" style="width:${width};justify-content:center;${style}">${getSectionEmoji(sec)} ${secDone}/${secSteps.length}</span>`;
-}).join('');
+  const sectionPills = [...sectionOrder].reverse().map(sec => {
+    const width = PILL_WIDTHS[sec] || '100px';
+    const secSteps = steps.filter(s => s.Section === sec);
+    if (!secSteps.length) {
+      return `<span class="fit-pill" style="width:${width};justify-content:center;background:#1a1a2a;color:#444;border-color:#333;">${getSectionEmoji(sec)}</span>`;
+    }
+    const secDone = secSteps.filter(s => completedFitness.has(fitKey(s))).length;
+    const color = getSectionColor(sec);
+    let style;
+    if (secDone === secSteps.length) {
+      style = `background:#0e3d20;color:#6fcf97;border-color:#1a6035;`;
+    } else if (secDone > 0) {
+      style = `background:#0d2a45;color:#7ab3f5;border-color:#2a5080;font-weight:500;`;
+    } else {
+      style = `background:transparent;color:${color};border-color:${color}44;`;
+    }
+    return `<span class="fit-pill" style="width:${width};justify-content:center;${style}">${getSectionEmoji(sec)} ${secDone}/${secSteps.length}</span>`;
+  }).join('');
 
-  // Current card
   let cardHTML = '';
   if (complete) {
     cardHTML = `
@@ -219,10 +220,8 @@ const sectionPills = [...sectionOrder].reverse().map(sec => {
         </div>
       </div>`;
   } else if (current) {
-    const color   = getSectionColor(current.Section);
-    const isPeak  = current.Section === 'Peak';
-    const displayItem = current.Item;
-    const isOptional  = current.Status === 'optional';
+    const color      = getSectionColor(current.Section);
+    const isOptional = current.Status === 'optional';
 
     cardHTML = `
       <div class="fit-card" style="border-color:${color}33">
@@ -231,13 +230,13 @@ const sectionPills = [...sectionOrder].reverse().map(sec => {
           <div class="fit-section-label" style="color:${color}">
             ${getSectionEmoji(current.Section)} ${current.Section}
           </div>
-          <div class="fit-item">${displayItem}</div>
+          <div class="fit-item">${current.Item}</div>
           <div class="fit-goal">${current.Goal || ''}</div>
           ${isOptional ? `<div class="fit-optional">optional — do if you want</div>` : ''}
           <textarea class="fit-notes-field" id="fit-notes-${current.ID}"
-  placeholder="reps / notes..."
-  onblur="saveFitNotes('${current.ID}', this.value)"
->${current.Notes || ''}</textarea>
+            placeholder="reps / notes..."
+            onblur="saveFitNotes('${current.ID}', this.value)"
+          >${current.Notes || ''}</textarea>
           <div class="fit-actions">
             <button class="fit-done-btn" style="border-color:${color};color:${color}"
               onclick="completeFitStep('${current.Section}', ${current.Order})">
@@ -267,7 +266,7 @@ const sectionPills = [...sectionOrder].reverse().map(sec => {
       <span class="fit-progress-label">${done} / ${total}</span>
     </div>
     <div class="fit-pills" style="display:flex;flex-direction:column;align-items:center;gap:4px;">${sectionPills}</div>
-${cardHTML}
+    ${cardHTML}
   `;
 }
 
@@ -290,8 +289,8 @@ async function initFitness() {
     const peaks = fitnessData
       .filter(s => s.Section === 'Peak' && s.Status === 'active')
       .sort((a, b) => a.Order - b.Order);
+
     if (peaks.length) {
-      // Find the one most recently done and start from the next
       let lastDoneOrder = -1;
       let lastDate = null;
       peaks.forEach(p => {
@@ -311,5 +310,6 @@ async function initFitness() {
     fitnessData = [];
   }
 
+  assignedPeak = null; // reset so getOrAssignPeak uses correct peakIndex
   renderFitness();
 }
