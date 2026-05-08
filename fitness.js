@@ -71,13 +71,7 @@ function getSessionSteps() {
 
   return nonPeak;
 }
-  return fitnessData
-    .filter(s => s.Status === 'active' && !excluded.includes(s.Section))
-    .sort((a, b) => {
-      const si = sectionOrder.indexOf(a.Section) - sectionOrder.indexOf(b.Section);
-      return si !== 0 ? si : a.Order - b.Order;
-    });
-}
+
 
 function getCurrentFitStep() {
   return getSessionSteps().find(s => !completedFitness.has(fitKey(s))) || null;
