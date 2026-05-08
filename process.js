@@ -55,6 +55,7 @@ async function completeStep(order) {
     try {
       await fetch(PROCESS_GAS_URL, {
         method: 'POST',
+         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tab: 'Process',
