@@ -59,15 +59,15 @@ function getSessionSteps() {
       return si !== 0 ? si : a.Order - b.Order;
     });
 
-  if (!excluded.includes('Peak')) {
-    const peak = getNextPeak();
-    if (peak) {
-      const peakIndex = sectionOrder.indexOf('Peak');
-      const insertAt = nonPeak.findIndex(s => sectionOrder.indexOf(s.Section) > peakIndex);
-      if (insertAt === -1) nonPeak.push(peak);
-      else nonPeak.splice(insertAt, 0, peak);
-    }
+ if (!excluded.includes('Peak')) {
+  const peak = getNextPeak();
+  if (peak && !completedFitness.has(fitKey(peak))) {
+    const peakSectionIndex = sectionOrder.indexOf('Peak');
+    const insertAt = nonPeak.findIndex(s => sectionOrder.indexOf(s.Section) > peakSectionIndex);
+    if (insertAt === -1) nonPeak.push(peak);
+    else nonPeak.splice(insertAt, 0, peak);
   }
+}
 
   return nonPeak;
 }
@@ -217,8 +217,7 @@ const sectionPills = [...sectionOrder].reverse().map(sec => {
   } else if (current) {
     const color   = getSectionColor(current.Section);
     const isPeak  = current.Section === 'Peak';
-    const peakRow = isPeak ? getNextPeak() : null;
-    const displayItem = isPeak && peakRow ? `Workout ${peakRow.Item} — ${peakRow.Notes}` : current.Item;
+    const displayItem = current.Item;
     const isOptional  = current.Status === 'optional';
 
     cardHTML = `
