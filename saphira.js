@@ -99,7 +99,6 @@ async function startSaphira() {
 // ── Reset: avatar click on briefing or chat ───────────────────────────────
 //
 //   Clears today's cache and re-runs the full context-gathering flow.
-//   This is the "establish context + run briefing" button.
 
 function resetAndRestart() {
   localStorage.removeItem(CACHE_KEY);
@@ -116,6 +115,78 @@ function resetAndRestart() {
   renderChatPanel();
 }
 
+// ── Quick Re-brief: skips context questions, uses current sheet context ───
+//
+//   Called by the "New Briefing" button. Fetches live data, calls Claude,
+//   logs to sheet, caches, and renders. No chat flow.
+
+async function quickReBrief() {
+  showLoading();
+
+  try {
+    const { activeTasks, contextMap, todayEvents } = await fetchSheetData();
+    const payload  = buildPayload(activeTasks, contextMap, todayEvents);
+    const briefing = await callClaudeViaProxy(payload);
+
+    // Update local cache
+    localStorage.setItem(CACHE_KEY,  JSON.stringify(briefing));
+    localStorage.setItem(CACHE_DATE, todayStr());
+
+    // Log to sheet
+    await logBriefingToSheet(briefing);
+
+    renderBriefing(briefing);
+  } catch(e) {
+    console.error('Saphira quick re-brief error:', e);
+    showError(e.message);
+  }
+}
+
+// ── Load last briefing from sheet ─────────────────────────────────────────
+//
+//   Called by the "Current Briefing" button. Fetches the last logged row
+//   from Saphirabrief tab and renders it. No Claude call.
+
+async function loadLastBriefing() {
+  showLoading();
+
+  try {
+    const res    = await fetch(`${Saphira_GAS}?action=getLastBriefing`);
+    const result = await res.json();
+
+    if (result.error) throw new Error(result.error);
+    if (!result.briefing) throw new Error('No saved briefing found.');
+
+    const briefing = typeof result.briefing === 'string'
+      ? JSON.parse(result.briefing)
+      : result.briefing;
+
+    renderBriefing(briefing, result.timestamp || null);
+  } catch(e) {
+    console.error('Saphira load briefing error:', e);
+    showError(e.message);
+  }
+}
+
+// ── Log briefing to sheet ─────────────────────────────────────────────────
+
+async function logBriefingToSheet(briefing) {
+  const timestamp = new Date().toLocaleString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true
+  });
+
+  await fetch(Saphira_GAS, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action:    'logBriefing',
+      timestamp,
+      briefing:  JSON.stringify(briefing)
+    })
+  });
+}
+
 // ── Open freeform chat (from header chat icon when briefing is showing) ───
 
 function openSaphiraChat() {
@@ -125,12 +196,10 @@ function openSaphiraChat() {
                 || panel.style.maxHeight === '0';
 
   if (isHidden) {
-    // Panel is closed — startSaphira decides whether to show briefing or gather context
     startSaphira();
     return;
   }
 
-  // Panel is open and showing briefing — switch to freeform chat
   isGatheringContext = false;
   if (!chatHistory.length) {
     chatHistory = [{ role: 'assistant', content: 'Ask me anything about today.' }];
@@ -152,6 +221,9 @@ async function runBriefing() {
     localStorage.setItem(CACHE_KEY,  JSON.stringify(briefing));
     localStorage.setItem(CACHE_DATE, todayStr());
 
+    // Log to sheet on every full briefing generation
+    await logBriefingToSheet(briefing);
+
     renderBriefing(briefing);
   } catch(e) {
     console.error('Saphira error:', e);
@@ -160,8 +232,11 @@ async function runBriefing() {
 }
 
 // ── Render briefing ───────────────────────────────────────────────────────
+//
+//   Optional secondArg: timestamp string from a logged briefing, shown
+//   as a subtitle when viewing a past briefing via "Current Briefing".
 
-function renderBriefing(data) {
+function renderBriefing(data, loggedTimestamp) {
   const panel = getPanel();
 
   const now     = new Date();
@@ -169,6 +244,11 @@ function renderBriefing(data) {
   const dateStr = now.toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   });
+
+  // If we're showing a logged briefing, note when it was generated
+  const timestampNote = loggedTimestamp
+    ? `<div class="sap-logged-timestamp">Briefing from ${esc(loggedTimestamp)}</div>`
+    : '';
 
   const reasoningItems = Array.isArray(data.reasoning)
     ? data.reasoning.map((r, i) => `
@@ -208,6 +288,18 @@ function renderBriefing(data) {
             <span class="sap-status-label">Listening</span>
           </div>
         </div>
+
+        <!-- ── Briefing action buttons ─────────────────────────────── -->
+        <div class="sap-briefing-actions">
+          <button class="sap-btn-briefing-action" onclick="loadLastBriefing()" title="Show the last saved briefing from the sheet">
+            Current Briefing
+          </button>
+          <button class="sap-btn-briefing-action sap-btn-briefing-action--new" onclick="quickReBrief()" title="Re-run briefing now without re-answering context questions">
+            New Briefing
+          </button>
+        </div>
+
+        ${timestampNote}
 
         <div class="sap-status-label-row">
           <span class="sap-status-rule"></span>
@@ -413,7 +505,7 @@ CONTEXT FLAG GUIDE:
 - ProcessComplete: whether morning process is already complete
 - SleepHours: time when sleep should occur, may be 2 sleeps on each day e.g. 6;00 AM - 9:00 AM, 1:00 PM-5:00 PM means I sleep between 6am and 9am; then sleep again between 1pm and 5pm.
 - Meds: medication status
-- Schedule: today's planned activities: begin them at the PlanStart time; how far in the workout{basecamp- climb- chasm- peak- summit}, chores (y or n), process (y or n)
+- Schedule: today's planned activities: begin them at the PlanStart time- go in this order workout then chores then process;in the line should be info showing: how far in the workout{basecamp- climb- chasm- peak- summit}, chores (y or n), process (y or n).
 - PlanStart: what time the day's plan starts
 - LearningFocus: specific learning topic or resource for today — non-negotiable directive if set
 - LearningWeekTarget: what the user is trying to accomplish this week in learning
