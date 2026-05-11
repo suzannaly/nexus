@@ -402,6 +402,15 @@ function renderChatPanel() {
             <span class="sap-status-label">${statusText}</span>
           </div>
         </div>
+        
+        <div class="sap-briefing-actions">
+          <button class="sap-btn-briefing-action" onclick="loadLastBriefing()" title="Show the last saved briefing from the sheet">
+            Current Briefing
+          </button>
+          <button class="sap-btn-briefing-action sap-btn-briefing-action--new" onclick="quickReBrief()" title="Re-run briefing now without re-answering context questions">
+            New Briefing
+          </button>
+        </div>
 
         <div id="sap-chat-messages" class="sap-chat-messages">
           ${messagesHTML || '<div class="sap-chat-empty">Ask me anything about today.</div>'}
