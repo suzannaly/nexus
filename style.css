@@ -515,6 +515,41 @@ body {
 }
 
 .sap-btn-retry:hover { border-color: var(--primary); color: var(--primary); }
+.sap-briefing-actions {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+
+.sap-btn-briefing-action {
+  flex: 1;
+  padding: 6px 10px;
+  background: rgba(147, 209, 237, 0.08);
+  border: 1px solid rgba(147, 209, 237, 0.2);
+  border-radius: 4px;
+  color: rgba(147, 209, 237, 0.7);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.sap-btn-briefing-action:hover {
+  background: rgba(147, 209, 237, 0.15);
+  border-color: rgba(147, 209, 237, 0.4);
+}
+
+.sap-btn-briefing-action--new {
+  border-color: rgba(147, 209, 237, 0.35);
+  color: rgba(147, 209, 237, 0.95);
+}
+
+.sap-logged-timestamp {
+  font-size: 10px;
+  color: rgba(147, 209, 237, 0.35);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
 
 /* Collapse portrait on narrow screens */
 @media (max-width: 900px) {
