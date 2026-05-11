@@ -1069,9 +1069,9 @@ body {
 }
 .prc-progress-bar {
   flex: 1;
-  height: 3px;
+  height: 6px;
   background: rgba(255,255,255,0.08);
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
 }
 .prc-progress-fill {
@@ -1280,13 +1280,12 @@ body {
 }
 .fit-progress-bar {
   flex: 1;
-  height: 3px;
+  height: 6px;
   background: rgba(255,255,255,0.08);
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
 }
 .fit-progress-fill {
-  background: #55dd17;
   height: 100%;
   border-radius: 2px;
   transition: width 0.3s ease;

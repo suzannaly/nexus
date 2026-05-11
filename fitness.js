@@ -261,7 +261,7 @@ function renderFitness() {
     </div>
     <div class="fit-progress-wrap">
       <div class="fit-progress-bar">
-        <div class="fit-progress-fill" style="width:${pct}%;background:${isRestDay ? '#7F77DD' : '#BA7517'}"></div>
+        <div class="fit-progress-fill" style="width:${pct}%;background:${isRestDay ? '#7F77DD' : '#55dd17;'}"></div>
       </div>
       <span class="fit-progress-label">${done} / ${total}</span>
     </div>
