@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Inside the NEXUS — Links</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper:        #f3eee2;
+    --paper-warm:   #ebe4d2;
+    --ink:          #1a1612;
+    --ink-soft:     #5a5145;
+    --ink-faint:    #8a8275;
+    --rule:         rgba(26, 22, 18, 0.16);
+    --rule-strong:  rgba(26, 22, 18, 0.85);
+    --accent:       #b03426;
+    --accent-soft:  rgba(176, 52, 38, 0.10);
+
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --sans:  'Public Sans', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Subtle paper grain */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  body {
+    min-height: 100vh;
+    padding: 40px 48px 64px;
+    position: relative;
+  }
+
+  .page {
+    max-width: 1640px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ─── Masthead ──────────────────────────────────────────── */
+  .masthead {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 12px 0 4px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .masthead__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-bottom: 6px;
+  }
+
+  .masthead__edition {
+    display: flex;
+    gap: 28px;
+  }
+  .masthead__edition span:first-child { color: var(--accent); }
+
+  .masthead__title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(72px, 8.6vw, 142px);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    padding: 6px 0 12px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .masthead__title em {
+    font-style: italic;
+  }
+  .masthead__title .roman {
+    font-family: var(--serif);
+    font-style: normal;
+    font-size: 0.18em;
+    color: var(--ink-soft);
+    letter-spacing: 0.18em;
+    align-self: flex-end;
+    padding-bottom: 0.14em;
+  }
+
+  .masthead__strap {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: center;
+    border-top: 1px solid var(--rule);
+    padding-top: 8px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .masthead__strap .ornament {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .masthead__strap .right { text-align: right; }
+  .masthead__strap kbd {
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── Bento ─────────────────────────────────────────────── */
+  .bento {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: 24px;
+  }
+
+  .zone {
+    background: var(--paper);
+    border: 1px solid var(--rule-strong);
+    padding: 22px 24px 24px;
+    position: relative;
+  }
+
+  .bento {
+    grid-template-columns: 7fr 5fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "coding projects"
+      "admin  career";
+  }
+  .zone--coding   { grid-area: coding; }
+  .zone--projects { grid-area: projects; }
+  .zone--admin    { grid-area: admin; }
+  .zone--career   { grid-area: career; }
+
+  /* ─── Zone header ───────────────────────────────────────── */
+  .zone__head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: end;
+    gap: 16px;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .zone__numeral {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 52px;
+    line-height: 0.8;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .zone__title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    align-self: end;
+  }
+  .zone__count {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-align: right;
+    padding-bottom: 4px;
+    line-height: 1.4;
+  }
+  .zone__count em {
+    display: block;
+    font-style: normal;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 14px;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 2px;
+  }
+
+  /* ─── Card grids per zone ───────────────────────────────── */
+  .cards { display: grid; gap: 14px; }
+
+  /* Wide zones (Coding, Admin): 4 columns × 2 rows */
+  .zone--coding .cards,
+  .zone--admin .cards {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr 1fr;
+    grid-auto-flow: dense;
+  }
+  .zone--coding .cards .card--hero,
+  .zone--admin .cards .card--hero {
+    grid-column: span 2;
+    grid-row: 1;
+  }
+
+  /* Narrow zones (Projects, Career): 2 columns × 4 rows */
+  .zone--projects .cards,
+  .zone--career .cards {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, auto);
+  }
+  .zone--projects .cards .card--hero,
+  .zone--career .cards .card--hero {
+    grid-column: span 2;
+    grid-row: 1;
+  }
+
+  /* ─── Card ──────────────────────────────────────────────── */
+  .card {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    text-decoration: none;
+    color: var(--ink);
+    overflow: hidden;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    min-height: 178px;
+  }
+
+  .card--hero {
+    min-height: 232px;
+  }
+  .zone--projects .card--hero,
+  .zone--career .card--hero {
+    min-height: 200px;
+  }
+
+  .card:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 -4px var(--ink), 0 14px 28px -16px rgba(26,22,18,0.35);
+  }
+  .card.flash {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .card__image {
+    position: relative;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .card__image image-slot {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .card__image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0 12px,
+        rgba(26,22,18,0.025) 12px 13px
+      );
+    pointer-events: none;
+  }
+
+  .card__key {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 1;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5px 6px 4px;
+    letter-spacing: 0.04em;
+    border-radius: 2px;
+    text-transform: uppercase;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .card__meta {
+    padding: 10px 12px 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 8px;
+    background: var(--paper);
+    border-top: 1px solid var(--rule);
+  }
+
+  .card__name {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.005em;
+  }
+  .card--hero .card__name { font-size: 28px; }
+
+  .card__tag {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    line-height: 1.3;
+  }
+
+  .card__arrow {
+    align-self: center;
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink-faint);
+    transition: transform 0.18s ease, color 0.18s ease;
+    padding-bottom: 1px;
+  }
+  .card:hover .card__arrow {
+    color: var(--accent);
+    transform: translate(2px, -1px);
+  }
+
+  /* Make whole card act like a link via overlay anchor */
+  .card__link {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+  }
+
+  /* image-slot sits above the card link so dragging/clicking it works */
+  .card__image { z-index: 1; }
+  .card__image image-slot { position: relative; z-index: 4; }
+
+  /* But meta + arrow link area should still feel clickable */
+  .card__meta { position: relative; z-index: 5; pointer-events: none; }
+
+  /* ─── Footer rule ───────────────────────────────────────── */
+  .colophon {
+    margin-top: 32px;
+    padding-top: 12px;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .colophon .ornament {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* ─── Keyboard cheatsheet overlay ───────────────────────── */
+  .keyhint {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    z-index: 50;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 14px;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: 0 10px 30px -12px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .keyhint b {
+    background: var(--paper);
+    color: var(--ink);
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  /* Responsive — collapse bento */
+  @media (max-width: 1100px) {
+    .bento {
+      grid-template-columns: 1fr;
+      grid-template-areas: "coding" "projects" "career" "admin";
+    }
+    .zone--projects .cards,
+    .zone--career .cards { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 720px) {
+    body { padding: 24px 18px 60px; }
+    .zone--coding .cards,
+    .zone--admin .cards { grid-template-columns: repeat(2, 1fr); }
+    .zone--coding .cards .card--hero,
+    .zone--admin .cards .card--hero { grid-column: span 2; }
+  }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ─────────── MASTHEAD ─────────── -->
+  <header class="masthead">
+    <div class="masthead__top">
+      <div class="masthead__edition">
+        <span>● Live</span>
+        <span id="dateline">Thursday · May 14, 2026</span>
+            </div>
+      <div>Master Navigation</div>
+    </div>
+
+    <h1 class="masthead__title">
+      <span>Inside the <em>NEXUS</em></span>
+      <span class="roman">Don't Spiral—</span>
+    </h1>
+
+    <div class="masthead__strap">
+      <div>Four desks</div>
+      <div class="ornament">✦ ✦ ✦</div>
+      <div class="right">
+        Press <kbd>A</kbd>–<kbd>Z</kbd> to open · <kbd>?</kbd> for help
+      </div>
+    </div>
+  </header>
+
+  <!-- ─────────── BENTO ─────────── -->
+  <main class="bento">
+
+    <!-- =============== CODING =============== -->
+    <section class="zone zone--coding" aria-labelledby="z-coding" style="background-color: rgb(143, 184, 211)">
+      <header class="zone__head">
+        <div class="zone__numeral">
+</div>
+        <h2 class="zone__title" id="z-coding">Coding</h2>
+        <div class="zone__count">
+          The Workshop
+          <em>Where things compile</em>
+        </div>
+      </header>
+
+      <div class="cards">
+        <div class="card card--hero">
+          <div class="card__image">
+            <span class="card__key">G</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/repo.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">GitHub</h3>
+              <p class="card__tag">Repositories · Pull requests</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="https://github.com" target="_blank" rel="noopener" aria-label="Open GitHub"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">V</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/code.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">VS Code</h3>
+              <p class="card__tag">vscode.dev</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">A</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/scripts.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Scripts</h3>
+              <p class="card__tag">Backend GAS</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============== ADMIN =============== -->
+    <section class="zone zone--admin" aria-labelledby="z-admin" style="background-color: rgb(206, 188, 152)">
+      <header class="zone__head">
+               <h2 class="zone__title" id="z-admin">Admin</h2>
+        <div class="zone__count">
+          The Filing Room
+          <em>Adulting, filed</em>
+        </div>
+      </header>
+
+      <div class="cards">
+        <div class="card card--hero">
+          <div class="card__image">
+            <span class="card__key">D</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/writing.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Docs</h3>
+              <p class="card__tag"></p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">S</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sheet.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Sheets</h3>
+              <p class="card__tag">Records</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">P</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/slides.png"</image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Slides</h3>
+              <p class="card__tag"></p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">N</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/notebook.png"</image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Notebooks</h3>
+              <p class="card__tag"></p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">Y</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/yt.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">YouTube</h3>
+              <p class="card__tag"></p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">E</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/drive.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Drive</h3>
+              <p class="card__tag">Cloud storage</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">O</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/one.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">OneDrive</h3>
+              <p class="card__tag">Cloud storage</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+<div class="card">
+          <div class="card__image">
+            <span class="card__key">O</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/cal.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Calendar</h3>
+              <p class="card__tag">Organization</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+<div class="card">
+          <div class="card__image">
+            <span class="card__key">O</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/forms.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Forms</h3>
+              <p class="card__tag">Data collection</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+<div class="card">
+          <div class="card__image">
+            <span class="card__key">O</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/keep.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Keep</h3>
+              <p class="card__tag">Note-taking</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============== PROJECTS =============== -->
+    <section class="zone zone--projects" aria-labelledby="z-projects" style="background-color: rgb(222, 204, 250)">
+      <header class="zone__head">
+        <div class="zone__numeral"></div>
+        <h2 class="zone__title" id="z-projects">Projects</h2>
+        <div class="zone__count">
+          The Studio
+          <em>In progress</em>
+        </div>
+      </header>
+
+      <div class="cards">
+        <div class="card card--hero">
+          <div class="card__image">
+            <span class="card__key">0</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/mysql.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">MySQL</h3>
+              <p class="card__tag">Featured · Active build</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">1</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/personal.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Personal Database</h3>
+              <p class="card__tag">My stuff</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">2</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sandbox.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Story Database</h3>
+              <p class="card__tag">Side build</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        
+      </div>
+    </section>
+
+
+
+    <!-- =============== CAREER =============== -->
+    <section class="zone zone--career" aria-labelledby="z-career" style="background-color: rgb(232, 250, 224)">
+      <header class="zone__head">
+        <div class="zone__numeral"></div>
+        <h2 class="zone__title" id="z-career">Career</h2>
+        <div class="zone__count">
+          The Long Game
+          <em>Reputation, kept</em>
+        </div>
+      </header>
+
+      <div class="cards">
+        <div class="card card--hero">
+          <div class="card__image">
+            <span class="card__key">I</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/resume.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">LinkedIn</h3>
+              <p class="card__tag">Profile · Inbox · Feed</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">R</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/portfolio/main/images/resume.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Résumé</h3>
+              <p class="card__tag">Latest draft</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="card">
+          <div class="card__image">
+            <span class="card__key">P</span>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/portfolio.png"></image-slot>
+          </div>
+          <div class="card__meta">
+            <div>
+              <h3 class="card__name">Portfolio</h3>
+              <p class="card__tag">Public site</p>
+            </div>
+            <span class="card__arrow">→</span>
+          </div>
+          <a class="card__link" href="#" target="_blank" rel="noopener"></a>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─────────── COLOPHON ─────────── -->
+  <footer class="colophon">
+    
+    <div class="ornament">— fin —</div>
+    <div>Press <em style="font-style:italic;font-family:var(--serif);text-transform:none;letter-spacing:0">a letter</em> to choose</div>
+  </footer>
+
+</div>
+
+<!-- Keyboard hint pill -->
+<div class="keyhint" id="keyhint">
+  <span>Tap <b>A</b>–<b>Z</b> · <b>?</b> Help</span>
+</div>
+
+<script src="image-slot.js"></script>
+<script>
+  // ─── Dateline ──────────────────────────────────────────────
+  (function () {
+    const el = document.getElementById('dateline');
+    if (!el) return;
+    const now = new Date();
+    const fmt = now.toLocaleDateString(undefined, {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+    });
+    el.textContent = fmt.replace(/,/g, ' ·');
+  })();
+
+  // ─── Keyboard shortcuts ────────────────────────────────────
+  // Single-character key opens the matching [data-key] card. `?` flashes
+  // all keys so the user sees them at a glance.
+  (function () {
+    // Binding source of truth: the visible <span class="card__key"> text inside
+    // each card. Edit that letter and the hotkey follows automatically.
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const byKey = {};
+    const duplicates = [];
+    cards.forEach((c) => {
+      const badge = c.querySelector('.card__key');
+      if (!badge) return;
+      const key = (badge.textContent || '').trim().toLowerCase();
+      if (!key) return;
+      if (byKey[key]) duplicates.push(key);
+      byKey[key] = c;
+    });
+    if (duplicates.length) {
+      console.warn('[Links] duplicate shortcut letters — only the last card with each wins:', duplicates);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      // ignore when typing in inputs
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const k = e.key.toLowerCase();
+
+      if (k === '?' || (e.shiftKey && k === '/')) {
+        e.preventDefault();
+        flashAll();
+        return;
+      }
+
+      const card = byKey[k];
+      if (!card) return;
+      e.preventDefault();
+      flash(card);
+      // navigate (open in new tab to mimic start-page behavior)
+      const href = card.getAttribute('href');
+      if (href && href !== '#') {
+        setTimeout(() => window.open(href, '_blank', 'noopener'), 120);
+      }
+    });
+
+    function flash(card) {
+      card.classList.add('flash');
+      card.scrollIntoView ? null : null;  // no-op
+      setTimeout(() => card.classList.remove('flash'), 260);
+    }
+
+    function flashAll() {
+      cards.forEach((c, i) => {
+        setTimeout(() => {
+          c.classList.add('flash');
+          setTimeout(() => c.classList.remove('flash'), 380);
+        }, i * 22);
+      });
+    }
+  })();
+
+  // ─── Auto-dismiss keyhint after a moment ───────────────────
+  (function () {
+    const hint = document.getElementById('keyhint');
+    if (!hint) return;
+    let hidden = false;
+    const hide = () => {
+      if (hidden) return;
+      hidden = true;
+      hint.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      hint.style.opacity = '0';
+      hint.style.transform = 'translateY(8px)';
+      setTimeout(() => hint.remove(), 500);
+    };
+    setTimeout(hide, 6000);
+    document.addEventListener('keydown', hide, { once: true });
+    document.addEventListener('mousemove', () => {}, { once: true });
+  })();
+</script>
+</body>
+</html>
