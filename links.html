@@ -581,7 +581,7 @@
         <div class="card">
           <div class="card__image">
             <span class="card__key">P</span>
-            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/slides.png"</image-slot>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/slides.png"></image-slot>
           </div>
           <div class="card__meta">
             <div>
@@ -596,7 +596,7 @@
         <div class="card">
           <div class="card__image">
             <span class="card__key">N</span>
-            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/notebook.png"</image-slot>
+            <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/notebook.png"></image-slot>
           </div>
           <div class="card__meta">
             <div>
@@ -807,7 +807,7 @@
 
         <div class="card">
           <div class="card__image">
-            <span class="card__key">P</span>
+            <span class="card__key">W</span>
             <image-slot src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/portfolio.png"></image-slot>
           </div>
           <div class="card__meta">
@@ -892,7 +892,7 @@
       e.preventDefault();
       flash(card);
       // navigate (open in new tab to mimic start-page behavior)
-      const href = card.getAttribute('href');
+      const href = card.querySelector('.card__link')?.getAttribute('href');
       if (href && href !== '#') {
         setTimeout(() => window.open(href, '_blank', 'noopener'), 120);
       }
