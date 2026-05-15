@@ -3,567 +3,1047 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Job Tracker — Inside the NEXUS</title>
+<title>Astral Codex — Job Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
+  /* ─── Theme variables (defaults; tweakable) ────────────── */
   :root {
-    --paper:        #f3eee2;
-    --paper-warm:   #ebe4d2;
-    --ink:          #1a1612;
-    --ink-soft:     #5a5145;
-    --ink-faint:    #8a8275;
-    --rule:         rgba(26, 22, 18, 0.16);
-    --rule-strong:  rgba(26, 22, 18, 0.85);
-    --accent:       #b03426;
-    --accent-soft:  rgba(176, 52, 38, 0.10);
-    --green:        #2d6a2d;
-    --green-soft:   rgba(45, 106, 45, 0.10);
+    /* Void Indigo palette (default) */
+    --void:         #090335;
+    --void-2:       #241b61;
+    --panel:        #040251;
+    --panel-2:      #040251;
+    --ink:          #e8e6df;
+    --ink-soft:     #ebd6af;
+    --ink-faint:    #6e6a7d;
+    --rule:         rgba(233, 227, 207, 0.12);
+    --rule-strong:  rgba(233, 227, 207, 0.32);
+    --gold:         #47a8d8;
+    --gold-soft:    rgba(227, 184, 99, 0.12);
+    --plasma:       #2188ab;
+    --plasma-soft:  rgba(111, 214, 226, 0.12);
+    --ember:        #e26b5b;
+    --ember-soft:   rgba(226, 107, 91, 0.12);
+    --jade:         #8bd09a;
+    --jade-soft:    rgba(139, 208, 154, 0.12);
 
-    --serif: 'Instrument Serif', 'Times New Roman', serif;
-    --sans:  'Public Sans', system-ui, sans-serif;
+    --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+    --sans:  'Space Grotesk', system-ui, sans-serif;
     --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+    --star-opacity: 1;
+    --scanline-opacity: 0.06;
+  }
+
+  /* Solar Forge — warm amber on charred obsidian */
+  body[data-realm="solar"] {
+    --void:        #0d0805;
+    --void-2:      #15100a;
+    --panel:       #1b150c;
+    --ink:         #f5e6c4;
+    --ink-soft:    #c2a880;
+    --ink-faint:   #7a6a4d;
+    --rule:        rgba(245, 230, 196, 0.12);
+    --rule-strong: rgba(245, 230, 196, 0.32);
+    --gold:        #f0a64a;
+    --gold-soft:   rgba(240, 166, 74, 0.14);
+    --plasma:      #ffd989;
+    --plasma-soft: rgba(255, 217, 137, 0.10);
+    --ember:       #e85c3a;
+    --jade:        #b8c75a;
+  }
+
+  /* Nebula Bloom — rose, violet, pearl */
+  body[data-realm="nebula"] {
+    --void:        #0a0712;
+    --void-2:      #160d22;
+    --panel:       #1d1130;
+    --ink:         #f3e8f5;
+    --ink-soft:    #bca8c8;
+    --ink-faint:   #7a6885;
+    --rule:        rgba(243, 232, 245, 0.12);
+    --rule-strong: rgba(243, 232, 245, 0.32);
+    --gold:        #f0a3c8;
+    --gold-soft:   rgba(240, 163, 200, 0.14);
+    --plasma:      #b18cf0;
+    --plasma-soft: rgba(177, 140, 240, 0.14);
+    --ember:       #ff7a8a;
+    --jade:        #92e0c8;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
-    background: var(--paper);
+    background: var(--void);
     color: var(--ink);
     font-family: var(--sans);
     -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "ss02";
   }
 
+  /* ─── Cosmic backdrop ──────────────────────────────────── */
+  body {
+    min-height: 100vh;
+    padding: 56px 48px 80px;
+    position: relative;
+    overflow-x: hidden;
+    background:
+      radial-gradient(ellipse 1100px 700px at 18% -10%, var(--gold-soft) 0%, transparent 55%),
+      radial-gradient(ellipse 900px 600px at 92% 15%, var(--plasma-soft) 0%, transparent 60%),
+      radial-gradient(ellipse 1400px 900px at 50% 110%, var(--gold-soft) 0%, transparent 55%),
+      linear-gradient(180deg, var(--void) 0%, var(--void-2) 100%);
+    background-attachment: fixed;
+  }
+
+  /* Starfield */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 1;
-    opacity: 0.5;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: var(--star-opacity);
+    background-image:
+      radial-gradient(1.2px 1.2px at 12% 18%, rgba(255,255,255,0.85), transparent 60%),
+      radial-gradient(1px 1px at 27% 64%, rgba(255,255,255,0.6), transparent 60%),
+      radial-gradient(1.6px 1.6px at 43% 32%, rgba(255,255,255,0.9), transparent 60%),
+      radial-gradient(1px 1px at 58% 78%, rgba(255,255,255,0.55), transparent 60%),
+      radial-gradient(1.4px 1.4px at 71% 12%, rgba(255,255,255,0.8), transparent 60%),
+      radial-gradient(1px 1px at 83% 52%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(1.2px 1.2px at 92% 88%, rgba(255,255,255,0.7), transparent 60%),
+      radial-gradient(0.9px 0.9px at 8%  82%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(1.1px 1.1px at 37% 7%,  rgba(255,255,255,0.7), transparent 60%),
+      radial-gradient(0.9px 0.9px at 64% 42%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(1.3px 1.3px at 50% 90%, rgba(255,255,255,0.8), transparent 60%),
+      radial-gradient(1px 1px at 22% 48%, rgba(255,255,255,0.55), transparent 60%);
+    background-size: 100% 100%;
+    animation: drift 240s linear infinite;
   }
 
-  body {
-    min-height: 100vh;
-    padding: 40px 48px 64px;
-    position: relative;
+  /* Scanlines */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: var(--scanline-opacity);
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.4) 0px,
+      rgba(255,255,255,0.4) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+
+  @keyframes drift {
+    from { transform: translate3d(0,0,0); }
+    to   { transform: translate3d(-40px,-30px,0); }
   }
 
   .page {
-    max-width: 1200px;
+    max-width: 1240px;
     margin: 0 auto;
     position: relative;
-    z-index: 2;
+    z-index: 3;
   }
 
   /* ─── Masthead ─────────────────────────────────────────── */
   .masthead {
-    border-top: 2px solid var(--ink);
-    border-bottom: 1px solid var(--ink);
-    padding: 12px 0 4px;
-    margin-bottom: 28px;
+    position: relative;
+    padding: 18px 0 6px;
+    margin-bottom: 36px;
+    border-top: 1px solid var(--gold);
+    border-bottom: 1px solid var(--gold);
   }
+  .masthead::before,
+  .masthead::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.4;
+  }
+  .masthead::before { top: 4px; }
+  .masthead::after  { bottom: 4px; }
 
   .masthead__top {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-soft);
-    padding-bottom: 6px;
+    padding-bottom: 10px;
   }
-
   .masthead__top a {
-    color: var(--accent);
+    color: var(--plasma);
     text-decoration: none;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
   }
   .masthead__top a:hover { text-decoration: underline; }
+  .masthead__coords {
+    display: flex;
+    gap: 18px;
+  }
+  .masthead__coords span::before {
+    content: "◆";
+    margin-right: 6px;
+    color: var(--gold);
+    font-size: 8px;
+    vertical-align: middle;
+  }
 
   .masthead__title {
     font-family: var(--serif);
     font-style: italic;
-    font-size: clamp(52px, 6vw, 96px);
-    line-height: 0.92;
-    letter-spacing: -0.02em;
-    padding: 6px 0 12px;
+    font-weight: 500;
+    font-size: clamp(56px, 7.2vw, 112px);
+    line-height: 0.9;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    padding: 8px 0 14px;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 24px;
   }
-
-  .masthead__title .roman {
+  .masthead__title .accent {
+    color: var(--gold);
+  }
+  .masthead__title .vol {
     font-family: var(--mono);
     font-style: normal;
+    font-weight: 500;
     font-size: 11px;
-    color: var(--ink-soft);
-    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     align-self: flex-end;
-    padding-bottom: 0.2em;
+    padding-bottom: 0.35em;
+    text-align: right;
+    line-height: 1.5;
   }
+  .masthead__title .vol .gold { color: var(--gold); }
 
   .masthead__strap {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     gap: 24px;
     align-items: center;
-    border-top: 1px solid var(--rule);
-    padding-top: 8px;
+    border-top: 1px dashed var(--rule-strong);
+    padding-top: 12px;
     font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.16em;
+    font-size: 10px;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-soft);
   }
   .masthead__strap .ornament {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 18px;
-    color: var(--ink);
+    font-size: 20px;
+    color: var(--gold);
     text-transform: none;
     letter-spacing: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
+  .masthead__strap .ornament svg { width: 18px; height: 18px; }
   .masthead__strap .right { text-align: right; }
 
   /* ─── Stats bar ─────────────────────────────────────────── */
   .stats-bar {
-    display: flex;
-    gap: 0;
-    border: 1px solid var(--rule-strong);
-    margin-bottom: 24px;
-    background: var(--paper-warm);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
   }
 
   .stat {
-    flex: 1;
-    padding: 14px 20px;
-    border-right: 1px solid var(--rule-strong);
-    text-align: center;
+    position: relative;
+    padding: 22px 22px 18px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0) 60%),
+      var(--panel);
+    border: 1px solid var(--rule-strong);
+    overflow: hidden;
   }
-  .stat:last-child { border-right: none; }
-
+  .stat::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 14px; height: 14px;
+    border-top: 1px solid var(--gold);
+    border-left: 1px solid var(--gold);
+  }
+  .stat::after {
+    content: "";
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 14px; height: 14px;
+    border-bottom: 1px solid var(--gold);
+    border-right: 1px solid var(--gold);
+  }
+  .stat__sigil {
+    position: absolute;
+    top: 14px; right: 14px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+  }
   .stat__num {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 40px;
+    font-weight: 500;
+    font-size: 56px;
     line-height: 1;
-    color: var(--accent);
+    color: var(--gold);
+    letter-spacing: -0.02em;
   }
+  .stat__num.plasma { color: var(--plasma); }
+  .stat__num.jade   { color: var(--jade); }
+  .stat__num.ember  { color: var(--ember); }
   .stat__label {
     font-family: var(--mono);
     font-size: 9.5px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-soft);
-    margin-top: 4px;
+    margin-top: 6px;
+  }
+  .stat__sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    margin-top: 2px;
   }
 
-  /* ─── Add form ──────────────────────────────────────────── */
-  .form-block {
+  /* ─── Panels (form, table) ─────────────────────────────── */
+  .panel {
+    position: relative;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0) 50%),
+      var(--panel);
     border: 1px solid var(--rule-strong);
-    background: var(--paper-warm);
-    padding: 22px 24px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
+  }
+  .panel::before,
+  .panel::after {
+    content: "";
+    position: absolute;
+    width: 18px; height: 18px;
+    pointer-events: none;
+  }
+  .panel::before {
+    top: -1px; left: -1px;
+    border-top: 1px solid var(--gold);
+    border-left: 1px solid var(--gold);
+  }
+  .panel::after {
+    bottom: -1px; right: -1px;
+    border-bottom: 1px solid var(--gold);
+    border-right: 1px solid var(--gold);
   }
 
-  .form-block__head {
+  .panel__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 20px 28px 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .panel__head h2 {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 28px;
-    border-bottom: 1px solid var(--rule);
-    padding-bottom: 10px;
-    margin-bottom: 16px;
+    font-weight: 500;
+    font-size: 36px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
   }
+  .panel__head h2 .accent { color: var(--gold); }
+  .panel__head .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .panel__body { padding: 22px 28px 26px; }
 
+  /* ─── Form ───────────────────────────────────────────────── */
   .form-grid {
     display: grid;
     grid-template-columns: 2fr 2fr 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 14px;
+    margin-bottom: 14px;
   }
-
   .form-grid-2 {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 12px;
+    gap: 14px;
     align-items: end;
   }
-
   .field label {
     display: block;
     font-family: var(--mono);
     font-size: 9.5px;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-soft);
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
-
+  .field label::before {
+    content: "▸ ";
+    color: var(--gold);
+    font-size: 8px;
+  }
   .field input,
   .field select,
   .field textarea {
     width: 100%;
-    background: var(--paper);
+    background: var(--void-2);
     border: 1px solid var(--rule-strong);
     color: var(--ink);
     font-family: var(--sans);
-    font-size: 13px;
-    padding: 8px 10px;
+    font-size: 14px;
+    padding: 10px 12px;
     border-radius: 0;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
   .field input:focus,
   .field select:focus,
   .field textarea:focus {
-    border-color: var(--accent);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold-soft), 0 0 16px var(--gold-soft);
   }
-  .field textarea { resize: vertical; min-height: 60px; }
+  .field input::placeholder { color: var(--ink-faint); }
+  .field select {
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--gold) 50%),
+      linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+    background-position:
+      calc(100% - 14px) calc(50% - 2px),
+      calc(100% - 9px) calc(50% - 2px);
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 28px;
+  }
 
   .btn-add {
-    background: var(--ink);
-    color: var(--paper);
+    position: relative;
+    background: var(--gold);
+    color: var(--void);
     border: none;
     font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    padding: 10px 24px;
+    padding: 12px 28px;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: all 0.2s;
     white-space: nowrap;
     height: fit-content;
+    box-shadow: 0 0 0 0 var(--gold-soft);
   }
-  .btn-add:hover { background: var(--accent); }
+  .btn-add:hover {
+    background: var(--ink);
+    box-shadow: 0 0 28px var(--gold-soft);
+  }
+  .btn-add::before { content: "⌖ "; opacity: 0.7; }
 
   .msg {
     font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    margin-top: 10px;
-    padding: 8px 12px;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border: 1px solid;
   }
-  .msg--success { background: var(--green-soft); color: var(--green); border: 1px solid var(--green); }
-  .msg--error   { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+  .msg--success { background: var(--jade-soft); color: var(--jade); border-color: var(--jade); }
+  .msg--error   { background: var(--ember-soft); color: var(--ember); border-color: var(--ember); }
 
-  /* ─── Table ─────────────────────────────────────────────── */
-  .table-block {
-    border: 1px solid var(--rule-strong);
-    background: var(--paper-warm);
-    overflow-x: auto;
-  }
-
-  .table-block__head {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 28px;
-    padding: 18px 24px 14px;
-    border-bottom: 1px solid var(--rule-strong);
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-  }
-
+  /* ─── Filter row ───────────────────────────────────────── */
   .filter-row {
     display: flex;
     gap: 8px;
-    padding: 12px 24px;
+    padding: 16px 28px;
     border-bottom: 1px solid var(--rule);
     flex-wrap: wrap;
+    align-items: center;
   }
-
+  .filter-row__label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-right: 6px;
+  }
   .filter-btn {
     font-family: var(--mono);
     font-size: 9.5px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    padding: 5px 12px;
+    padding: 7px 14px;
     border: 1px solid var(--rule-strong);
-    background: var(--paper);
+    background: transparent;
     color: var(--ink-soft);
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s;
   }
-  .filter-btn:hover,
+  .filter-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
   .filter-btn.active {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
+    background: var(--gold);
+    color: var(--void);
+    border-color: var(--gold);
+    box-shadow: 0 0 18px var(--gold-soft);
   }
 
+  /* ─── Table ─────────────────────────────────────────────── */
+  .table-wrap {
+    overflow-x: auto;
+  }
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 14px;
   }
-
   thead tr {
-    border-bottom: 2px solid var(--ink);
+    border-bottom: 1px solid var(--gold);
   }
-
   th {
     font-family: var(--mono);
     font-size: 9.5px;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--ink-soft);
-    padding: 10px 16px;
+    color: var(--ink-faint);
+    padding: 14px 20px;
     text-align: left;
-    font-weight: 400;
-    background: var(--paper-warm);
+    font-weight: 500;
+    background: transparent;
   }
-
+  th::before {
+    content: "//";
+    color: var(--gold);
+    margin-right: 6px;
+    opacity: 0.6;
+  }
   td {
-    padding: 12px 16px;
+    padding: 16px 20px;
     border-bottom: 1px solid var(--rule);
     vertical-align: top;
     color: var(--ink);
-    background: var(--paper);
+    background: transparent;
   }
-
-  tr:hover td { background: var(--paper-warm); }
+  tr { transition: background 0.15s; }
+  tbody tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+  tbody tr:last-child td { border-bottom: none; }
 
   .td-title {
     font-family: var(--serif);
-    font-size: 16px;
-    font-weight: 400;
+    font-style: italic;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.2;
   }
-
   .td-org {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--ink-soft);
-    margin-top: 2px;
+    margin-top: 4px;
     font-family: var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   .status-pill {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.14em;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 0;
+    padding: 5px 10px 5px 8px;
+    border: 1px solid;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .status-pill::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px currentColor;
+  }
+  .status-pill:hover {
+    box-shadow: 0 0 12px currentColor;
+    filter: brightness(1.2);
   }
 
-  .status-applied    { background: #1a2a40; color: #7ab3f5; border: 1px solid #2a4a70; }
-  .status-interview  { background: #3a2a00; color: #f2c94c; border: 1px solid #6a4a00; }
-  .status-offer      { background: #0e3d20; color: #6fcf97; border: 1px solid #1a6035; }
-  .status-rejected   { background: #3d1a1a; color: #eb5757; border: 1px solid #6a2a2a; }
-  .status-withdrawn  { background: #2a2a2a; color: #888780; border: 1px solid #444; }
+  .status-applied   { color: var(--plasma); border-color: var(--plasma); }
+  .status-applied::before { background: var(--plasma); }
+
+  .status-interview { color: var(--gold);   border-color: var(--gold); }
+  .status-interview::before { background: var(--gold); }
+
+  .status-offer     { color: var(--jade);   border-color: var(--jade); }
+  .status-offer::before { background: var(--jade); }
+
+  .status-rejected  { color: var(--ember);  border-color: var(--ember); }
+  .status-rejected::before { background: var(--ember); }
+
+  .status-withdrawn { color: var(--ink-faint); border-color: var(--ink-faint); }
+  .status-withdrawn::before { background: var(--ink-faint); box-shadow: none; }
 
   .td-notes {
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--ink-soft);
-    max-width: 220px;
+    max-width: 240px;
+    line-height: 1.4;
+    font-style: italic;
+    font-family: var(--serif);
   }
-
   .td-date {
     font-family: var(--mono);
     font-size: 11px;
     color: var(--ink-soft);
     white-space: nowrap;
+    letter-spacing: 0.06em;
   }
-
   .td-source {
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--ink-faint);
+    padding: 3px 7px;
+    border: 1px dashed var(--rule-strong);
+    display: inline-block;
   }
 
   .btn-delete {
     font-family: var(--mono);
     font-size: 9px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     background: none;
     border: 1px solid var(--rule);
     color: var(--ink-faint);
-    padding: 4px 8px;
+    padding: 5px 10px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s;
   }
   .btn-delete:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-soft);
+    border-color: var(--ember);
+    color: var(--ember);
+    background: var(--ember-soft);
   }
 
   .empty-row td {
     text-align: center;
     font-family: var(--serif);
     font-style: italic;
-    font-size: 18px;
+    font-size: 22px;
     color: var(--ink-faint);
-    padding: 40px;
+    padding: 56px 20px;
+  }
+  .empty-row td::before {
+    content: "✦ ";
+    color: var(--gold);
+  }
+  .empty-row td::after {
+    content: " ✦";
+    color: var(--gold);
   }
 
-  /* ─── Colophon ──────────────────────────────────────────── */
+  /* ─── Constellation decoration ─────────────────────────── */
+  .constellation {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .constellation--tl { top: -28px; left: -24px; width: 140px; }
+  .constellation--br { bottom: -28px; right: -24px; width: 160px; }
+
+  /* ─── Colophon ─────────────────────────────────────────── */
   .colophon {
-    margin-top: 32px;
-    padding-top: 12px;
-    border-top: 2px solid var(--ink);
-    display: flex;
-    justify-content: space-between;
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 1px solid var(--gold);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
     align-items: center;
     font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.16em;
+    font-size: 10px;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-soft);
   }
+  .colophon a { color: var(--plasma); text-decoration: none; }
+  .colophon a:hover { text-decoration: underline; }
   .colophon .ornament {
     font-family: var(--serif);
     font-style: italic;
-    font-size: 16px;
-    color: var(--ink);
+    font-size: 18px;
+    color: var(--gold);
     text-transform: none;
     letter-spacing: 0;
   }
+  .colophon .right { text-align: right; }
 
-  @media (max-width: 800px) {
-    body { padding: 24px 18px 60px; }
+  /* ─── Tweaks panel ─────────────────────────────────────── */
+  #tweaks {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 280px;
+    background: var(--panel);
+    border: 1px solid var(--gold);
+    z-index: 100;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 28px var(--gold-soft);
+    display: none;
+  }
+  #tweaks.open { display: block; }
+  #tweaks .twk-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--gold);
+  }
+  #tweaks .twk-head button {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+  #tweaks .twk-body { padding: 14px; display: flex; flex-direction: column; gap: 16px; }
+  #tweaks .twk-row label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  #tweaks .swatches {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  #tweaks .swatch {
+    cursor: pointer;
+    border: 1px solid var(--rule-strong);
+    padding: 8px 6px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--ink-soft);
+    transition: all 0.2s;
+  }
+  #tweaks .swatch:hover { border-color: var(--gold); color: var(--gold); }
+  #tweaks .swatch.active {
+    border-color: var(--gold);
+    color: var(--void);
+    background: var(--gold);
+  }
+  #tweaks .swatch .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    margin: 0 auto 4px;
+  }
+  #tweaks input[type="range"] {
+    width: 100%;
+    accent-color: var(--gold);
+  }
+  #tweaks .range-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  #tweaks .range-row .val {
+    font-size: 10px;
+    color: var(--gold);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  @media (max-width: 880px) {
+    body { padding: 28px 18px 60px; }
     .form-grid { grid-template-columns: 1fr 1fr; }
-    .stats-bar { flex-wrap: wrap; }
-    .stat { min-width: 50%; border-bottom: 1px solid var(--rule-strong); }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .masthead__title { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .masthead__title .vol { text-align: left; padding-bottom: 0; }
+    .panel__head { flex-direction: column; align-items: flex-start; gap: 6px; }
   }
 </style>
 </head>
-<body>
+<body data-realm="indigo">
+
+<!-- ─── Tweak defaults (persisted) ─── -->
+<script>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "realm": "indigo",
+  "stars": 1,
+  "scanlines": 0.06
+}/*EDITMODE-END*/;
+</script>
+
 <div class="page">
 
   <!-- ─── Masthead ─── -->
   <header class="masthead">
-    <div class="masthead__top">
-      <a href="links.html">← Back to Nexus</a>
-      <span id="dateline"></span>
+    <div class="masthead__top" style="display:flex; align-items: center;  gap:8px;">
+       <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/R.jpg" style="max-width:160px;">
+      <a style="font-size:24px;" href="links.html">◂ Return to Nexus</a>
+            
+            <div class="masthead__coords" style="margin-left:auto; font-size:larger"></div>
+            <span id="dateline"></span>
+      </div>
     </div>
-    <h1 class="masthead__title">
-      <span>Job <em>Tracker</em></span>
-      <span class="roman">Career · Applications · Status</span>
-    </h1>
+    <h1 class="masthead__title" style="display:flex; align-items:center; gap:8px;">
+  <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/warp.jpg" style="max-width:260px;">
+  <span>Astral <em class="accent">Codex</em> Tracker</span>
+  <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/planet.jpg" style="max-width:260px;">
+</h1>
     <div class="masthead__strap">
-      <div>The Long Game</div>
-      <div class="ornament">✦ ✦ ✦</div>
-      <div class="right">One application at a time</div>
+      <div>The Long Game · Charted Course</div>
+      <div class="ornament">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="0.8">
+          <circle cx="10" cy="10" r="1" fill="currentColor"/>
+          <circle cx="3" cy="6" r="0.8" fill="currentColor"/>
+          <circle cx="17" cy="5" r="0.8" fill="currentColor"/>
+          <circle cx="15" cy="15" r="0.8" fill="currentColor"/>
+          <circle cx="5" cy="16" r="0.8" fill="currentColor"/>
+          <line x1="3" y1="6" x2="10" y2="10"/>
+          <line x1="10" y1="10" x2="17" y2="5"/>
+          <line x1="10" y1="10" x2="15" y2="15"/>
+          <line x1="10" y1="10" x2="5" y2="16"/>
+        </svg>
+        Per aspera, ad astra
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="0.8">
+          <circle cx="10" cy="10" r="1" fill="currentColor"/>
+          <circle cx="3" cy="6" r="0.8" fill="currentColor"/>
+          <circle cx="17" cy="5" r="0.8" fill="currentColor"/>
+          <circle cx="15" cy="15" r="0.8" fill="currentColor"/>
+          <circle cx="5" cy="16" r="0.8" fill="currentColor"/>
+          <line x1="3" y1="6" x2="10" y2="10"/>
+          <line x1="10" y1="10" x2="17" y2="5"/>
+          <line x1="10" y1="10" x2="15" y2="15"/>
+          <line x1="10" y1="10" x2="5" y2="16"/>
+        </svg>
+      </div>
+      <div class="right">One transmission at a time</div>
     </div>
   </header>
 
   <!-- ─── Stats ─── -->
-  <div class="stats-bar" id="stats-bar">
-    <div class="stat"><div class="stat__num" id="stat-total">—</div><div class="stat__label">Total</div></div>
-    <div class="stat"><div class="stat__num" id="stat-applied">—</div><div class="stat__label">Applied</div></div>
-    <div class="stat"><div class="stat__num" id="stat-interview">—</div><div class="stat__label">Interview</div></div>
-    <div class="stat"><div class="stat__num" id="stat-offer">—</div><div class="stat__label">Offer</div></div>
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat__sigil">001</div>
+      <div class="stat__num" id="stat-total">—</div>
+      <div class="stat__label">Total Voyages</div>
+      <div class="stat__sub">applications</div>
+    </div>
+    <div class="stat">
+      <div class="stat__sigil">002</div>
+      <div class="stat__num plasma" id="stat-applied">—</div>
+      <div class="stat__label">In Transit</div>
+      <div class="stat__sub">awaiting signal</div>
+    </div>
+    <div class="stat">
+      <div class="stat__sigil">003</div>
+      <div class="stat__num" id="stat-interview">—</div>
+      <div class="stat__label">Hailed</div>
+      <div class="stat__sub">interview </div>
+    </div>
+    <div class="stat">
+      <div class="stat__sigil">004</div>
+      <div class="stat__num jade" id="stat-offer">—</div>
+      <div class="stat__label">Quest Granted</div>
+      <div class="stat__sub">offers </div>
+    </div>
   </div>
 
   <!-- ─── Add Form ─── -->
-  <div class="form-block">
-    <div class="form-block__head">Log an Application</div>
-    <div class="form-grid">
-      <div class="field">
-        <label>Job Title</label>
-        <input type="text" id="f-title" placeholder="Health Information Specialist">
-      </div>
-      <div class="field">
-        <label>Organization</label>
-        <input type="text" id="f-org" placeholder="OhioHealth">
-      </div>
-      <div class="field">
-        <label>Source</label>
-        <select id="f-source">
-          <option value="USAJobs">USAJobs</option>
-          <option value="OHIMA">OHIMA</option>
-          <option value="LinkedIn">LinkedIn</option>
-          <option value="Direct">Direct</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Date Applied</label>
-        <input type="date" id="f-date">
-      </div>
+  <div class="panel">
+    <div class="panel__head">
+      <h2>Inscribe a New <span class="accent">Voyage</span></h2>
+      <span class="meta">§ 01 · Transmission</span>
     </div>
-    <div class="form-grid-2">
-      <div class="field">
-        <label>Notes</label>
-        <input type="text" id="f-notes" placeholder="Tweaks made, contact name, follow-up date...">
+    <div class="panel__body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Description</label>
+          <input type="text" id="f-title" placeholder="Health Information Specialist">
+        </div>
+        <div class="field">
+          <label>Company</label>
+          <input type="text" id="f-org" placeholder="OhioHealth">
+        </div>
+        <div class="field">
+          <label>Origin</label>
+          <select id="f-source">
+            <option value="USAJobs">USAJobs</option>
+            <option value="OHIMA">OHIMA</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Direct">Direct</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="f-date">
+        </div>
       </div>
-      <button class="btn-add" onclick="addJob()">+ Log it</button>
+      <div class="form-grid-2">
+        <div class="field">
+          <label>Notes</label>
+          <input type="text" id="f-notes" placeholder="Tweaks made · contact name · follow-up date…">
+        </div>
+        <button class="btn-add" onclick="addJob()">Commit to the Codex</button>
+      </div>
+      <div id="msg"></div>
     </div>
-    <div id="msg"></div>
   </div>
 
   <!-- ─── Table ─── -->
-  <div class="table-block">
-    <div class="table-block__head">
-      <span>Applications</span>
+  <div class="panel">
+    <div class="panel__head">
+      <h2>The <span class="accent">Manifest</span></h2>
+      <span class="meta" id="manifest-count">§ 02 · 0 entries</span>
     </div>
     <div class="filter-row">
+      <span class="filter-row__label">Filter ▸</span>
       <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
-      <button class="filter-btn" onclick="setFilter('applied', this)">Applied</button>
-      <button class="filter-btn" onclick="setFilter('interview', this)">Interview</button>
-      <button class="filter-btn" onclick="setFilter('offer', this)">Offer</button>
-      <button class="filter-btn" onclick="setFilter('rejected', this)">Rejected</button>
+      <button class="filter-btn" onclick="setFilter('applied', this)">In Transit</button>
+      <button class="filter-btn" onclick="setFilter('interview', this)">Hailed</button>
+      <button class="filter-btn" onclick="setFilter('offer', this)">Granted</button>
+      <button class="filter-btn" onclick="setFilter('rejected', this)">Declined</button>
       <button class="filter-btn" onclick="setFilter('withdrawn', this)">Withdrawn</button>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Position</th>
-          <th>Source</th>
-          <th>Date</th>
-          <th>Status</th>
-          <th>Notes</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="job-list">
-        <tr class="empty-row"><td colspan="6">Loading applications…</td></tr>
-      </tbody>
-    </table>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Origin</th>
+            <th>Date</th>
+            <th>Phase</th>
+            <th>Notes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="job-list">
+          <tr class="empty-row"><td colspan="6">Listening for transmissions…</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <footer class="colophon">
-    <div><a href="links.html" style="color:var(--ink-soft);text-decoration:none;">← Links</a></div>
-    <div class="ornament">— fin —</div>
-    <div id="footer-count"></div>
+    <div><a href="links.html">◂ Return to Nexus</a></div>
+    <div><img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/worm.avif" style="max-width: 360px;"></img></div>
+    <div class="right" id="footer-count"></div>
   </footer>
 
 </div>
 
+<!-- ─── Tweaks Panel ─── -->
+<div id="tweaks">
+  <div class="twk-head">
+    <span>✦ Tweaks</span>
+    <button id="twk-close" title="Close">✕</button>
+  </div>
+  <div class="twk-body">
+    <div class="twk-row">
+      <label>Realm Palette</label>
+      <div class="swatches" id="realm-swatches">
+        <div class="swatch active" data-realm="indigo">
+          <div class="dot" style="background: linear-gradient(135deg, #e3b863 50%, #6fd6e2 50%)"></div>
+          Indigo
+        </div>
+        <div class="swatch" data-realm="solar">
+          <div class="dot" style="background: linear-gradient(135deg, #f0a64a 50%, #ffd989 50%)"></div>
+          Solar
+        </div>
+        <div class="swatch" data-realm="nebula">
+          <div class="dot" style="background: linear-gradient(135deg, #f0a3c8 50%, #b18cf0 50%)"></div>
+          Nebula
+        </div>
+      </div>
+    </div>
+    <div class="twk-row">
+      <label>Starfield Density</label>
+      <div class="range-row">
+        <input type="range" id="twk-stars" min="0" max="1.5" step="0.1" value="1">
+        <span class="val" id="twk-stars-val">1.0</span>
+      </div>
+    </div>
+    <div class="twk-row">
+      <label>Scanlines</label>
+      <div class="range-row">
+        <input type="range" id="twk-scan" min="0" max="0.3" step="0.01" value="0.06">
+        <span class="val" id="twk-scan-val">0.06</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+  
   const API = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
   let allJobs = [];
   let activeFilter = 'all';
 
-  // ─── Dateline ───
+  // Dateline + cosmic coordinates
   (function () {
     const el = document.getElementById('dateline');
-    if (!el) return;
+    const co = document.getElementById('coords');
     const now = new Date();
     el.textContent = now.toLocaleDateString(undefined, {
-      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-    }).replace(/,/g, ' ·');
+      month: 'long', day: 'numeric', year: 'numeric'
+    }).toUpperCase();
+    // a little fake "stardate" flair based on date
+    const doy = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
+    co.textContent = `SECTOR ${(7 + (doy % 9))}G · STARDATE ${now.getFullYear()}.${String(doy).padStart(3,'0')}`;
   })();
 
-  // ─── Set today's date as default ───
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
 
-  // ─── Fetch jobs ───
   async function loadJobs() {
     try {
       const res  = await fetch(`${API}?tab=Jobs`);
@@ -573,11 +1053,10 @@
       renderStats();
     } catch (e) {
       document.getElementById('job-list').innerHTML =
-        '<tr class="empty-row"><td colspan="6">Could not load — check connection.</td></tr>';
+        '<tr class="empty-row"><td colspan="6">Signal lost — check connection.</td></tr>';
     }
   }
 
-  // ─── Add job ───
   async function addJob() {
     const title  = document.getElementById('f-title').value.trim();
     const org    = document.getElementById('f-org').value.trim();
@@ -586,7 +1065,7 @@
     const notes  = document.getElementById('f-notes').value.trim();
 
     if (!title || !org) {
-      showMsg('Title and organization are required.', 'error');
+      showMsg('Designation and House are required.', 'error');
       return;
     }
 
@@ -607,27 +1086,25 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tab: 'Jobs', row })
       });
-      showMsg('Logged.', 'success');
+      showMsg('✦ Transmitted to the Codex.', 'success');
       document.getElementById('f-title').value = '';
       document.getElementById('f-org').value   = '';
       document.getElementById('f-notes').value = '';
       document.getElementById('f-date').value  = new Date().toISOString().split('T')[0];
-      // Optimistic add
       allJobs.unshift(row);
       renderTable();
       renderStats();
     } catch (e) {
-      showMsg('Could not save — check connection.', 'error');
+      showMsg('Transmission failed — check the relay.', 'error');
     }
   }
 
-  // ─── Status cycle on click ───
   const STATUS_CYCLE = ['applied','interview','offer','rejected','withdrawn'];
 
   async function cycleStatus(id) {
     const job = allJobs.find(j => String(j.ID) === String(id));
     if (!job) return;
-    const cur = STATUS_CYCLE.indexOf(job.Status);
+    const cur = STATUS_CYCLE.indexOf((job.Status||'applied').toLowerCase());
     job.Status = STATUS_CYCLE[(cur + 1) % STATUS_CYCLE.length];
     renderTable();
     renderStats();
@@ -646,7 +1123,6 @@
     } catch(e) { console.warn('status update failed', e); }
   }
 
-  // ─── Filter ───
   function setFilter(f, btn) {
     activeFilter = f;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -654,7 +1130,15 @@
     renderTable();
   }
 
-  // ─── Render table ───
+  // Phase labels (themed)
+  const PHASE_LABEL = {
+    applied:    'Applied',
+    interview:  'Interview',
+    offer:      'Offer',
+    rejected:   'Declined',
+    withdrawn:  'Withdrawn'
+  };
+
   function renderTable() {
     const tbody = document.getElementById('job-list');
     const filtered = activeFilter === 'all'
@@ -662,16 +1146,21 @@
       : allJobs.filter(j => (j.Status || 'applied').toLowerCase() === activeFilter);
 
     document.getElementById('footer-count').textContent =
-      `${filtered.length} record${filtered.length !== 1 ? 's' : ''}`;
+      `${filtered.length} record${filtered.length !== 1 ? 's' : ''} · charted`;
+    document.getElementById('manifest-count').textContent =
+      `§ 02 · ${filtered.length} ${filtered.length === 1 ? 'entry' : 'entries'}`;
 
     if (!filtered.length) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="6">${activeFilter === 'all' ? 'No applications yet — log your first one above.' : 'Nothing in this category.'}</td></tr>`;
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="6">${activeFilter === 'all' ? 'The Codex awaits its first voyage' : 'No voyages in this phase'}</td></tr>`;
       return;
     }
 
     tbody.innerHTML = filtered.map(j => {
       const status = (j.Status || 'applied').toLowerCase();
-      const date   = j['Date Applied'] ? new Date(j['Date Applied']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+      const phase  = PHASE_LABEL[status] || status;
+      const date   = j['Date Applied']
+        ? new Date(j['Date Applied']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '—';
       return `
         <tr>
           <td>
@@ -682,34 +1171,31 @@
           <td><span class="td-date">${date}</span></td>
           <td>
             <span class="status-pill status-${status}"
-              style="cursor:pointer;" title="Click to advance status"
+              title="Click to advance phase"
               onclick="cycleStatus('${j.ID}')">
-              ${status}
+              ${phase}
             </span>
           </td>
           <td><span class="td-notes">${esc(j.Notes || '')}</span></td>
-          <td><button class="btn-delete" onclick="deleteJob('${j.ID}')">remove</button></td>
+          <td><button class="btn-delete" onclick="deleteJob('${j.ID}')">jettison</button></td>
         </tr>`;
     }).join('');
   }
 
-  // ─── Render stats ───
   function renderStats() {
-    document.getElementById('stat-total').textContent     = allJobs.length;
-    document.getElementById('stat-applied').textContent   = allJobs.filter(j => (j.Status||'applied') === 'applied').length;
-    document.getElementById('stat-interview').textContent = allJobs.filter(j => j.Status === 'interview').length;
-    document.getElementById('stat-offer').textContent     = allJobs.filter(j => j.Status === 'offer').length;
+    document.getElementById('stat-total').textContent     = allJobs.length || 0;
+    document.getElementById('stat-applied').textContent   = allJobs.filter(j => ((j.Status||'applied').toLowerCase()) === 'applied').length;
+    document.getElementById('stat-interview').textContent = allJobs.filter(j => (j.Status||'').toLowerCase() === 'interview').length;
+    document.getElementById('stat-offer').textContent     = allJobs.filter(j => (j.Status||'').toLowerCase() === 'offer').length;
   }
 
-  // ─── Delete (local only — GAS doesn't support delete by default) ───
   function deleteJob(id) {
-    if (!confirm('Remove this entry?')) return;
+    if (!confirm('Jettison this voyage from the Codex?')) return;
     allJobs = allJobs.filter(j => String(j.ID) !== String(id));
     renderTable();
     renderStats();
   }
 
-  // ─── Msg ───
   function showMsg(text, type) {
     const el = document.getElementById('msg');
     el.textContent = text;
@@ -722,6 +1208,58 @@
   }
 
   loadJobs();
+
+  /* ───────────────────────────────────────────────────────
+     TWEAKS — palette, starfield, scanlines
+     ─────────────────────────────────────────────────────── */
+  const tweaks = { ...TWEAK_DEFAULTS };
+
+  function applyTweaks() {
+    document.body.setAttribute('data-realm', tweaks.realm);
+    document.documentElement.style.setProperty('--star-opacity', tweaks.stars);
+    document.documentElement.style.setProperty('--scanline-opacity', tweaks.scanlines);
+    // update UI
+    document.querySelectorAll('#realm-swatches .swatch').forEach(s => {
+      s.classList.toggle('active', s.dataset.realm === tweaks.realm);
+    });
+    const sv = document.getElementById('twk-stars');     if (sv) sv.value = tweaks.stars;
+    const sc = document.getElementById('twk-scan');      if (sc) sc.value = tweaks.scanlines;
+    const svv = document.getElementById('twk-stars-val');if (svv) svv.textContent = Number(tweaks.stars).toFixed(1);
+    const scv = document.getElementById('twk-scan-val'); if (scv) scv.textContent = Number(tweaks.scanlines).toFixed(2);
+  }
+  applyTweaks();
+
+  function setTweak(patch) {
+    Object.assign(tweaks, patch);
+    applyTweaks();
+    try {
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: patch }, '*');
+    } catch(e){}
+  }
+
+  // wire swatches
+  document.querySelectorAll('#realm-swatches .swatch').forEach(s => {
+    s.addEventListener('click', () => setTweak({ realm: s.dataset.realm }));
+  });
+  document.getElementById('twk-stars').addEventListener('input', e => {
+    setTweak({ stars: parseFloat(e.target.value) });
+  });
+  document.getElementById('twk-scan').addEventListener('input', e => {
+    setTweak({ scanlines: parseFloat(e.target.value) });
+  });
+
+  // Tweaks protocol — listener BEFORE announcement
+  const panel = document.getElementById('tweaks');
+  window.addEventListener('message', (ev) => {
+    const t = ev.data && ev.data.type;
+    if (t === '__activate_edit_mode')   panel.classList.add('open');
+    if (t === '__deactivate_edit_mode') panel.classList.remove('open');
+  });
+  document.getElementById('twk-close').addEventListener('click', () => {
+    panel.classList.remove('open');
+    try { window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); } catch(e){}
+  });
+  try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch(e){}
 </script>
 </body>
 </html>
