@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Job Tracker — Inside the NEXUS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper:        #f3eee2;
+    --paper-warm:   #ebe4d2;
+    --ink:          #1a1612;
+    --ink-soft:     #5a5145;
+    --ink-faint:    #8a8275;
+    --rule:         rgba(26, 22, 18, 0.16);
+    --rule-strong:  rgba(26, 22, 18, 0.85);
+    --accent:       #b03426;
+    --accent-soft:  rgba(176, 52, 38, 0.10);
+    --green:        #2d6a2d;
+    --green-soft:   rgba(45, 106, 45, 0.10);
+
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --sans:  'Public Sans', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  body {
+    min-height: 100vh;
+    padding: 40px 48px 64px;
+    position: relative;
+  }
+
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ─── Masthead ─────────────────────────────────────────── */
+  .masthead {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 12px 0 4px;
+    margin-bottom: 28px;
+  }
+
+  .masthead__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-bottom: 6px;
+  }
+
+  .masthead__top a {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .masthead__top a:hover { text-decoration: underline; }
+
+  .masthead__title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(52px, 6vw, 96px);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    padding: 6px 0 12px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .masthead__title .roman {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    align-self: flex-end;
+    padding-bottom: 0.2em;
+  }
+
+  .masthead__strap {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: center;
+    border-top: 1px solid var(--rule);
+    padding-top: 8px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .masthead__strap .ornament {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .masthead__strap .right { text-align: right; }
+
+  /* ─── Stats bar ─────────────────────────────────────────── */
+  .stats-bar {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--rule-strong);
+    margin-bottom: 24px;
+    background: var(--paper-warm);
+  }
+
+  .stat {
+    flex: 1;
+    padding: 14px 20px;
+    border-right: 1px solid var(--rule-strong);
+    text-align: center;
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat__num {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .stat__label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  /* ─── Add form ──────────────────────────────────────────── */
+  .form-block {
+    border: 1px solid var(--rule-strong);
+    background: var(--paper-warm);
+    padding: 22px 24px;
+    margin-bottom: 24px;
+  }
+
+  .form-block__head {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 28px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 5px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--rule-strong);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 8px 10px;
+    border-radius: 0;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--accent);
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+
+  .btn-add {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+    height: fit-content;
+  }
+  .btn-add:hover { background: var(--accent); }
+
+  .msg {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-top: 10px;
+    padding: 8px 12px;
+  }
+  .msg--success { background: var(--green-soft); color: var(--green); border: 1px solid var(--green); }
+  .msg--error   { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+
+  /* ─── Table ─────────────────────────────────────────────── */
+  .table-block {
+    border: 1px solid var(--rule-strong);
+    background: var(--paper-warm);
+    overflow-x: auto;
+  }
+
+  .table-block__head {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 28px;
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--rule-strong);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--rule);
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border: 1px solid var(--rule-strong);
+    background: var(--paper);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead tr {
+    border-bottom: 2px solid var(--ink);
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 400;
+    background: var(--paper-warm);
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--ink);
+    background: var(--paper);
+  }
+
+  tr:hover td { background: var(--paper-warm); }
+
+  .td-title {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .td-org {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    font-family: var(--mono);
+  }
+
+  .status-pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 0;
+  }
+
+  .status-applied    { background: #1a2a40; color: #7ab3f5; border: 1px solid #2a4a70; }
+  .status-interview  { background: #3a2a00; color: #f2c94c; border: 1px solid #6a4a00; }
+  .status-offer      { background: #0e3d20; color: #6fcf97; border: 1px solid #1a6035; }
+  .status-rejected   { background: #3d1a1a; color: #eb5757; border: 1px solid #6a2a2a; }
+  .status-withdrawn  { background: #2a2a2a; color: #888780; border: 1px solid #444; }
+
+  .td-notes {
+    font-size: 12px;
+    color: var(--ink-soft);
+    max-width: 220px;
+  }
+
+  .td-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .td-source {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .btn-delete {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink-faint);
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-delete:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .empty-row td {
+    text-align: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-faint);
+    padding: 40px;
+  }
+
+  /* ─── Colophon ──────────────────────────────────────────── */
+  .colophon {
+    margin-top: 32px;
+    padding-top: 12px;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .colophon .ornament {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  @media (max-width: 800px) {
+    body { padding: 24px 18px 60px; }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    .stats-bar { flex-wrap: wrap; }
+    .stat { min-width: 50%; border-bottom: 1px solid var(--rule-strong); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ─── Masthead ─── -->
+  <header class="masthead">
+    <div class="masthead__top">
+      <a href="links.html">← Back to Nexus</a>
+      <span id="dateline"></span>
+    </div>
+    <h1 class="masthead__title">
+      <span>Job <em>Tracker</em></span>
+      <span class="roman">Career · Applications · Status</span>
+    </h1>
+    <div class="masthead__strap">
+      <div>The Long Game</div>
+      <div class="ornament">✦ ✦ ✦</div>
+      <div class="right">One application at a time</div>
+    </div>
+  </header>
+
+  <!-- ─── Stats ─── -->
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat"><div class="stat__num" id="stat-total">—</div><div class="stat__label">Total</div></div>
+    <div class="stat"><div class="stat__num" id="stat-applied">—</div><div class="stat__label">Applied</div></div>
+    <div class="stat"><div class="stat__num" id="stat-interview">—</div><div class="stat__label">Interview</div></div>
+    <div class="stat"><div class="stat__num" id="stat-offer">—</div><div class="stat__label">Offer</div></div>
+  </div>
+
+  <!-- ─── Add Form ─── -->
+  <div class="form-block">
+    <div class="form-block__head">Log an Application</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Job Title</label>
+        <input type="text" id="f-title" placeholder="Health Information Specialist">
+      </div>
+      <div class="field">
+        <label>Organization</label>
+        <input type="text" id="f-org" placeholder="OhioHealth">
+      </div>
+      <div class="field">
+        <label>Source</label>
+        <select id="f-source">
+          <option value="USAJobs">USAJobs</option>
+          <option value="OHIMA">OHIMA</option>
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="Direct">Direct</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Date Applied</label>
+        <input type="date" id="f-date">
+      </div>
+    </div>
+    <div class="form-grid-2">
+      <div class="field">
+        <label>Notes</label>
+        <input type="text" id="f-notes" placeholder="Tweaks made, contact name, follow-up date...">
+      </div>
+      <button class="btn-add" onclick="addJob()">+ Log it</button>
+    </div>
+    <div id="msg"></div>
+  </div>
+
+  <!-- ─── Table ─── -->
+  <div class="table-block">
+    <div class="table-block__head">
+      <span>Applications</span>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-btn" onclick="setFilter('applied', this)">Applied</button>
+      <button class="filter-btn" onclick="setFilter('interview', this)">Interview</button>
+      <button class="filter-btn" onclick="setFilter('offer', this)">Offer</button>
+      <button class="filter-btn" onclick="setFilter('rejected', this)">Rejected</button>
+      <button class="filter-btn" onclick="setFilter('withdrawn', this)">Withdrawn</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>Source</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Notes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="job-list">
+        <tr class="empty-row"><td colspan="6">Loading applications…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="colophon">
+    <div><a href="links.html" style="color:var(--ink-soft);text-decoration:none;">← Links</a></div>
+    <div class="ornament">— fin —</div>
+    <div id="footer-count"></div>
+  </footer>
+
+</div>
+
+<script>
+  const API = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
+  let allJobs = [];
+  let activeFilter = 'all';
+
+  // ─── Dateline ───
+  (function () {
+    const el = document.getElementById('dateline');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = now.toLocaleDateString(undefined, {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    }).replace(/,/g, ' ·');
+  })();
+
+  // ─── Set today's date as default ───
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+  // ─── Fetch jobs ───
+  async function loadJobs() {
+    try {
+      const res  = await fetch(`${API}?tab=Jobs`);
+      const rows = await res.json();
+      allJobs = Array.isArray(rows) ? rows.filter(r => r.Title) : [];
+      renderTable();
+      renderStats();
+    } catch (e) {
+      document.getElementById('job-list').innerHTML =
+        '<tr class="empty-row"><td colspan="6">Could not load — check connection.</td></tr>';
+    }
+  }
+
+  // ─── Add job ───
+  async function addJob() {
+    const title  = document.getElementById('f-title').value.trim();
+    const org    = document.getElementById('f-org').value.trim();
+    const source = document.getElementById('f-source').value;
+    const date   = document.getElementById('f-date').value;
+    const notes  = document.getElementById('f-notes').value.trim();
+
+    if (!title || !org) {
+      showMsg('Title and organization are required.', 'error');
+      return;
+    }
+
+    const row = {
+      ID:           Date.now(),
+      Title:        title,
+      Organization: org,
+      Source:       source,
+      'Date Applied': date,
+      Status:       'applied',
+      Notes:        notes
+    };
+
+    try {
+      await fetch(API, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tab: 'Jobs', row })
+      });
+      showMsg('Logged.', 'success');
+      document.getElementById('f-title').value = '';
+      document.getElementById('f-org').value   = '';
+      document.getElementById('f-notes').value = '';
+      document.getElementById('f-date').value  = new Date().toISOString().split('T')[0];
+      // Optimistic add
+      allJobs.unshift(row);
+      renderTable();
+      renderStats();
+    } catch (e) {
+      showMsg('Could not save — check connection.', 'error');
+    }
+  }
+
+  // ─── Status cycle on click ───
+  const STATUS_CYCLE = ['applied','interview','offer','rejected','withdrawn'];
+
+  async function cycleStatus(id) {
+    const job = allJobs.find(j => String(j.ID) === String(id));
+    if (!job) return;
+    const cur = STATUS_CYCLE.indexOf(job.Status);
+    job.Status = STATUS_CYCLE[(cur + 1) % STATUS_CYCLE.length];
+    renderTable();
+    renderStats();
+    try {
+      await fetch(API, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tab: 'Jobs',
+          matchColumn: 'ID',
+          matchValue: String(id),
+          updates: { Status: job.Status }
+        })
+      });
+    } catch(e) { console.warn('status update failed', e); }
+  }
+
+  // ─── Filter ───
+  function setFilter(f, btn) {
+    activeFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  }
+
+  // ─── Render table ───
+  function renderTable() {
+    const tbody = document.getElementById('job-list');
+    const filtered = activeFilter === 'all'
+      ? allJobs
+      : allJobs.filter(j => (j.Status || 'applied').toLowerCase() === activeFilter);
+
+    document.getElementById('footer-count').textContent =
+      `${filtered.length} record${filtered.length !== 1 ? 's' : ''}`;
+
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="6">${activeFilter === 'all' ? 'No applications yet — log your first one above.' : 'Nothing in this category.'}</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(j => {
+      const status = (j.Status || 'applied').toLowerCase();
+      const date   = j['Date Applied'] ? new Date(j['Date Applied']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+      return `
+        <tr>
+          <td>
+            <div class="td-title">${esc(j.Title)}</div>
+            <div class="td-org">${esc(j.Organization || '')}</div>
+          </td>
+          <td><span class="td-source">${esc(j.Source || '')}</span></td>
+          <td><span class="td-date">${date}</span></td>
+          <td>
+            <span class="status-pill status-${status}"
+              style="cursor:pointer;" title="Click to advance status"
+              onclick="cycleStatus('${j.ID}')">
+              ${status}
+            </span>
+          </td>
+          <td><span class="td-notes">${esc(j.Notes || '')}</span></td>
+          <td><button class="btn-delete" onclick="deleteJob('${j.ID}')">remove</button></td>
+        </tr>`;
+    }).join('');
+  }
+
+  // ─── Render stats ───
+  function renderStats() {
+    document.getElementById('stat-total').textContent     = allJobs.length;
+    document.getElementById('stat-applied').textContent   = allJobs.filter(j => (j.Status||'applied') === 'applied').length;
+    document.getElementById('stat-interview').textContent = allJobs.filter(j => j.Status === 'interview').length;
+    document.getElementById('stat-offer').textContent     = allJobs.filter(j => j.Status === 'offer').length;
+  }
+
+  // ─── Delete (local only — GAS doesn't support delete by default) ───
+  function deleteJob(id) {
+    if (!confirm('Remove this entry?')) return;
+    allJobs = allJobs.filter(j => String(j.ID) !== String(id));
+    renderTable();
+    renderStats();
+  }
+
+  // ─── Msg ───
+  function showMsg(text, type) {
+    const el = document.getElementById('msg');
+    el.textContent = text;
+    el.className   = `msg msg--${type}`;
+    setTimeout(() => { el.textContent = ''; el.className = 'msg'; }, 3000);
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  loadJobs();
+</script>
+</body>
+</html>
