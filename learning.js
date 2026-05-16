@@ -149,9 +149,15 @@ function renderLearning() {
     : '';
 
   section.innerHTML = `
-    <h2 class="lrn-heading">Learning</h2>
-    <div class="lrn-grid">${cards}</div>
-    ${detail}
+  <button onclick="learningDone()"
+    style="margin:12px 12px 0;width:calc(100% - 24px);padding:10px;border-radius:8px;
+           border:1px solid #2ECC71;background:#0e3d20;color:#6fcf97;
+           font-size:13px;cursor:pointer;letter-spacing:0.06em;">
+    ✓ Done with Learning
+  </button>
+  <h2 class="lrn-heading">Learning</h2>
+  <div class="lrn-grid">${cards}</div>
+  ${detail}
   `;
 }
 
@@ -170,4 +176,24 @@ async function initLearning() {
   }
 
   renderLearning();
+}
+async function learningDone() {
+  // Mark pill done
+  if (typeof markDone === 'function') markDone('learning-panel');
+
+  // Write LearningDoneToday to Context tab
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'updateContext',
+        key: 'LearningDoneToday',
+        value: 'TRUE'
+      })
+    });
+  } catch(err) {
+    console.warn('learning.js: context write-back failed', err);
+  }
 }
