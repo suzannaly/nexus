@@ -1,5 +1,5 @@
 // today.js — Nexus Today Section
-// Manages Calendar, Chores, and Tasks tabs.
+// Manages Calendar
 // Call initToday() to render.
 
 const TODAY_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';

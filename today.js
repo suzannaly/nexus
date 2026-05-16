@@ -2,26 +2,13 @@
 // Manages Calendar
 // Call initToday() to render.
 
-const TODAY_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
-const IMG = 'https://raw.githubusercontent.com/suzannaly/nexus/main/images/';
-
-
-
-
-// ─── State ────────────────────────────────────────────────────────────────────
-let activeTab       = 'calendar';
-let calendarEvents  = [];
-let choresData      = [];
-let completedChores = new Set();
-
-// Collapse state — all start closed
-let openGroups = new Set();
-let openZones  = new Set();
-
-
 // ══════════════════════════════════════════════════════════════════════════════
 // CALENDAR
 // ══════════════════════════════════════════════════════════════════════════════
+
+const TODAY_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
+const IMG = 'https://raw.githubusercontent.com/suzannaly/nexus/main/images/';
+
 
 function getWeekDays() {
   const today  = new Date();
