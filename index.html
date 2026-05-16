@@ -204,11 +204,7 @@
       border-radius: 4px;
     }
 
-    /* Learning panel — reuses existing learning-section styles */
-    #learning-panel {
-      padding: 0;
-    }
-
+    
     /* Remove old layout sections */
     #bottom-split,
     #health-section,
@@ -293,12 +289,7 @@
         <div class="check-pill" data-panel="money-panel" onclick="switchPanel(this)">
           <span class="pill-check">☐</span> Money
         </div>
-        <div class="check-pill" data-panel="learning-panel" onclick="switchPanel(this)">
-          <span class="pill-check">☐</span> Learning
-        </div>
-        <div class="check-pill" data-panel="tasks-panel" onclick="switchPanel(this)">
-  Tasks
-</div>
+        
       </nav>
 
       <!-- Active panel -->
@@ -360,23 +351,7 @@
           </iframe>
         </section>
 
-        <!-- Learning -->
-        <section id="learning-panel">
-          <div id="learning-section"></div>
-        </section>
-
-        <!-- Tasks -->
-        <section id="tasks-panel">
-          <div id="tasks-section">
-            <h2>Tasks</h2>
-            <div class="task-add-row">
-              <input class="task-new-input" id="new-task-input" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()">
-              <button class="task-new-btn" onclick="addTask()">+</button>
-            </div>
-            <div id="task-preview"></div>
-          </div>
-        </section>
-
+        
       </div>
       <!-- /active-panel -->
 
@@ -396,8 +371,6 @@
   <script>initFitness();</script>
   <script src="process.js"></script>
   <script>initProcess();</script>
-  <script src="learning.js"></script>
-  <script>initLearning();</script>
   <script src="chores.js"></script>
   <script>initChores();</script>
 
@@ -429,20 +402,7 @@
       }
     }
 
-    // ── Task add ───────────────────────────────────────────────────────
-    async function addTask() {
-      const input = document.getElementById('new-task-input');
-      const title = input.value.trim();
-      if (!title) return;
-      input.value = '';
-      const id = Date.now();
-      await postData('Tasks', { ID: id, Title: title, Done: 'FALSE' });
-      loadTasks();
-    }
-
-    // ── Chores init placeholder ────────────────────────────────────────
-    // Your existing chores JS can be loaded here once extracted
-    // For now sections render as empty until chores.js is wired in
+    
   </script>
 
 </body>

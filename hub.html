@@ -3,744 +3,919 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Inside the NEXUS — Links</title>
+<title>Inside the NEXUS — Work Session</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
 <style>
-  :root {
-    --paper:        #f3eee2;
-    --paper-warm:   #ebe4d2;
-    --ink:          #1a1612;
-    --ink-soft:     #5a5145;
-    --ink-faint:    #8a8275;
-    --rule:         rgba(26, 22, 18, 0.16);
-    --rule-strong:  rgba(26, 22, 18, 0.85);
-    --accent:       #b03426;
-    --accent-soft:  rgba(176, 52, 38, 0.10);
+/* ═══════════════════════════════════════════════════════
+   TOKENS — matches existing nexus aesthetic
+═══════════════════════════════════════════════════════ */
+:root {
+  --paper:        #f3eee2;
+  --paper-warm:   #ebe4d2;
+  --ink:          #1a1612;
+  --ink-soft:     #5a5145;
+  --ink-faint:    #8a8275;
+  --rule:         rgba(26, 22, 18, 0.16);
+  --rule-strong:  rgba(26, 22, 18, 0.85);
+  --accent:       #b03426;
+  --accent-soft:  rgba(176, 52, 38, 0.10);
 
-    --serif: 'Instrument Serif', 'Times New Roman', serif;
-    --sans:  'Public Sans', system-ui, sans-serif;
-    --mono:  'JetBrains Mono', ui-monospace, monospace;
-  }
+  --serif: 'Instrument Serif', 'Times New Roman', serif;
+  --sans:  'Public Sans', system-ui, sans-serif;
+  --mono:  'JetBrains Mono', ui-monospace, monospace;
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Section tints — same palette as index */
+  --tint-career:   rgb(232, 250, 224);
+  --tint-courses:  rgb(222, 204, 250);
+  --tint-projects: rgb(206, 188, 152);
+  --tint-admin:    rgb(143, 184, 211);
+}
 
-  html, body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--sans);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Subtle paper grain */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.5;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  }
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
 
-  body {
-    min-height: 100vh;
-    padding: 40px 48px 64px;
-    position: relative;
-  }
+/* Paper grain */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1;
+  opacity: 0.5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
 
-  .page {
-    max-width: 1640px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-  }
+body {
+  min-height: 100vh;
+  padding: 40px 48px 64px;
+  position: relative;
+}
 
-  /* ─── Masthead ──────────────────────────────────────────── */
-  .masthead {
-    border-top: 2px solid var(--ink);
-    border-bottom: 1px solid var(--ink);
-    padding: 12px 0 4px;
-    margin-bottom: 28px;
-    position: relative;
-  }
+.page {
+  max-width: 1640px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
 
-  .masthead__top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    padding-bottom: 6px;
-  }
+/* ═══════════════════════════════════════════════════════
+   MASTHEAD
+═══════════════════════════════════════════════════════ */
+.masthead {
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 12px 0 4px;
+  margin-bottom: 28px;
+}
 
-  .masthead__edition {
-    display: flex;
-    gap: 28px;
-  }
-  .masthead__edition span:first-child { color: var(--accent); }
+.masthead__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-bottom: 6px;
+}
 
-  .masthead__title {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: clamp(72px, 8.6vw, 142px);
-    line-height: 0.92;
-    letter-spacing: -0.02em;
-    padding: 6px 0 12px;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 24px;
-  }
-  .masthead__title em {
-    font-style: italic;
-  }
-  .masthead__title .roman {
-    font-family: var(--serif);
-    font-style: normal;
-    font-size: 0.18em;
-    color: var(--ink-soft);
-    letter-spacing: 0.18em;
-    align-self: flex-end;
-    padding-bottom: 0.14em;
-  }
+.masthead__edition { display: flex; gap: 28px; }
+.masthead__edition span:first-child { color: var(--accent); }
 
-  .masthead__strap {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 24px;
-    align-items: center;
-    border-top: 1px solid var(--rule);
-    padding-top: 8px;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-  }
-  .masthead__strap .ornament {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 18px;
-    color: var(--ink);
-    text-transform: none;
-    letter-spacing: 0;
-  }
-  .masthead__strap .right { text-align: right; }
-  .masthead__strap kbd {
-    font-family: var(--mono);
-    font-size: 10px;
-    background: var(--ink);
-    color: var(--paper);
-    padding: 2px 6px;
-    border-radius: 2px;
-    letter-spacing: 0.04em;
-  }
+.masthead__title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(56px, 7vw, 118px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  padding: 6px 0 12px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+}
+.masthead__title .roman {
+  font-family: var(--serif);
+  font-style: normal;
+  font-size: 0.18em;
+  color: var(--ink-soft);
+  letter-spacing: 0.18em;
+  align-self: flex-end;
+  padding-bottom: 0.14em;
+}
 
-  /* ─── Bento ─────────────────────────────────────────────── */
-  .bento {
-    display: grid;
-    grid-template-columns: 7fr 5fr;
-    gap: 24px;
-  }
+.masthead__strap {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 24px;
+  align-items: center;
+  border-top: 1px solid var(--rule);
+  padding-top: 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.masthead__strap .ornament {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--ink);
+  text-transform: none; letter-spacing: 0;
+}
+.masthead__strap .right { text-align: right; }
+.masthead__strap kbd {
+  font-family: var(--mono); font-size: 10px;
+  background: var(--ink); color: var(--paper);
+  padding: 2px 6px; border-radius: 2px;
+  letter-spacing: 0.04em;
+}
 
-  .zone {
-    background: var(--paper);
-    border: 1px solid var(--rule-strong);
-    padding: 22px 24px 24px;
-    position: relative;
-  }
+/* ═══════════════════════════════════════════════════════
+   CALENDAR STRIP
+═══════════════════════════════════════════════════════ */
+.cal-strip {
+  border: 1px solid var(--rule-strong);
+  background: var(--paper-warm);
+  margin-bottom: 24px;
+  padding: 18px 22px 20px;
+}
 
-  .bento {
-    grid-template-columns: 7fr 5fr;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "coding projects"
-      "admin  career";
-  }
-  .zone--calendar { grid-area: calendar}
-  .zone--coding   { grid-area: coding; }
-  .zone--projects { grid-area: projects; }
-  .zone--admin    { grid-area: admin; }
-  .zone--career   { grid-area: career; }
+.cal-strip__head {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cal-strip__head::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
 
-  /* ─── Zone header ───────────────────────────────────────── */
-  .zone__head {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: end;
-    gap: 16px;
-    padding-bottom: 14px;
-    margin-bottom: 18px;
-    border-bottom: 1px solid var(--ink);
-  }
-  .zone__numeral {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 52px;
-    line-height: 0.8;
-    color: var(--accent);
-    letter-spacing: -0.02em;
-  }
-  .zone__title {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 44px;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    align-self: end;
-  }
-  .zone__count {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    text-align: right;
-    padding-bottom: 4px;
-    line-height: 1.4;
-  }
-  .zone__count em {
-    display: block;
-    font-style: normal;
-    color: var(--ink);
-    font-family: var(--serif);
-    font-size: 14px;
-    text-transform: none;
-    letter-spacing: 0;
-    margin-top: 2px;
-  }
+/* Calendar grid — injected by today.js renderCalendar() */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
 
-  /* ─── Card grids per zone ───────────────────────────────── */
-  .cards { display: grid; gap: 14px; }
+.cal-day {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 10px 10px 12px;
+  min-height: 100px;
+}
 
-  /* Wide zones (Coding, Admin): 4 columns × 2 rows */
-  .zone--coding .cards,
-  .zone--admin .cards,
-  .zone--calendar .cards {
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: 1fr 1fr;
-    grid-auto-flow: dense;
-  }
-  .zone--coding .cards .card--hero,
-  .zone--admin .cards .card--hero,
-  .zone--calendar .cards .card--hero {
-    grid-column: span 2;
-    grid-row: 1;
-  }
+.cal-day--today {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
 
-  /* Narrow zones (Projects, Career): 2 columns × 4 rows */
-  .zone--projects .cards,
-  .zone--career .cards {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(4, auto);
-  }
-  .zone--projects .cards .card--hero,
-  .zone--career .cards .card--hero {
-    grid-column: span 2;
-    grid-row: 1;
-  }
+.cal-day-header {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule);
+}
 
-  /* ─── Card ──────────────────────────────────────────────── */
-  .card {
-    position: relative;
-    display: grid;
-    grid-template-rows: 1fr auto;
-    background: var(--paper-warm);
-    border: 1px solid var(--rule);
-    text-decoration: none;
-    color: var(--ink);
-    overflow: hidden;
-    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-    min-height: 178px;
-  }
+.cal-day-name {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
 
-  .card--hero {
-    min-height: 232px;
-  }
-  .zone--projects .card--hero,
-  .zone--career .card--hero {
-    min-height: 200px;
-  }
+.cal-day-num {
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink);
+}
 
-  .card:hover {
-    border-color: var(--ink);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 0 -4px var(--ink), 0 14px 28px -16px rgba(26,22,18,0.35);
-  }
-  .card.flash {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-  }
+.cal-day--today .cal-day-num { color: var(--accent); }
 
-  .card__image {
-    position: relative;
-    background: var(--paper);
-    border-bottom: 1px solid var(--rule);
-    overflow: hidden;
-  }
-  .card__image img {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .card__image::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(
-        135deg,
-        transparent 0 12px,
-        rgba(26,22,18,0.025) 12px 13px
-      );
-    pointer-events: none;
-  }
+.cal-event {
+  margin-bottom: 5px;
+  padding: 4px 6px;
+  background: var(--paper-warm);
+  border-left: 2px solid var(--ink-soft);
+}
+.cal-day--today .cal-event { border-left-color: var(--accent); }
 
-  .card__key {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    z-index: 2;
-    font-family: var(--mono);
-    font-weight: 500;
-    font-size: 10px;
-    line-height: 1;
-    background: var(--ink);
-    color: var(--paper);
-    padding: 5px 6px 4px;
-    letter-spacing: 0.04em;
-    border-radius: 2px;
-    text-transform: uppercase;
-    min-width: 18px;
-    text-align: center;
-  }
+.cal-event-time {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+}
 
-  .card__meta {
-    padding: 10px 12px 12px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: end;
-    gap: 8px;
-    background: var(--paper);
-    border-top: 1px solid var(--rule);
-  }
+.cal-event-title {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.3;
+}
 
-  .card__name {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 22px;
-    line-height: 1;
-    letter-spacing: -0.005em;
-  }
-  .card--hero .card__name { font-size: 28px; }
+.cal-event-who {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--ink-soft);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
 
-  .card__tag {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    margin-top: 6px;
-    line-height: 1.3;
-  }
+.cal-no-events {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-faint);
+  letter-spacing: 0.06em;
+}
 
-  .card__arrow {
-    align-self: center;
-    font-family: var(--serif);
-    font-size: 22px;
-    color: var(--ink-faint);
-    transition: transform 0.18s ease, color 0.18s ease;
-    padding-bottom: 1px;
-  }
-  .card:hover .card__arrow {
-    color: var(--accent);
-    transform: translate(2px, -1px);
-  }
+/* ═══════════════════════════════════════════════════════
+   TASKS — TOP STORIES
+═══════════════════════════════════════════════════════ */
+.tasks-strip {
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  margin-bottom: 24px;
+  padding: 18px 22px 20px;
+}
 
-  /* Make whole card act like a link via overlay anchor */
-  .card__link {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-  }
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ink);
+}
 
-  .card__image { z-index: 1; }
-  .card__image img { position: relative; z-index: 4; }
+.section-numeral {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 40px;
+  line-height: 0.8;
+  color: var(--accent);
+}
 
-  /* But meta + arrow link area should still feel clickable */
-  .card__meta { position: relative; z-index: 5; pointer-events: none; }
+.section-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 36px;
+  line-height: 1;
+}
 
-  /* ─── Footer rule ───────────────────────────────────────── */
-  .colophon {
-    margin-top: 32px;
-    padding-top: 12px;
-    border-top: 2px solid var(--ink);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-  }
-  .colophon .ornament {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 16px;
-    color: var(--ink);
-    text-transform: none;
-    letter-spacing: 0;
-  }
+.section-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-left: auto;
+  padding-bottom: 4px;
+}
 
-  /* ─── Keyboard cheatsheet overlay ───────────────────────── */
-  .keyhint {
-    position: fixed;
-    bottom: 18px;
-    right: 18px;
-    z-index: 50;
-    background: var(--ink);
-    color: var(--paper);
-    padding: 10px 14px;
-    border-radius: 3px;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    box-shadow: 0 10px 30px -12px rgba(0,0,0,0.4);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .keyhint b {
-    background: var(--paper);
-    color: var(--ink);
-    padding: 2px 6px;
-    border-radius: 2px;
-    font-weight: 500;
-  }
+/* Task add row */
+.task-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
 
-  /* Responsive — collapse bento */
-  @media (max-width: 1100px) {
-    .bento {
-      grid-template-columns: 1fr;
-      grid-template-areas: "coding" "projects" "career" "admin";
-    }
-    .zone--projects .cards,
-    .zone--career .cards { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 720px) {
-    body { padding: 24px 18px 60px; }
-    .zone--coding .cards,
-    .zone--admin .cards { grid-template-columns: repeat(2, 1fr); }
-    .zone--coding .cards .card--hero,
-    .zone--admin .cards .card--hero { grid-column: span 2; }
-  }
+.task-new-input {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 13px;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  padding: 8px 12px;
+  outline: none;
+}
+.task-new-input:focus { border-color: var(--accent); }
+.task-new-input::placeholder { color: var(--ink-faint); }
 
+.task-new-btn {
+  font-family: var(--mono);
+  font-size: 18px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  width: 36px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.task-new-btn:hover { background: var(--accent); }
+
+/* Task two-col grid */
+.task-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 20px;
+}
+
+.task-col { display: flex; flex-direction: column; gap: 6px; }
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.12s;
+}
+.task-item:hover {
+  border-color: var(--ink);
+  transform: translateX(2px);
+}
+
+.task-check-box {
+  width: 15px; height: 15px;
+  border: 1.5px solid var(--ink-soft);
+  flex-shrink: 0;
+}
+
+.task-item-body { flex: 1; }
+
+.task-item-title {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.task-item-priority {
+  display: inline-block;
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+}
+.priority-high   { background: #3d0e0e; color: #f5a0a0; }
+.priority-medium { background: #3a2a00; color: #f2c94c; }
+.priority-low    { background: #1a2a1a; color: #6fcf97; }
+
+.task-preview-empty {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.1em;
+  padding: 8px 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ZONE SECTIONS (Career, Courses, Projects, Admin)
+═══════════════════════════════════════════════════════ */
+.zone-section {
+  border: 1px solid var(--rule-strong);
+  margin-bottom: 24px;
+  padding: 22px 24px 24px;
+}
+
+.zone-section--career   { background: var(--tint-career); }
+.zone-section--courses  { background: var(--tint-courses); }
+.zone-section--projects { background: var(--tint-projects); }
+.zone-section--admin    { background: var(--tint-admin); }
+
+/* Bento card grid */
+.cards {
+  display: grid;
+  gap: 14px;
+}
+
+.cards--career,
+.cards--projects {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.cards--admin {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* ═══════════════════════════════════════════════════════
+   CARD
+═══════════════════════════════════════════════════════ */
+.card {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--ink);
+  overflow: hidden;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  min-height: 160px;
+}
+
+.card--hero { min-height: 200px; }
+.card--sm   { min-height: 120px; }
+
+.card:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 -4px var(--ink), 0 14px 28px -16px rgba(26,22,18,0.35);
+}
+.card.flash {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.card__image {
+  position: relative;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  overflow: hidden;
+}
+.card__image img {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.card__image::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    135deg, transparent 0 12px, rgba(26,22,18,0.025) 12px 13px
+  );
+  pointer-events: none;
+}
+
+.card__key {
+  position: absolute; top: 8px; left: 8px; z-index: 2;
+  font-family: var(--mono); font-weight: 500; font-size: 10px;
+  background: var(--ink); color: var(--paper);
+  padding: 5px 6px 4px; letter-spacing: 0.04em;
+  border-radius: 2px; text-transform: uppercase;
+  min-width: 18px; text-align: center;
+}
+
+.card__meta {
+  padding: 10px 12px 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end; gap: 8px;
+  background: var(--paper);
+  border-top: 1px solid var(--rule);
+  position: relative; z-index: 5; pointer-events: none;
+}
+
+.card__name {
+  font-family: var(--serif);
+  font-size: 20px; line-height: 1;
+  letter-spacing: -0.005em;
+}
+.card--hero .card__name { font-size: 26px; }
+.card--sm .card__name   { font-size: 16px; }
+
+.card__tag {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-soft); margin-top: 4px; line-height: 1.3;
+}
+
+.card__arrow {
+  align-self: center;
+  font-family: var(--serif); font-size: 20px;
+  color: var(--ink-faint);
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+.card:hover .card__arrow { color: var(--accent); transform: translate(2px,-1px); }
+
+.card__link {
+  position: absolute; inset: 0; z-index: 3;
+}
+.card__image { z-index: 1; }
+.card__image img { position: relative; z-index: 4; }
+
+/* ═══════════════════════════════════════════════════════
+   COURSES — learning.js cards
+═══════════════════════════════════════════════════════ */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* Override learning.js card styles to match nexus aesthetic */
+.lrn-card {
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.lrn-card:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 -4px var(--ink), 0 14px 28px -16px rgba(26,22,18,0.35);
+}
+.lrn-card--open { border-color: var(--accent); }
+
+.lrn-accent {
+  height: 3px;
+  width: 100%;
+}
+
+.lrn-card-inner { padding: 14px 16px 16px; }
+
+.lrn-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.lrn-name {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.lrn-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.lrn-chip {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lrn-bar-wrap {
+  height: 3px;
+  background: var(--rule);
+  margin-bottom: 5px;
+}
+.lrn-bar-fill { height: 100%; transition: width 0.4s ease; }
+
+.lrn-bar-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.lrn-week { margin-bottom: 12px; }
+.lrn-week-label {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.lrn-week {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.lrn-launch-btn {
+  width: 100%;
+  padding: 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.lrn-launch-btn:hover { background: var(--accent); }
+
+/* Detail panel */
+.lrn-detail {
+  margin-top: 14px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  padding: 18px 20px;
+}
+.lrn-detail-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.lrn-syllabus {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 14px;
+}
+.lrn-sessions { margin-bottom: 12px; }
+.lrn-session-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--rule);
+}
+.lrn-session-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.lrn-open-all {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--ink); color: var(--paper);
+  border: none; padding: 9px 18px; cursor: pointer;
+  transition: background 0.15s;
+}
+.lrn-open-all:hover { background: var(--accent); }
+.lrn-heading { display: none; } /* heading lives in section-head, not lrn-heading */
+.lrn-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   COLOPHON
+═══════════════════════════════════════════════════════ */
+.colophon {
+  margin-top: 32px;
+  padding-top: 12px;
+  border-top: 2px solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.colophon .ornament {
+  font-family: var(--serif); font-style: italic;
+  font-size: 16px; color: var(--ink);
+  text-transform: none; letter-spacing: 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   KEYBOARD HINT
+═══════════════════════════════════════════════════════ */
+.keyhint {
+  position: fixed; bottom: 18px; right: 18px; z-index: 50;
+  background: var(--ink); color: var(--paper);
+  padding: 10px 14px; border-radius: 3px;
+  font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  box-shadow: 0 10px 30px -12px rgba(0,0,0,0.4);
+  display: flex; align-items: center; gap: 10px;
+}
+.keyhint b {
+  background: var(--paper); color: var(--ink);
+  padding: 2px 6px; border-radius: 2px; font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media (max-width: 1200px) {
+  .courses-grid,
+  .lrn-grid { grid-template-columns: repeat(2, 1fr); }
+  .cards--career { grid-template-columns: repeat(2, 1fr); }
+  .cards--admin  { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 800px) {
+  body { padding: 24px 18px 60px; }
+  .cal-grid { grid-template-columns: repeat(4, 1fr); }
+  .cal-grid .cal-day:nth-child(n+5) { display: none; }
+  .courses-grid,
+  .lrn-grid,
+  .cards--career,
+  .cards--projects,
+  .cards--admin { grid-template-columns: repeat(2, 1fr); }
+  .task-two-col { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- ─────────── MASTHEAD ─────────── -->
-  <header class="masthead">
-    <div class="masthead__top">
-      <div class="masthead__edition">
-        <span>● Live</span>
-        <span id="dateline">Thursday · May 14, 2026</span>
-            </div>
-      <div>Master Navigation</div>
+<!-- ═══════════════ MASTHEAD ═══════════════ -->
+<header class="masthead">
+  <div class="masthead__top">
+    <div class="masthead__edition">
+      <span>● Work Session</span>
+      <span id="dateline">Saturday · May 16, 2026</span>
+    </div>
+    <div>Chapter Two</div>
+  </div>
+  <h1 class="masthead__title">
+    <span>Inside the <em>NEXUS</em></span>
+    <span class="roman">Do the Work—</span>
+  </h1>
+  <div class="masthead__strap">
+    <div>Five desks</div>
+    <div class="ornament">✦ ✦ ✦</div>
+    <div class="right">Press <kbd>A</kbd>–<kbd>Z</kbd> to open · <kbd>?</kbd> for help</div>
+  </div>
+</header>
+
+<!-- ═══════════════ CALENDAR STRIP ═══════════════ -->
+<div class="cal-strip">
+  <div class="cal-strip__head">This Week</div>
+  <div id="calendar-target">
+    <div class="cal-grid" style="opacity:0.4">
+      <!-- placeholder skeleton while loading -->
+      <div class="cal-day"><div class="cal-day-header"><span class="cal-day-name">Mon</span><span class="cal-day-num">—</span></div></div>
+      <div class="cal-day"><div class="cal-day-header"><span class="cal-day-name">Tue</span><span class="cal-day-num">—</span></div></div>
+      <div class="cal-day"><div class="cal-day-header"><span class="cal-day-name">Wed</span><span class="cal-day-num">—</span></div></div>
+      <div class="cal-day"><div class="cal-day-header"><span class="cal-day-name">Thu</span><span class="cal-day-num">—</span></div></div>
+      <div class="cal-day"><div class="cal-day-header"><span class="cal-day-name">Fri</span><span class="cal-day-num">—</span></div></div>
+      <div class="cal-day"><div class="cal-day-header"><span class="cal-day-name">Sat</span><span class="cal-day-num">—</span></div></div>
+      <div class="cal-day"><div class="cal-day-header"><span class="cal-day-name">Sun</span><span class="cal-day-num">—</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TASKS — TOP STORIES ═══════════════ -->
+<div class="tasks-strip">
+  <div class="section-head">
+    <div class="section-numeral">§</div>
+    <h2 class="section-title">Top Stories</h2>
+    <div class="section-sub">Priority queue · click to complete</div>
+  </div>
+  <div id="tasks-target">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:0.1em;">Loading tasks…</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 1 · CAREER ═══════════════ -->
+<section class="zone-section zone-section--career">
+  <div class="section-head">
+    <div class="section-numeral">1</div>
+    <h2 class="section-title">Career</h2>
+    <div class="section-sub">The Long Game · Reputation, kept</div>
+  </div>
+  <div class="cards cards--career">
+
+    <div class="card card--hero">
+      <div class="card__image">
+        <span class="card__key">U</span><!-- HOTKEY: U — USAJobs -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/usajobs.png" alt="USAJobs">
+      </div>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">USAJobs</h3>
+          <p class="card__tag">Federal listings</p>
+        </div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://www.usajobs.gov" target="_blank" rel="noopener"></a>
     </div>
 
-    <h1 class="masthead__title">
-      <span>Inside the <em>NEXUS</em></span>
-      <span class="roman">Don't Spiral—</span>
-    </h1>
-
-    <div class="masthead__strap">
-      <div>Four desks</div>
-      <div class="ornament">✦ ✦ ✦</div>
-      <div class="right">
-        Press <kbd>A</kbd>–<kbd>Z</kbd> to open · <kbd>?</kbd> for help
+    <div class="card card--hero">
+      <div class="card__image">
+        <span class="card__key">H</span><!-- HOTKEY: H — OHIMA -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/ohima.webp" alt="OHIMA">
       </div>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">OHIMA</h3>
+          <p class="card__tag">Regional HIM listings</p>
+        </div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://www.ohima.org" target="_blank" rel="noopener"></a>
     </div>
-  </header>
 
-  <!-- ─────────── BENTO ─────────── -->
-  <main class="bento">
-<!-- =============== CALENDAR =============== -->
- <section id="today-section"></section>
-
-
-      <header class="zone__head">
-        <div class="zone__numeral">
-</div>
-        <h2 class="zone__title" id="z-calendar">Calendar</h2>
-        <div class="zone__count">
-          
-      </header>
-       <div class="section-container">
-        <div class="section-header calendar" onclick="toggleSection(this)">
-          <span class="section-icon">📅</span>
-          This Week
-<span class="collapse-arrow">▼</span>
-        </div>
-        <div class="section-content">
-          <div class="calendar-wrapper">
-            
-            <d
-              <div class="calendar-grid" id="calendar-events"></div>
-            </div>
-            
-          </div>
-        </div>
+    <div class="card card--hero">
+      <div class="card__image">
+        <span class="card__key">T</span><!-- HOTKEY: T — Tracker -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/data.png" alt="Tracker">
       </div>
-
-
-    <!-- =============== CODING =============== -->
-    <section class="zone zone--coding" aria-labelledby="z-coding" style="background-color: rgb(143, 184, 211)">
-      <header class="zone__head">
-        <div class="zone__numeral">
-</div>
-        <h2 class="zone__title" id="z-coding">Coding</h2>
-        <div class="zone__count">
-          The Workshop
-          <em>Where things compile</em>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">Tracker</h3>
+          <p class="card__tag">Applications · Status</p>
         </div>
-      </header>
-
-      <div class="cards">
-        <div class="card card--hero">
-          <div class="card__image">
-            <span class="card__key">G</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/repo.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">GitHub</h3>
-              <p class="card__tag">Repositories · Pull requests</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://github.com" target="_blank" rel="noopener" aria-label="Open GitHub"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">V</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/code.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">VS Code</h3>
-              <p class="card__tag">vscode.dev</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="VSCode:///" target="_blank" rel="noopener" aria-label="Open VS Code"></a>
-          </div> 
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">A</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/scripts.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Scripts</h3>
-              <p class="card__tag">Backend GAS</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://script.google.com/u/0/home/projects/1gM_NN_pkwhSQANYeBkatfQtVx9YAgRcFRQ3JJM54KUPHvCd8_ove5uIZ/edit" target="_blank" rel="noopener"></a>
-        </div>
-
+        <span class="card__arrow">→</span>
       </div>
-    </section>
+      <a class="card__link" href="tracker.html"></a>
+    </div>
 
-    <!-- =============== ADMIN =============== -->
-    <section class="zone zone--admin" aria-labelledby="z-admin" style="background-color: rgb(206, 188, 152)">
-      <header class="zone__head">
-               <h2 class="zone__title" id="z-admin">Admin</h2>
-        <div class="zone__count">
-          The Filing Room
-          <em>Adulting, filed</em>
-        </div>
-      </header>
-
-      <div class="cards">
-        <div class="card card--hero">
-          <div class="card__image">
-            <span class="card__key">D</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/writing.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Docs</h3>
-              <p class="card__tag"></p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://docs.google.com/document/?usp=docs_alc&authuser=0" target="_blank" rel="noopener"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">S</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sheet.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Sheets</h3>
-              <p class="card__tag">Records</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://docs.google.com/spreadsheets/?usp=sheets_alc&authuser=0" target="_blank" rel="noopener"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">P</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/slides.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Slides</h3>
-              <p class="card__tag"></p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://docs.google.com/presentation/?usp=slides_alc&authuser=0" target="_blank" rel="noopener"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">N</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/notebook.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Notebooks</h3>
-              <p class="card__tag"></p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://notebooklm.google.com/?utm_source=app_launcher&utm_medium=referral&authuser=0" target="_blank" rel="noopener"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">Y</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/yt.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">YouTube</h3>
-              <p class="card__tag"></p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://www.youtube.com/?authuser=0" target="_blank" rel="noopener"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">E</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/drive.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Drive</h3>
-              <p class="card__tag">Cloud storage</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://drive.google.com/?usp=drive_ref" target="_blank" rel="noopener"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">O</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/one.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">OneDrive</h3>
-              <p class="card__tag">Cloud storage</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://onedrive.live.com/?view=1" target="_blank" rel="noopener"></a>
-        </div>
-
-<div class="card">
-          <div class="card__image">
-            <span class="card__key">C</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/cal.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Calendar</h3>
-              <p class="card__tag">Organization</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://calendar.google.com/calendar?authuser=0" target="_blank" rel="noopener"></a>
-        </div>
-
-<div class="card">
-          <div class="card__image">
-            <span class="card__key">F</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/form.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Forms</h3>
-              <p class="card__tag">Data collection</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://docs.google.com/forms/?authuser=0" target="_blank" rel="noopener"></a>
-        </div>
-<div class="card">
-          <div class="card__image">
-            <span class="card__key">K</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/keep.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Keep</h3>
-              <p class="card__tag">Note-taking</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://keep.google.com/?authuser=0" target="_blank" rel="noopener"></a>
-        </div>
-
+    <div class="card">
+      <div class="card__image">
+        <span class="card__key">I</span><!-- HOTKEY: I — LinkedIn -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/resume.png" alt="LinkedIn">
       </div>
-    </section>
-
-    <!-- =============== PROJECTS =============== -->
-    <section class="zone zone--projects" aria-labelledby="z-projects" style="background-color: rgb(222, 204, 250)">
-      <header class="zone__head">
-        <div class="zone__numeral"></div>
-        <h2 class="zone__title" id="z-projects">Projects</h2>
-        <div class="zone__count">
-          The Studio
-          <em>In progress</em>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">LinkedIn</h3>
+          <p class="card__tag">Profile · Inbox</p>
         </div>
-      </header>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://www.linkedin.com/feed/" target="_blank" rel="noopener"></a>
+    </div>
 
+    <div class="card">
+      <div class="card__image">
+        <span class="card__key">R</span><!-- HOTKEY: R — Résumé -->
+        <img src="https://raw.githubusercontent.com/suzannaly/portfolio/main/images/resume.png" alt="Résumé">
+      </div>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">Résumé</h3>
+          <p class="card__tag">Latest draft</p>
+        </div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://raw.githubusercontent.com/suzannaly/Portfolio/main/images/Bolich_Suzanna_Resume.pdf" target="_blank" rel="noopener"></a>
+    </div>
+
+    <div class="card">
+      <div class="card__image">
+        <span class="card__key">W</span><!-- HOTKEY: W — Portfolio -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/portfolio.png" alt="Portfolio">
+      </div>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">Portfolio</h3>
+          <p class="card__tag">Public site</p>
+        </div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://sites.google.com/view/suzanna-bolich-e-portfolio/welcome" target="_blank" rel="noopener"></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ 2 · COURSES ═══════════════ -->
+<section class="zone-section zone-section--courses">
+  <div class="section-head">
+    <div class="section-numeral">2</div>
+    <h2 class="section-title">Courses</h2>
+    <div class="section-sub">90-Day Track · Active build</div>
+  </div>
+  <!-- learning.js renders into #learning-section -->
+  <div id="learning-section">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--ink-soft);letter-spacing:0.1em;">Loading tracks…</div>
+  </div>
+</section>
+
+<!-- ═══════════════ 3 · PROJECTS ═══════════════ -->
+<section class="zone-section zone-section--projects">
+  <div class="section-head">
+    <div class="section-numeral">3</div>
+    <h2 class="section-title">Projects</h2>
+    <div class="section-sub">The Studio · In progress</div>
+  </div>
+  
+    <div class="card card--hero">
+      <div class="card__image">
+        <span class="card__key">0</span><!-- HOTKEY: 0 — Dan's DB (placeholder) -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/mysql.png" alt="Dan's DB">
+      </div>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">Dan's DB</h3>
+          <p class="card__tag">MySQL · localhost:3000</p>
+        </div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="http://localhost:3000" target="_blank" rel="noopener"></a>
+    </div>
+<div class="cards cards--projects">
       <div class="cards">
         <div class="card card--hero">
           <div class="card__image">
@@ -755,8 +930,37 @@
             <span class="card__arrow">→</span>
           </div>
           <a class="card__link" href="mysqlwb://"></a>
-</div>
+        </div>
+    <div class="card card--hero">
+      <div class="card__image">
+        <span class="card__key">1</span><!-- HOTKEY: 1 — Kids DB (placeholder link) -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/personal.png" alt="Kids Database">
+      </div>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">Kids DB</h3>
+          <p class="card__tag">Side build · active</p>
+        </div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="#" target="_blank" rel="noopener"></a><!-- TODO: real link -->
+    </div>
 
+    <div class="card card--hero">
+      <div class="card__image">
+        <span class="card__key">2</span><!-- HOTKEY: 2 — Bishop folder (OneDrive for now) -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/one.png" alt="Bishop">
+      </div>
+      <div class="card__meta">
+        <div>
+          <h3 class="card__name">Bishop</h3>
+          <p class="card__tag">Curriculum · OneDrive</p>
+        </div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://onedrive.live.com/?view=1" target="_blank" rel="noopener"></a><!-- TODO: deep link to Bishop folder -->
+    </div>
+ 
         <div class="card">
           <div class="card__image">
             <span class="card__key">1</span>
@@ -786,237 +990,182 @@
           </div>
           <a class="card__link" href="mysqlwb://"></a>
 </div>
-
         
+  </div>
+</section>
+
+<!-- ═══════════════ 4 · ADMIN / CODING ═══════════════ -->
+<section class="zone-section zone-section--admin">
+  <div class="section-head">
+    <div class="section-numeral">4</div>
+    <h2 class="section-title">Admin</h2>
+    <div class="section-sub">The Filing Room · Hotkeys only</div>
+  </div>
+  <div class="cards cards--admin">
+
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">G</span><!-- HOTKEY: G — GitHub -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/repo.png" alt="GitHub">
       </div>
-    </section>
-
-
-
-    <!-- =============== CAREER =============== -->
-    <section class="zone zone--career" aria-labelledby="z-career" style="background-color: rgb(232, 250, 224)">
-      <header class="zone__head">
-        <div class="zone__numeral"></div>
-        <h2 class="zone__title" id="z-career">Career</h2>
-        <div class="zone__count">
-          The Long Game
-          <em>Reputation, kept</em>
-        </div>
-      </header>
-
-      <div class="cards">
-        <div class="card card--hero">
-          <div class="card__image">
-            <span class="card__key">I</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/resume.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">LinkedIn</h3>
-              <p class="card__tag">Profile · Inbox · Feed</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://www.linkedin.com/feed/" target="_blank" rel="noopener"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">R</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/portfolio/main/images/resume.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Résumé</h3>
-              <p class="card__tag">Latest draft</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://raw.githubusercontent.com/suzannaly/Portfolio/main/images/Bolich_Suzanna_Resume.pdf" target="_blank" rel="noopener"></a>
-        </div>
-
-        <div class="card">
-          <div class="card__image">
-            <span class="card__key">W</span>
-            <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/portfolio.png"></img>
-          </div>
-          <div class="card__meta">
-            <div>
-              <h3 class="card__name">Portfolio</h3>
-              <p class="card__tag">Public site</p>
-            </div>
-            <span class="card__arrow">→</span>
-          </div>
-          <a class="card__link" href="https://sites.google.com/view/suzanna-bolich-e-portfolio/welcome" target="_blank" rel="noopener"></a>
-        </div>
-
-<div class="card">
-  <div class="card__image">
-    <span class="card__key">U</span>
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/usajobs.png"></img>
-  </div>
-  <div class="card__meta">
-    <div>
-      <h3 class="card__name">USAJobs</h3>
-      <p class="card__tag">Federal listings</p>
-    </div>
-    <span class="card__arrow">→</span>
-  </div>
-  <a class="card__link" href="https://www.usajobs.gov" target="_blank" rel="noopener"></a>
-</div>
-
-<div class="card">
-  <div class="card__image">
-    <span class="card__key">H</span>
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/ohima.webp"></img>
-  </div>
-  <div class="card__meta">
-    <div>
-      <h3 class="card__name">OHIMA</h3>
-      <p class="card__tag">Regional HIM listings</p>
-    </div>
-    <span class="card__arrow">→</span>
-  </div>
-  <a class="card__link" href="https://www.ohima.org" target="_blank" rel="noopener"></a>
-</div>
-
-<div class="card">
-  <div class="card__image">
-    <span class="card__key">T</span>
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/data.png"></img>
-  </div>
-  <div class="card__meta">
-    <div>
-      <h3 class="card__name">Tracker</h3>
-      <p class="card__tag">Applications · Status</p>
-    </div>
-    <span class="card__arrow">→</span>
-  </div>
-  <a class="card__link" href="tracker.html"></a>
-</div>
-
+      <div class="card__meta">
+        <div><h3 class="card__name">GitHub</h3><p class="card__tag">Repos</p></div>
+        <span class="card__arrow">→</span>
       </div>
-    </section>
+      <a class="card__link" href="https://github.com" target="_blank" rel="noopener"></a>
+    </div>
 
-  </main>
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">V</span><!-- HOTKEY: V — VS Code -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/code.png" alt="VS Code">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">VS Code</h3><p class="card__tag">Editor</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="VSCode:///" target="_blank" rel="noopener"></a>
+    </div>
 
-  <!-- ─────────── COLOPHON ─────────── -->
-  <footer class="colophon">
-    
-    <div class="ornament">— fin —</div>
-    <div>Press <em style="font-style:italic;font-family:var(--serif);text-transform:none;letter-spacing:0">a letter</em> to choose</div>
-  </footer>
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">A</span><!-- HOTKEY: A — Scripts/GAS -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/scripts.png" alt="Scripts">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">Scripts</h3><p class="card__tag">GAS backend</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://script.google.com/u/0/home/projects/1gM_NN_pkwhSQANYeBkatfQtVx9YAgRcFRQ3JJM54KUPHvCd8_ove5uIZ/edit" target="_blank" rel="noopener"></a>
+    </div>
 
-</div>
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">D</span><!-- HOTKEY: D — Docs -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/writing.png" alt="Docs">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">Docs</h3><p class="card__tag">Google Docs</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://docs.google.com/document/?usp=docs_alc&authuser=0" target="_blank" rel="noopener"></a>
+    </div>
 
-<!-- Keyboard hint pill -->
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">S</span><!-- HOTKEY: S — Sheets -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/sheet.png" alt="Sheets">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">Sheets</h3><p class="card__tag">Records</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://docs.google.com/spreadsheets/?usp=sheets_alc&authuser=0" target="_blank" rel="noopener"></a>
+    </div>
+
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">E</span><!-- HOTKEY: E — Drive -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/drive.png" alt="Drive">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">Drive</h3><p class="card__tag">Cloud storage</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://drive.google.com/?usp=drive_ref" target="_blank" rel="noopener"></a>
+    </div>
+
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">O</span><!-- HOTKEY: O — OneDrive -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/one.png" alt="OneDrive">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">OneDrive</h3><p class="card__tag">Cloud storage</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://onedrive.live.com/?view=1" target="_blank" rel="noopener"></a>
+    </div>
+
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">N</span><!-- HOTKEY: N — Notebooks -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/notebook.png" alt="Notebooks">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">Notebooks</h3><p class="card__tag">NotebookLM</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://notebooklm.google.com/?utm_source=app_launcher&utm_medium=referral&authuser=0" target="_blank" rel="noopener"></a>
+    </div>
+
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">C</span><!-- HOTKEY: C — Calendar -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/cal.png" alt="Calendar">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">Calendar</h3><p class="card__tag">Google Cal</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://calendar.google.com/calendar?authuser=0" target="_blank" rel="noopener"></a>
+    </div>
+
+    <div class="card card--sm">
+      <div class="card__image">
+        <span class="card__key">K</span><!-- HOTKEY: K — Keep -->
+        <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/keep.png" alt="Keep">
+      </div>
+      <div class="card__meta">
+        <div><h3 class="card__name">Keep</h3><p class="card__tag">Notes</p></div>
+        <span class="card__arrow">→</span>
+      </div>
+      <a class="card__link" href="https://keep.google.com/?authuser=0" target="_blank" rel="noopener"></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ COLOPHON ═══════════════ -->
+<footer class="colophon">
+  <div>Work session · <span id="session-date"></span></div>
+  <div class="ornament">— fin —</div>
+  <div>Press <em style="font-style:italic;font-family:var(--serif);text-transform:none;letter-spacing:0">a letter</em> to choose</div>
+</footer>
+
+</div><!-- /page -->
+
 <div class="keyhint" id="keyhint">
   <span>Tap <b>A</b>–<b>Z</b> · <b>?</b> Help</span>
 </div>
 
-
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════ -->
 <script>
-  // ─── Dateline ──────────────────────────────────────────────
-  (function () {
-    const el = document.getElementById('dateline');
-    if (!el) return;
-    const now = new Date();
-    const fmt = now.toLocaleDateString(undefined, {
-      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-    });
-    el.textContent = fmt.replace(/,/g, ' ·');
-  })();
+// ─── GAS endpoint (shared across today.js + learning.js) ──────────────────
+const GAS_URL       = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
+const TODAY_GAS_URL = GAS_URL; // alias so today.js functions work unchanged
 
-  // ─── Keyboard shortcuts ────────────────────────────────────
-  // Single-character key opens the matching [data-key] card. `?` flashes
-  // all keys so the user sees them at a glance.
-  (function () {
-    // Binding source of truth: the visible <span class="card__key"> text inside
-    // each card. Edit that letter and the hotkey follows automatically.
-    const cards = Array.from(document.querySelectorAll('.card'));
-    const byKey = {};
-    const duplicates = [];
-    cards.forEach((c) => {
-      const badge = c.querySelector('.card__key');
-      if (!badge) return;
-      const key = (badge.textContent || '').trim().toLowerCase();
-      if (!key) return;
-      if (byKey[key]) duplicates.push(key);
-      byKey[key] = c;
-    });
-    if (duplicates.length) {
-      console.warn('[Links] duplicate shortcut letters — only the last card with each wins:', duplicates);
-    }
-
-    document.addEventListener('keydown', (e) => {
-      // ignore when typing in inputs
-      const t = e.target;
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-
-      const k = e.key.toLowerCase();
-
-      if (k === '?' || (e.shiftKey && k === '/')) {
-        e.preventDefault();
-        flashAll();
-        return;
-      }
-
-      const card = byKey[k];
-      if (!card) return;
-      e.preventDefault();
-      flash(card);
-      // navigate (open in new tab to mimic start-page behavior)
-      const href = card.querySelector('.card__link')?.getAttribute('href');
-      if (href && href !== '#') {
-        setTimeout(() => window.open(href, '_blank', 'noopener'), 120);
-      }
-    });
-
-    function flash(card) {
-      card.classList.add('flash');
-      card.scrollIntoView ? null : null;  // no-op
-      setTimeout(() => card.classList.remove('flash'), 260);
-    }
-
-    function flashAll() {
-      cards.forEach((c, i) => {
-        setTimeout(() => {
-          c.classList.add('flash');
-          setTimeout(() => c.classList.remove('flash'), 380);
-        }, i * 22);
-      });
-    }
-  })();
-
-  // ─── Auto-dismiss keyhint after a moment ───────────────────
-  (function () {
-    const hint = document.getElementById('keyhint');
-    if (!hint) return;
-    let hidden = false;
-    const hide = () => {
-      if (hidden) return;
-      hidden = true;
-      hint.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-      hint.style.opacity = '0';
-      hint.style.transform = 'translateY(8px)';
-      setTimeout(() => hint.remove(), 500);
-    };
-    setTimeout(hide, 6000);
-    document.addEventListener('keydown', hide, { once: true });
-    document.addEventListener('mousemove', () => {}, { once: true });
-  })();
-  // today.js — Nexus Today Section
-// Manages Calendar
-// Call initToday() to render.
-
-// ══════════════════════════════════════════════════════════════════════════════
-// CALENDAR
-// ══════════════════════════════════════════════════════════════════════════════
-
-const TODAY_GAS_URL = 'https://script.google.com/macros/s/AKfycbxcw0Idgactfq_oG_hGIOe2H4xoDgVzLjg6uchxBg3AONOXgDwfD8WhBnJHjR9yXOQzzQ/exec';
 const IMG = 'https://raw.githubusercontent.com/suzannaly/nexus/main/images/';
 
+// ─── Dateline ─────────────────────────────────────────────────────────────
+(function () {
+  const el = document.getElementById('dateline');
+  const sd = document.getElementById('session-date');
+  const now = new Date();
+  const fmt = now.toLocaleDateString(undefined, {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+  });
+  const str = fmt.replace(/,/g, ' ·');
+  if (el) el.textContent = str;
+  if (sd) sd.textContent = str;
+})();
+
+// ═══════════════════════════════════════════════════════
+// CALENDAR (from today.js)
+// ═══════════════════════════════════════════════════════
+let calendarEvents = [];
 
 function getWeekDays() {
   const today  = new Date();
@@ -1031,8 +1180,7 @@ function getWeekDays() {
 }
 
 function isSameDay(a, b) {
-  const da = new Date(a);
-  const db = new Date(b);
+  const da = new Date(a), db = new Date(b);
   return da.getFullYear() === db.getFullYear() &&
          da.getMonth()    === db.getMonth()    &&
          da.getDate()     === db.getDate();
@@ -1048,7 +1196,7 @@ function renderCalendar() {
   const weekDays = getWeekDays();
   const dayNames = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
 
-  const columns = weekDays.map((day, i) => {
+  return weekDays.map((day, i) => {
     const isToday   = isSameDay(day, today);
     const dayEvents = calendarEvents.filter(e => isSameDay(e.start, day));
 
@@ -1059,7 +1207,7 @@ function renderCalendar() {
             <div class="cal-event-title">${e.title}</div>
             ${e.calendar === 'Dan' ? '<div class="cal-event-who">Dan</div>' : ''}
           </div>`).join('')
-      : `<div class="cal-no-events">No events</div>`;
+      : `<div class="cal-no-events">—</div>`;
 
     return `
       <div class="cal-day ${isToday ? 'cal-day--today' : ''}">
@@ -1070,21 +1218,319 @@ function renderCalendar() {
         <div class="cal-day-events">${eventHTML}</div>
       </div>`;
   }).join('');
-
-  return `<div class="cal-grid">${columns}</div>`;
 }
 
+function paintCalendar() {
+  const target = document.getElementById('calendar-target');
+  if (target) target.innerHTML = `<div class="cal-grid">${renderCalendar()}</div>`;
+}
 
-// ══════════════════════════════════════════════════════════════════════════════
-// FETCH + INIT
-// ══════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// TASKS (from today.js — renderTasksTab)
+// ═══════════════════════════════════════════════════════
+let tasksData      = [];
+let completedTasks = new Set();
 
-async function initToday() {
-  renderToday();
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-  const [calRes] = await Promise.allSettled([
-    fetch(`${TODAY_GAS_URL}?calendar=1`),
-  
+function renderTasksTab() {
+  const order = JSON.parse(localStorage.getItem('nexus-task-order') || '[]');
+  let active = tasksData.filter(t => {
+    const done = String(t.Done).toUpperCase().trim();
+    return done !== 'TRUE' && done !== '1' && t.Title && !completedTasks.has(String(t.ID));
+  });
+
+  if (order.length) {
+    active.sort((a, b) => {
+      const ai = order.indexOf(a.ID), bi = order.indexOf(b.ID);
+      if (ai === -1) return 1;
+      if (bi === -1) return -1;
+      return ai - bi;
+    });
+  }
+
+  const half = Math.ceil(active.length / 2);
+  const col1 = active.slice(0, half);
+  const col2 = active.slice(half);
+
+  const renderCol = (tasks) => tasks.map(t => `
+    <div class="task-item" onclick="completeTask('${t.ID}', '${escHtml(t.Title)}')">
+      <div class="task-check-box"></div>
+      <div class="task-item-body">
+        <div class="task-item-title">${escHtml(t.Title)}</div>
+        ${t.Priority ? `<span class="task-item-priority priority-${t.Priority.toLowerCase()}">${t.Priority}</span>` : ''}
+      </div>
+    </div>`).join('');
+
+  return `
+    <div class="task-add-row">
+      <input id="task-new-input" class="task-new-input" type="text" placeholder="Add a task…"
+        onkeydown="if(event.key==='Enter')addTask()">
+      <button class="task-new-btn" onclick="addTask()">+</button>
+    </div>
+    <div class="task-two-col">
+      <div class="task-col">${col1.length ? renderCol(col1) : ''}</div>
+      <div class="task-col">${col2.length ? renderCol(col2) : ''}</div>
+    </div>
+    ${active.length === 0 ? '<div class="task-preview-empty">no tasks queued</div>' : ''}
+  `;
+}
+
+function paintTasks() {
+  const target = document.getElementById('tasks-target');
+  if (target) target.innerHTML = renderTasksTab();
+}
+
+function getTodayDate_chores() {
+  const d = new Date();
+  return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+}
+
+async function completeTask(id, title) {
+  completedTasks.add(String(id));
+  paintTasks();
+  try {
+    await fetch(
+      GAS_URL +
+      '?tab=Tasks' +
+      '&matchColumn=ID' +
+      '&matchValue=' + encodeURIComponent(id) +
+      '&updates=' + encodeURIComponent(JSON.stringify({ Done: 'TRUE' })),
+      { method: 'GET' }
+    );
+  } catch(err) { console.warn('task complete write-back failed', err); }
+}
+
+async function addTask() {
+  const input = document.getElementById('task-new-input');
+  const title = input.value.trim();
+  if (!title) return;
+  input.value = '';
+
+  const maxId = tasksData.reduce((max, t) => Math.max(max, Number(t.ID) || 0), 0);
+  const newTask = { ID: maxId + 1, Title: title, Done: 'FALSE', Priority: '', Category: '', Notes: '' };
+  tasksData.push(newTask);
+  paintTasks();
+
+  try {
+    await fetch(
+      GAS_URL + '?tab=Tasks&row=' + encodeURIComponent(JSON.stringify(newTask)),
+      { method: 'GET', mode: 'no-cors' }
+    );
+  } catch(err) { console.warn('task add failed', err); }
+}
+
+// ═══════════════════════════════════════════════════════
+// LEARNING (from learning.js)
+// ═══════════════════════════════════════════════════════
+const ZONE_CONFIG = {
+  'Codecademy':   { accent: '#2a6bb5', statusLabel: 'on track',    statusType: 'active' },
+  'Calculus':     { accent: '#1D9E75', statusLabel: 'low pressure', statusType: 'slow'   },
+  'Coding Basics':{ accent: '#7F77DD', statusLabel: 'on track',    statusType: 'active' },
+  'Typing':       { accent: '#888780', statusLabel: 'daily habit',  statusType: 'active' },
+};
+
+function statusBg(type) {
+  return {
+    active: 'background:#0e3d20;color:#6fcf97;border:0.5px solid #1a6035',
+    slow:   'background:#3a2a00;color:#f2c94c;border:0.5px solid #6a4a00',
+    ready:  'background:#1a2a40;color:#7ab3f5;border:0.5px solid #2a4a70',
+  }[type] || '';
+}
+
+function formatLastDone(raw) {
+  if (!raw) return 'never';
+  const d = new Date(raw);
+  if (isNaN(d)) return raw;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function groupByZone(rows) {
+  const zones = {};
+  rows
+    .filter(row => row.Zone && String(row.Zone).trim() !== '')
+    .forEach(row => {
+      if (!zones[row.Zone]) zones[row.Zone] = [];
+      zones[row.Zone].push(row);
+    });
+
+  return Object.entries(zones).map(([zone, items]) => {
+    items.sort((a, b) => a.Order - b.Order);
+    const current = items.find(i => i.Status === 'current') || items[0];
+    const config  = ZONE_CONFIG[zone] || { accent: '#5a5145', statusLabel: 'active', statusType: 'active' };
+    return { zone, items, current, ...config };
+  });
+}
+
+let openZoneId   = null;
+let learningData = [];
+
+function buildCard(track, isOpen) {
+  const { zone, current, accent, statusLabel, statusType } = track;
+  return `
+    <div class="lrn-card ${isOpen ? 'lrn-card--open' : ''}" id="card-${zone}" onclick="toggleLearning('${zone}')">
+      <div class="lrn-accent" style="background:${accent}"></div>
+      <div class="lrn-card-inner">
+        <div class="lrn-card-header">
+          <div>
+            <div class="lrn-name">${zone}</div>
+            <div class="lrn-sub">${current ? current.Item : '—'}</div>
+          </div>
+          <span class="lrn-chip" style="${statusBg(statusType)}">${statusLabel}</span>
+        </div>
+        <div class="lrn-bar-wrap">
+          <div class="lrn-bar-fill" style="width:${current ? current.Progress : 0}%;background:${accent}"></div>
+        </div>
+        <div class="lrn-bar-label">${current ? current.Progress : 0}% · ${current ? current.Notes : ''}</div>
+        <div class="lrn-week">
+          <div class="lrn-week-label">this week</div>
+          ${current ? current.WeekTarget : '—'}
+        </div>
+        <button class="lrn-launch-btn" onclick="event.stopPropagation();openSession('${current && current.URL ? current.URL : ''}')">
+          open session ›
+        </button>
+      </div>
+    </div>`;
+}
+
+function buildDetail(track) {
+  const { zone, items, current, accent } = track;
+  const syllabus = items.map(item => {
+    let style = 'background:var(--paper-warm);color:var(--ink-soft);border:0.5px solid var(--rule)';
+    if (item.Status === 'done')    style = 'background:#0e3d20;color:#6fcf97;border:0.5px solid #1a6035;text-decoration:line-through';
+    if (item.Status === 'current') style = 'background:#0d2a45;color:#7ab3f5;border:0.5px solid #2a5080;font-weight:500';
+    return `<span style="font-family:var(--mono);font-size:9.5px;padding:3px 8px;border-radius:20px;${style}">${item.Item}</span>`;
+  }).join('');
+
+  const sessionRow = current && current.URL ? `
+    <div class="lrn-session-item" onclick="openSession('${current.URL}')" style="cursor:pointer">
+      <div class="lrn-session-dot" style="background:${accent}"></div>
+      <div>
+        <div style="font-size:12px;font-family:var(--sans);color:var(--ink)">${zone}</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--ink-soft)">
+          ${current.Duration} min · last done ${formatLastDone(current.LastDone)}
+        </div>
+      </div>
+    </div>` : '';
+
+  return `
+    <div class="lrn-detail">
+      <div class="lrn-detail-title">${zone} — session</div>
+      <div class="lrn-syllabus">${syllabus}</div>
+      <div class="lrn-sessions">${sessionRow}</div>
+      <button class="lrn-open-all" onclick="openSession('${current && current.URL ? current.URL : ''}')">
+        launch ${zone}
+      </button>
+    </div>`;
+}
+
+function openSession(url) {
+  if (!url) return;
+  window.open(url, '_blank');
+}
+
+function toggleLearning(zone) {
+  openZoneId = openZoneId === zone ? null : zone;
+  paintLearning();
+  if (openZoneId) {
+    const detail = document.getElementById(`detail-${openZoneId}`);
+    if (detail) detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function paintLearning() {
+  const section = document.getElementById('learning-section');
+  if (!section) return;
+
+  if (!learningData.length) {
+    section.innerHTML = `<p style="font-family:var(--mono);font-size:11px;color:var(--ink-soft);letter-spacing:0.1em;">Loading tracks…</p>`;
+    return;
+  }
+
+  const tracks = groupByZone(learningData);
+  const cards  = tracks.map(t => buildCard(t, openZoneId === t.zone)).join('');
+  const detail = openZoneId ? buildDetail(tracks.find(t => t.zone === openZoneId)) : '';
+
+  section.innerHTML = `<div class="lrn-grid">${cards}</div>${detail}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════════════
+(function () {
+  const cards  = Array.from(document.querySelectorAll('.card'));
+  const byKey  = {};
+  cards.forEach(c => {
+    const badge = c.querySelector('.card__key');
+    if (!badge) return;
+    const key = (badge.textContent || '').trim().toLowerCase();
+    if (key) byKey[key] = c;
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    const k = e.key.toLowerCase();
+
+    if (k === '?' || (e.shiftKey && k === '/')) {
+      e.preventDefault();
+      cards.forEach((c, i) => {
+        setTimeout(() => {
+          c.classList.add('flash');
+          setTimeout(() => c.classList.remove('flash'), 380);
+        }, i * 22);
+      });
+      return;
+    }
+
+    const card = byKey[k];
+    if (!card) return;
+    e.preventDefault();
+    card.classList.add('flash');
+    setTimeout(() => card.classList.remove('flash'), 260);
+    const href = card.querySelector('.card__link')?.getAttribute('href');
+    if (href && href !== '#') {
+      setTimeout(() => window.open(href, '_blank', 'noopener'), 120);
+    }
+  });
+})();
+
+// ─── Auto-dismiss keyhint ──────────────────────────────────────────────────
+(function () {
+  const hint = document.getElementById('keyhint');
+  if (!hint) return;
+  let hidden = false;
+  const hide = () => {
+    if (hidden) return;
+    hidden = true;
+    hint.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    hint.style.opacity = '0';
+    hint.style.transform = 'translateY(8px)';
+    setTimeout(() => hint.remove(), 500);
+  };
+  setTimeout(hide, 6000);
+  document.addEventListener('keydown', hide, { once: true });
+})();
+
+// ═══════════════════════════════════════════════════════
+// INIT — fetch all data in parallel
+// ═══════════════════════════════════════════════════════
+async function init() {
+  // Paint immediately with empty state
+  paintCalendar();
+  paintTasks();
+  paintLearning();
+
+  const [calRes, taskRes, learnRes] = await Promise.allSettled([
+    fetch(`${GAS_URL}?calendar=1`),
+    fetch(`${GAS_URL}?tab=Tasks`),
+    fetch(`${GAS_URL}?tab=Learning`),
   ]);
 
   if (calRes.status === 'fulfilled') {
@@ -1094,9 +1540,26 @@ async function initToday() {
     } catch { calendarEvents = []; }
   }
 
-  
-  renderToday();
+  if (taskRes.status === 'fulfilled') {
+    try {
+      tasksData = await taskRes.value.json();
+      if (!Array.isArray(tasksData)) tasksData = [];
+    } catch { tasksData = []; }
+  }
+
+  if (learnRes.status === 'fulfilled') {
+    try {
+      learningData = await learnRes.value.json();
+      if (!Array.isArray(learningData)) learningData = [];
+    } catch { learningData = []; }
+  }
+
+  paintCalendar();
+  paintTasks();
+  paintLearning();
 }
+
+init();
 </script>
 </body>
 </html>
