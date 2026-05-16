@@ -463,12 +463,19 @@ function toggleReasoning(btn) {
 
 function dismissSaphira() {
   const panel = getPanel();
-  panel.style.transition = 'opacity 0.4s ease, max-height 0.5s ease';
-  panel.style.opacity    = '0';
-  panel.style.overflow   = 'hidden';
-  panel.style.maxHeight  = panel.offsetHeight + 'px';
-  setTimeout(() => { panel.style.maxHeight = '0'; }, 10);
-  setTimeout(() => { panel.style.display   = 'none'; }, 500);
+  panel.style.transition = '';
+  panel.style.opacity    = '1';
+  panel.style.maxHeight  = '';
+  panel.style.overflow   = 'visible';
+  panel.style.display    = 'block';
+
+  panel.innerHTML = `
+    <div style="text-align:center;padding:12px;">
+      <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png"
+        style="width:100%;max-height:380px;object-fit:cover;border-radius:8px;opacity:0.85;cursor:pointer;"
+        onclick="startSaphira()"
+        title="Tap to open Saphira">
+    </div>`;
 }
 
 // ── Fetch Sheets data ─────────────────────────────────────────────────────
