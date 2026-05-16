@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+  <!-- ADMIN HEADER -->
+<header id="admin-bar">
+  <a href="http://localhost:3000" target="_blank">Dan</a>
+  <a href="https://suzannaly.github.io/nexus/links" target="_blank">Projects</a>
+  <a href="https://drive.google.com/drive/folders/1nSeGFxDPelAtx1T1EyrGwmwtBT3a14Fw" target="_blank">Kids</a>
+  <a href="https://docs.google.com/spreadsheets/d/1mJUw-CekG5I74HuPuq3N_YMQ9FyP-ONqS91sDlywecQ/edit" target="_blank">Backend</a>
+  <span id="flag-indicator"></span>
+  <button id="sap-bar-btn" onclick="openSaphiraChat()">
+    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/saphira.png" alt="Saphira">
+  <span class="hover-text">Saphira</span>
+  </button>
+</header>
+
+  <!-- Saphira BRIEFING PANEL -->
+  <!-- She speaks first. Before anything else. -->
+  <section id="Saphira-panel">
+    <!-- renderBriefing() writes here via saphira.js -->
+  </section>
+
+   <!-- ANCHOR -->
+  <section id="anchor">
+    <button class="anchor-btn" data-phase="stop">
+      <img src="images/beach.png" alt="STOP">
+    </button>
+    <button class="anchor-btn" data-phase="bridge">
+      <img src="images/bridge.png" alt="BRIDGE">
+    </button>
+    <button class="anchor-btn" data-phase="start">
+      <img src="images/swingcrop.PNG" alt="START">
+    </button>
+  </section>
+
+  <!-- ANCHOR MODAL -->
+  <div id="anchor-modal" class="hidden">
+    <div id="anchor-modal-content">
+      <button id="anchor-close">✕</button>
+      <div id="anchor-body"></div>
+    </div>
+  </div>
+  
+<!-- LEARNING TRACKS -->
+<section id="learning-section"></section>
+
+ 
+
+  <!-- TODAY -->
+<section id="today-section"></section>
+
+  <!-- BOTTOM SPLIT -->
+  <div id="bottom-split">
+
+    <section id="money-section">
+      <h2>Money</h2>
+      <div style="display:flex;gap:12px;margin-bottom:12px;">
+  <a href="https://docs.google.com/spreadsheets/d/1XFHp-0PM0pm3Ns4mQerjx9RJiYaUFzGFtxHRe_9cByA/edit?gid=1417920226#gid=1417920226" target="_blank" class="money-icon-btn" title="Ledger">
+    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/ledger.png" alt="Ledger">
+  </a>
+  <a href="https://onlinebanking.usbank.com/auth/login/" target="_blank" class="money-icon-btn" title="US Bank">
+    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/data.png" alt="US Bank">
+  </a>
+</div>
+      <iframe
+        src="https://calendar.google.com/calendar/embed?height=300&wkst=1&ctz=America%2FNew_York&showPrint=0&showTz=0&mode=AGENDA&src=Y2UxOWVkYzM4YTNiODAxMGViZTMxZjMwZmRlMjc4NTZlNGFhYTdjOTAzODE5NTY5Y2U4MzJjNDYwMzExMzAzY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23d81b60"
+        style="border-width:0"
+        width="200"
+        height="300"
+        frameborder="0"
+        scrolling="no">
+      </iframe>
+    </section>
+
+    <section id="sheets-section">
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/1XFHp-0PM0pm3Ns4mQerjx9RJiYaUFzGFtxHRe_9cByA/edit?gid=1482812311#gid=1482812311&single=true&widget=true&headers=false"
+        style="width:100%;height:450px;border:none;border-radius:4px;">
+      </iframe>
+    </section>
+
+  </div>
+  <!-- /bottom-split -->
+
+  <!-- HEALTH -->
+  <section id="health-section">
+    <h2>Health</h2></section>
+    <div class="flex-container">
+  <section id="process-section"></section>
+  <div id="temple-col">
+    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png" alt="temple">
+  </div>
+  <section id="fitness-section"></section>
+</div>
+  
+  <script src="app.js"></script>
+  <script src="saphira.js"></script>
+  <script>
+    // Saphira calls Claude via GAS proxy — no API key in this file.
+    StartSaphira();
+  </script>
+  <script src="today.js"></script>
+<script>initToday();</script>
+ <script src="learning.js"></script>
+<script>initLearning();</script> 
+<script src="process.js"></script>
+<script>initProcess();</script>
+<script src="fitness.js"></script>
+<script>initFitness();</script>
+</body>
+</html>
