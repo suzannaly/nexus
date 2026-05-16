@@ -6,114 +6,437 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nexus</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── NEW LAYOUT OVERRIDES ─────────────────────────────────────────── */
+
+    /* Admin bar — slim, Bridge small */
+    #admin-bar {
+      display: flex;
+      gap: 12px;
+      padding: 6px 16px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      background: var(--bg);
+    }
+
+    #bridge-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0;
+      cursor: pointer;
+      overflow: hidden;
+      width: 48px;
+      height: 36px;
+      flex-shrink: 0;
+      transition: border-color 0.15s;
+    }
+    #bridge-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    #bridge-btn:hover { border-color: var(--primary); }
+
+    #admin-bar a {
+      color: var(--primary);
+      font-family: 'Dancing Script', cursive;
+      font-size: 20px;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    #admin-bar a:hover { color: var(--accent1); }
+
+    #admin-bar .spacer { flex: 1; }
+
+    /* ── MAIN TWO-COLUMN LAYOUT ───────────────────────────────────────── */
+    #main-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── LEFT COLUMN ─────────────────────────────────────────────────── */
+    #left-col {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background: var(--bg);
+    }
+
+    /* Anchors — Stop and Start only, images only */
+    #anchor {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .anchor-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .anchor-btn img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+    .anchor-btn:hover { border-color: var(--primary); }
+
+    /* Saphira panel fills remaining left col */
+    #Saphira-panel {
+      flex: 1;
+      border-bottom: none;
+    }
+
+    /* ── RIGHT COLUMN ─────────────────────────────────────────────────── */
+    #right-col {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+
+    /* ── CHECKLIST STRIP ─────────────────────────────────────────────── */
+    #checklist-strip {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      background: rgba(8, 12, 85, 0.6);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .check-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .check-pill:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .check-pill.active {
+      border-color: var(--primary);
+      background: rgba(147, 209, 237, 0.12);
+      color: var(--primary);
+    }
+
+    .check-pill.done {
+      border-color: #2ECC71;
+      background: rgba(46, 204, 113, 0.08);
+      color: #6fcf97;
+      opacity: 0.75;
+    }
+
+    .check-pill.done .pill-check { color: #6fcf97; }
+
+    .pill-check {
+      font-size: 13px;
+      width: 14px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ── ACTIVE PANEL ─────────────────────────────────────────────────── */
+    #active-panel {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    #active-panel > section {
+      display: none;
+    }
+
+    #active-panel > section.panel-active {
+      display: block;
+    }
+
+    /* Money panel */
+    #money-panel {
+      padding: 20px;
+      background: #DAF6E1;
+    }
+
+    #money-panel h2 {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .money-links {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    #money-panel iframe {
+      width: 100%;
+      height: 420px;
+      border: none;
+      border-radius: 4px;
+    }
+
+    /* Learning panel — reuses existing learning-section styles */
+    #learning-panel {
+      padding: 0;
+    }
+
+    /* Remove old layout sections */
+    #bottom-split,
+    #health-section,
+    #today-section,
+    #sheets-section,
+    .flex-container,
+    #temple-col {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
- 
-  <!-- ADMIN HEADER -->
-<header id="admin-bar">
-  <a href="http://localhost:3000" target="_blank">Dan</a>
-  <a href="https://suzannaly.github.io/nexus/links" target="_blank">Projects</a>
-  <a href="https://drive.google.com/drive/folders/1nSeGFxDPelAtx1T1EyrGwmwtBT3a14Fw" target="_blank">Kids</a>
-  <a href="https://docs.google.com/spreadsheets/d/1mJUw-CekG5I74HuPuq3N_YMQ9FyP-ONqS91sDlywecQ/edit" target="_blank">Backend</a>
-  <span id="flag-indicator"></span>
-  <button id="sap-bar-btn" onclick="openSaphiraChat()">
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/saphira.png" alt="Saphira">
-  <span class="hover-text">Saphira</span>
-  </button>
-</header>
 
-  <!-- Saphira BRIEFING PANEL -->
-  <!-- She speaks first. Before anything else. -->
-  <section id="Saphira-panel">
-    <!-- renderBriefing() writes here via saphira.js -->
-  </section>
+  <!-- ── ADMIN BAR ───────────────────────────────────────────────────── -->
+  <header id="admin-bar">
+    <button id="bridge-btn" class="anchor-btn" data-phase="bridge">
+      <img src="images/bridge.png" alt="Bridge">
+    </button>
+    <a href="https://docs.google.com/spreadsheets/d/1mJUw-CekG5I74HuPuq3N_YMQ9FyP-ONqS91sDlywecQ/edit" target="_blank">Backend</a>
+    <a href="https://suzannaly.github.io/nexus/hub" target="_blank">Hub</a>
+    <div class="spacer"></div>
+    <span id="flag-indicator"></span>
+    <button id="sap-bar-btn" onclick="openSaphiraChat()">
+      <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/saphira.png" alt="Saphira">
+      <span class="hover-text">Saphira</span>
+    </button>
+  </header>
 
-   <!-- ANCHOR -->
-  <section id="anchor">
-    <button class="anchor-btn" data-phase="stop">
-      <img src="images/beach.png" alt="STOP">
-    </button>
-    <button class="anchor-btn" data-phase="bridge">
-      <img src="images/bridge.png" alt="BRIDGE">
-    </button>
-    <button class="anchor-btn" data-phase="start">
-      <img src="images/swingcrop.PNG" alt="START">
-    </button>
-  </section>
-
-  <!-- ANCHOR MODAL -->
+  <!-- ── ANCHOR MODAL ────────────────────────────────────────────────── -->
   <div id="anchor-modal" class="hidden">
     <div id="anchor-modal-content">
       <button id="anchor-close">✕</button>
       <div id="anchor-body"></div>
     </div>
   </div>
-  
-<!-- LEARNING TRACKS -->
-<section id="learning-section"></section>
 
- 
+  <!-- ── MAIN LAYOUT ─────────────────────────────────────────────────── -->
+  <div id="main-layout">
 
-  <!-- TODAY -->
-<section id="today-section"></section>
+    <!-- ── LEFT COLUMN ─────────────────────────────────────────────── -->
+    <div id="left-col">
 
-  <!-- BOTTOM SPLIT -->
-  <div id="bottom-split">
+      <!-- Anchors: Stop + Start only -->
+      <section id="anchor">
+        <button class="anchor-btn" data-phase="stop">
+          <img src="images/beach.png" alt="Stop">
+        </button>
+        <button class="anchor-btn" data-phase="start">
+          <img src="images/swingcrop.PNG" alt="Start">
+        </button>
+      </section>
 
-    <section id="money-section">
-      <h2>Money</h2>
-      <div style="display:flex;gap:12px;margin-bottom:12px;">
-  <a href="https://docs.google.com/spreadsheets/d/1XFHp-0PM0pm3Ns4mQerjx9RJiYaUFzGFtxHRe_9cByA/edit?gid=1417920226#gid=1417920226" target="_blank" class="money-icon-btn" title="Ledger">
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/ledger.png" alt="Ledger">
-  </a>
-  <a href="https://onlinebanking.usbank.com/auth/login/" target="_blank" class="money-icon-btn" title="US Bank">
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/data.png" alt="US Bank">
-  </a>
-</div>
-      <iframe
-        src="https://calendar.google.com/calendar/embed?height=300&wkst=1&ctz=America%2FNew_York&showPrint=0&showTz=0&mode=AGENDA&src=Y2UxOWVkYzM4YTNiODAxMGViZTMxZjMwZmRlMjc4NTZlNGFhYTdjOTAzODE5NTY5Y2U4MzJjNDYwMzExMzAzY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23d81b60"
-        style="border-width:0"
-        width="200"
-        height="300"
-        frameborder="0"
-        scrolling="no">
-      </iframe>
-    </section>
+      <!-- Saphira -->
+      <section id="Saphira-panel">
+        <!-- renderBriefing() writes here via saphira.js -->
+      </section>
 
-    <section id="sheets-section">
-      <iframe
-        src="https://docs.google.com/spreadsheets/d/1XFHp-0PM0pm3Ns4mQerjx9RJiYaUFzGFtxHRe_9cByA/edit?gid=1482812311#gid=1482812311&single=true&widget=true&headers=false"
-        style="width:100%;height:450px;border:none;border-radius:4px;">
-      </iframe>
-    </section>
+    </div>
+    <!-- /left-col -->
+
+    <!-- ── RIGHT COLUMN ────────────────────────────────────────────── -->
+    <div id="right-col">
+
+      <!-- Checklist strip -->
+      <nav id="checklist-strip">
+        <div class="check-pill active" data-panel="fitness-panel" onclick="switchPanel(this)">
+          <span class="pill-check">☐</span> Fitness
+        </div>
+        <div class="check-pill" data-panel="daily-panel" onclick="switchPanel(this)">
+          <span class="pill-check">☐</span> Daily
+        </div>
+        <div class="check-pill" data-panel="standard-panel" onclick="switchPanel(this)">
+          <span class="pill-check">☐</span> Standard
+        </div>
+        <div class="check-pill" data-panel="wheel-panel" onclick="switchPanel(this)">
+          <span class="pill-check">☐</span> Wheel
+        </div>
+        <div class="check-pill" data-panel="process-panel" onclick="switchPanel(this)">
+          <span class="pill-check">☐</span> Process
+        </div>
+        <div class="check-pill" data-panel="money-panel" onclick="switchPanel(this)">
+          <span class="pill-check">☐</span> Money
+        </div>
+        <div class="check-pill" data-panel="learning-panel" onclick="switchPanel(this)">
+          <span class="pill-check">☐</span> Learning
+        </div>
+        <div class="check-pill" data-panel="tasks-panel" onclick="switchPanel(this)">
+          <span class="pill-check">☐</span> Tasks
+        </div>
+      </nav>
+
+      <!-- Active panel -->
+      <div id="active-panel">
+
+        <!-- Fitness -->
+        <section id="fitness-panel" class="panel-active">
+          <div id="fitness-section"></div>
+        </section>
+
+        <!-- Daily Chores -->
+        <section id="daily-panel">
+          <div id="chores-daily-section"></div>
+        </section>
+
+        <!-- Standard Chores -->
+        <section id="standard-panel">
+          <div id="chores-standard-section"></div>
+        </section>
+
+        <!-- Wheel Chores -->
+        <section id="wheel-panel">
+          <div id="chores-wheel-section"></div>
+        </section>
+
+        <!-- Process -->
+        <section id="process-panel">
+          <div id="process-section"></div>
+        </section>
+
+        <!-- Money -->
+        <section id="money-panel">
+          <h2>Money</h2>
+          <div class="money-links">
+            <a href="https://docs.google.com/spreadsheets/d/1XFHp-0PM0pm3Ns4mQerjx9RJiYaUFzGFtxHRe_9cByA/edit?gid=1417920226#gid=1417920226" target="_blank" class="money-icon-btn" title="Ledger">
+              <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/ledger.png" alt="Ledger">
+            </a>
+            <a href="https://onlinebanking.usbank.com/auth/login/" target="_blank" class="money-icon-btn" title="US Bank">
+              <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/data.png" alt="US Bank">
+            </a>
+          </div>
+          <iframe
+            src="https://calendar.google.com/calendar/embed?height=300&wkst=1&ctz=America%2FNew_York&showPrint=0&showTz=0&mode=AGENDA&src=Y2UxOWVkYzM4YTNiODAxMGViZTMxZjMwZmRlMjc4NTZlNGFhYTdjOTAzODE5NTY5Y2U4MzJjNDYwMzExMzAzY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23d81b60"
+            style="border-width:0"
+            width="100%"
+            height="300"
+            frameborder="0"
+            scrolling="no">
+          </iframe>
+          <iframe id="budget-iframe"
+            src="https://docs.google.com/spreadsheets/d/1XFHp-0PM0pm3Ns4mQerjx9RJiYaUFzGFtxHRe_9cByA/edit?gid=1482812311#gid=1482812311&single=true&widget=true&headers=false"
+            style="width:100%;height:420px;border:none;border-radius:4px;margin-top:12px;">
+          </iframe>
+        </section>
+
+        <!-- Learning -->
+        <section id="learning-panel">
+          <div id="learning-section"></div>
+        </section>
+
+        <!-- Tasks -->
+        <section id="tasks-panel">
+          <div id="tasks-section">
+            <h2>Tasks</h2>
+            <div class="task-add-row">
+              <input class="task-new-input" id="new-task-input" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()">
+              <button class="task-new-btn" onclick="addTask()">+</button>
+            </div>
+            <div id="task-preview"></div>
+          </div>
+        </section>
+
+      </div>
+      <!-- /active-panel -->
+
+    </div>
+    <!-- /right-col -->
 
   </div>
-  <!-- /bottom-split -->
+  <!-- /main-layout -->
 
-  <!-- HEALTH -->
-  <section id="health-section">
-    <h2>Health</h2></section>
-    <div class="flex-container">
-  <section id="process-section"></section>
-  <div id="temple-col">
-    <img src="https://raw.githubusercontent.com/suzannaly/nexus/main/images/temple.png" alt="temple">
-  </div>
-  <section id="fitness-section"></section>
-</div>
-  
+  <!-- ── SCRIPTS ─────────────────────────────────────────────────────── -->
   <script src="app.js"></script>
   <script src="saphira.js"></script>
   <script>
-    // Saphira calls Claude via GAS proxy — no API key in this file.
     StartSaphira();
   </script>
-  <script src="today.js"></script>
-<script>initToday();</script>
- <script src="learning.js"></script>
-<script>initLearning();</script> 
-<script src="process.js"></script>
-<script>initProcess();</script>
-<script src="fitness.js"></script>
-<script>initFitness();</script>
+  <script src="fitness.js"></script>
+  <script>initFitness();</script>
+  <script src="process.js"></script>
+  <script>initProcess();</script>
+  <script src="learning.js"></script>
+  <script>initLearning();</script>
+  <script src="chores.js"></script>
+  <script>initChores();</script>
+
+  <script>
+    // ── Panel switcher ──────────────────────────────────────────────────
+    function switchPanel(pill) {
+      // Update active pill
+      document.querySelectorAll('.check-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+
+      // Show target panel
+      const target = pill.dataset.panel;
+      document.querySelectorAll('#active-panel > section').forEach(s => s.classList.remove('panel-active'));
+      const el = document.getElementById(target);
+      if (el) el.classList.add('panel-active');
+    }
+
+    // ── Mark pill done and auto-advance ────────────────────────────────
+    function markDone(panelId) {
+      const pills = Array.from(document.querySelectorAll('.check-pill'));
+      const current = pills.find(p => p.dataset.panel === panelId);
+      if (current) {
+        current.classList.add('done');
+        current.querySelector('.pill-check').textContent = '✓';
+        // Auto-advance to next undone pill
+        const idx = pills.indexOf(current);
+        const next = pills.slice(idx + 1).find(p => !p.classList.contains('done'));
+        if (next) switchPanel(next);
+      }
+    }
+
+    // ── Task add ───────────────────────────────────────────────────────
+    async function addTask() {
+      const input = document.getElementById('new-task-input');
+      const title = input.value.trim();
+      if (!title) return;
+      input.value = '';
+      const id = Date.now();
+      await postData('Tasks', { ID: id, Title: title, Done: 'FALSE' });
+      loadTasks();
+    }
+
+    // ── Chores init placeholder ────────────────────────────────────────
+    // Your existing chores JS can be loaded here once extracted
+    // For now sections render as empty until chores.js is wired in
+  </script>
+
 </body>
 </html>

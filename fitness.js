@@ -219,6 +219,7 @@ function renderFitness() {
           <button class="fit-reset-btn" onclick="resetFitness()">reset</button>
         </div>
       </div>`;
+    if (typeof markDone === 'function') markDone('fitness-panel');  
   } else if (current) {
     const color      = getSectionColor(current.Section);
     const isOptional = current.Status === 'optional';

@@ -111,6 +111,7 @@ function renderProcess() {
       
         </div>
       </div>`;
+    if (typeof markDone === 'function') markDone('process-panel');  
   } else if (current) {
     const color = getPhaseColor(current.Phase);
     const isOpt = current.SessionType === 'optional';
