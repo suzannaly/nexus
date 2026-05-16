@@ -1361,7 +1361,7 @@ async function addTask() {
   try {
     await fetch(
       GAS_URL + '?tab=Tasks&row=' + encodeURIComponent(JSON.stringify(newTask)),
-      { method: 'GET', mode: 'no-cors' }
+      { method: 'GET' }
     );
   } catch(err) { console.warn('task add failed', err); }
 }
