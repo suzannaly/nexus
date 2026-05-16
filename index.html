@@ -408,7 +408,7 @@ async function moneyDone() {
       '?tab=Context' +
       '&matchColumn=Key' +
       '&matchValue=BookkeepingLastDone' +
-      '&updates=' + encodeURIComponent(JSON.stringify({ Value: new Date().toISOString() })),
+      '&updates=' + encodeURIComponent(JSON.stringify({ Value: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       { method: 'GET' }
     );
   } catch(err) {
